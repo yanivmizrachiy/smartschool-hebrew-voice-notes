@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#123c7c">
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
-  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, פיסוק עברי אוטומטי, התאמה אוטומטית למכשיר והעתקה.">
+  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: התקנה במכשיר, דיבור, פיסוק עברי אוטומטי, התאמה אוטומטית למכשיר והעתקה.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
@@ -23,6 +23,14 @@
 
       <h1>הכתבה בעברית להערות מעקב לסמרטקול</h1>
       <p class="subtitle">מדברים בעברית, האתר מפסק ומסדר אוטומטית לפי ההקשר, מעתיקים — ומדביקים בהערות המעקב.</p>
+
+      <section class="install-panel" aria-label="התקנת האפליקציה במכשיר">
+        <div class="install-copy">
+          <strong>שימוש קבוע מהמכשיר</strong>
+          <span id="installStatus">פתח את האתר, לחץ התקנה פעם אחת, ומאותו רגע תוכל לפתוח אותו כמו אפליקציה.</span>
+        </div>
+        <button class="install-button" type="button" onclick="installApp()" id="installBtn">התקן במכשיר שלך</button>
+      </section>
 
       <section class="device-hint" aria-live="polite">
         <div>
@@ -45,7 +53,6 @@
         <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
         <button class="btn soft" onclick="stopDictation()">עצור</button>
         <button class="btn success" onclick="copyText()">העתק להדבקה</button>
-        <button class="btn share" onclick="shareApp()">שתף למורה</button>
       </div>
 
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב. הפיסוק יתבצע אוטומטית..."></textarea>
@@ -62,25 +69,13 @@
         <button class="chip danger" onclick="clearText()">נקה</button>
       </div>
 
-      <section class="templates">
-        <h2>משפטים מהירים</h2>
-        <div class="template-grid">
-          <button onclick="insertTemplate('התלמיד השתתף בשיעור, עבד ברצינות, ויש להמשיך לעקוב אחר ביצוע המשימות.')">השתתפות טובה</button>
-          <button onclick="insertTemplate('התלמיד מתקשה בביצוע המשימות ונדרש תרגול נוסף בבית.')">נדרש תרגול</button>
-          <button onclick="insertTemplate('יש ליצור קשר עם ההורים ולעדכן אותם בהתקדמות ובקשיים שעלו.')">עדכון הורים</button>
-          <button onclick="insertTemplate('התלמיד לא הגיע לשיעור. יש לעקוב אחר השלמת החומר.')">אי הגעה</button>
-          <button onclick="insertTemplate('התלמיד גילה שיפור ביחס לשיעורים קודמים ומומלץ להמשיך לחזק אותו.')">שיפור חיובי</button>
-          <button onclick="insertTemplate('התלמיד זקוק להכוונה אישית בזמן העבודה ולבדיקה נוספת של הבנת ההוראות.')">זקוק להכוונה</button>
-        </div>
-      </section>
-
       <p class="privacy">האפליקציה אינה שומרת טקסט בשרת ואינה שולחת טקסט ל־GPT. הטיוטה נשמרת בדפדפן בלבד. זיהוי הדיבור תלוי בדפדפן ובמערכת ההפעלה.</p>
     </section>
   </main>
 
   <nav class="mobile-bar">
+    <button onclick="installApp()">⬇️ התקן</button>
     <button onclick="startDictation()">🎙️ דבר</button>
-    <button onclick="stopDictation()">⏸️ עצור</button>
     <button onclick="copyText()">📋 העתק</button>
   </nav>
 
