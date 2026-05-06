@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-smartschool-voice-notes-v8-clean-install-update';
+const CACHE_NAME='yaniv-smartschool-voice-notes-v9-free-hebrew-engine';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
