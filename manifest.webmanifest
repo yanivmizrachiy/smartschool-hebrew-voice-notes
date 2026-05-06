@@ -1,1 +1,22 @@
-{"name":"הכתבה בעברית להערות מעקב לסמרטקול","short_name":"הכתבה למעקב","start_url":"./index.html","scope":"./","display":"standalone","dir":"rtl","lang":"he","theme_color":"#123c7c","background_color":"#07162f","icons":[{"src":"icon.svg","sizes":"512x512","type":"image/svg+xml","purpose":"any"}]}
+{
+  "name": "הכתבה בעברית להערות מעקב לסמרטקול",
+  "short_name": "הכתבה למעקב",
+  "description": "כלי הכתבה בעברית להערות מעקב עם פיסוק אוטומטי והעתקה.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "he",
+  "orientation": "any",
+  "theme_color": "#123c7c",
+  "background_color": "#07162f",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
