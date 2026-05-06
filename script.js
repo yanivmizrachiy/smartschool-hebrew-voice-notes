@@ -19,6 +19,10 @@ function setBox(el,msg){
   if(text){el.hidden=false;el.textContent=text;}else{el.textContent='';el.hidden=true;}
 }
 
+function setListening(active){
+  document.body.classList.toggle('listening',!!active);
+}
+
 function showCopyNote(msg='הטקסט הועתק'){
   if(!copyNote)return;
   copyNote.hidden=false;
@@ -81,9 +85,10 @@ function initRecognition(){
   if(!SR){setBox(statusBox,'הדפדפן לא תומך בהכתבה');return false;}
   recognition=new SR();
   recognition.lang='he-IL';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;
-  recognition.onstart=()=>setBox(statusBox,'');
-  recognition.onend=()=>{autoPunctuateNow('speech-end');setBox(statusBox,'');};
+  recognition.onstart=()=>{setListening(true);setBox(statusBox,'');};
+  recognition.onend=()=>{setListening(false);autoPunctuateNow('speech-end');setBox(statusBox,'');};
   recognition.onerror=e=>{
+    setListening(false);
     let msg='';
     if(e.error==='not-allowed')msg='המיקרופון חסום';
     else if(e.error==='no-speech')msg='לא נקלט דיבור';
@@ -103,7 +108,7 @@ function initRecognition(){
 }
 
 function startDictation(){if(!recognition&&!initRecognition())return;try{recognition.start();}catch(e){}}
-function stopDictation(){if(recognition)recognition.stop();autoPunctuateNow('manual-stop');}
+function stopDictation(){setListening(false);if(recognition)recognition.stop();autoPunctuateNow('manual-stop');}
 function restoreDraft(){if(!txt)return;txt.value=localStorage.getItem(DRAFT_KEY)||'';autoPunctuateNow('restore');}
 function clearText(){if(!txt)return;if(confirm('לנקות את כל הטקסט?')){txt.value='';if(interimBox)interimBox.textContent='';localStorage.removeItem(DRAFT_KEY);setBox(statusBox,'');setBox(qualityBox,'');setBox(copyNote,'');}}
 
