@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#123c7c">
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
-  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, סידור טקסט, פיסוק חכם והעתקה.">
+  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, פיסוק עברי אוטומטי והעתקה.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
@@ -22,7 +22,7 @@
       </div>
 
       <h1>הכתבה בעברית להערות מעקב לסמרטקול</h1>
-      <p class="subtitle">מדברים בעברית, מקבלים טקסט, מפעילים פיסוק חכם, מעתיקים — ומדביקים בהערות המעקב.</p>
+      <p class="subtitle">מדברים בעברית, האתר מפסק ומסדר אוטומטית לפי ההקשר, מעתיקים — ומדביקים בהערות המעקב.</p>
 
       <section class="device-hint" aria-live="polite">
         <div>
@@ -39,19 +39,18 @@
         <div class="diag-card" id="diagDraft">בודק טיוטה...</div>
       </section>
 
-      <div class="status-panel" id="status">מוכן. לחץ על “התחל הכתבה” ואשר מיקרופון אם תתבקש.</div>
+      <div class="status-panel" id="status">מוכן. הפיסוק האוטומטי פעיל. לחץ על “התחל הכתבה” ואשר מיקרופון אם תתבקש.</div>
 
       <div class="main-actions">
         <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
         <button class="btn soft" onclick="stopDictation()">עצור</button>
-        <button class="btn gold" onclick="smartPunctuateAndCheck()">✨ סדר ופסק חכם</button>
         <button class="btn success" onclick="copyText()">העתק להדבקה</button>
       </div>
 
-      <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב..."></textarea>
+      <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב. הפיסוק יתבצע אוטומטית..."></textarea>
       <div class="interim" id="interim"></div>
 
-      <div class="quality-box" id="qualityBox">בדיקת עברית ופיסוק תופיע כאן אחרי לחיצה על “סדר ופסק חכם”.</div>
+      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל: אחרי הכתבה, לפני העתקה, וביציאה מתיבת הטקסט.</div>
 
       <div class="tool-grid">
         <button class="chip" onclick="addText('. ')">נקודה</button>
@@ -80,7 +79,7 @@
 
   <nav class="mobile-bar">
     <button onclick="startDictation()">🎙️ דבר</button>
-    <button onclick="smartPunctuateAndCheck()">✨ סדר</button>
+    <button onclick="stopDictation()">⏸️ עצור</button>
     <button onclick="copyText()">📋 העתק</button>
   </nav>
 
