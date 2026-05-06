@@ -33,12 +33,8 @@
       <div class="quality-box" id="qualityBox" aria-live="polite" hidden></div>
 
       <div class="tool-grid" aria-label="פעולות טקסט">
-        <button class="chip" onclick="addText('. ')">נקודה</button>
-        <button class="chip" onclick="addText(', ')">פסיק</button>
-        <button class="chip" onclick="addText('? ')">סימן שאלה</button>
-        <button class="chip" onclick="addText('\n')">שורה חדשה</button>
-        <button class="chip" onclick="restoreDraft()">שחזר טיוטה</button>
-        <button class="chip danger" onclick="clearText()">נקה</button>
+        <button class="chip restore" onclick="restoreDraft()">שחזר טיוטה</button>
+        <button class="clear-big" onclick="clearText()">נקה</button>
       </div>
     </section>
   </main>
