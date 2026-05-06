@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123c7c">
+  <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
+  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, סידור טקסט, פיסוק חכם והעתקה.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="manager-banner">האתר מנוהל על ידי הנברז</div>
+
+  <main class="app-shell">
+    <section class="hero-card">
+      <div class="topline">
+        <span class="pill">עברית מלאה</span>
+        <span class="pill gold">RTL</span>
+        <span class="pill">מחשב · טלפון · טאבלט</span>
+      </div>
+
+      <h1>הכתבה בעברית להערות מעקב לסמרטקול</h1>
+      <p class="subtitle">מדברים בעברית, מקבלים טקסט, מפעילים פיסוק חכם, מעתיקים — ומדביקים בהערות המעקב.</p>
+
+      <section class="diagnostics">
+        <div class="diag-card" id="diagSecure">בודק חיבור...</div>
+        <div class="diag-card" id="diagSpeech">בודק הכתבה...</div>
+        <div class="diag-card" id="diagMic">בודק מיקרופון...</div>
+        <div class="diag-card" id="diagDraft">בודק טיוטה...</div>
+      </section>
+
+      <div class="status-panel" id="status">מוכן. לחץ על “התחל הכתבה” ואשר מיקרופון אם תתבקש.</div>
+
+      <div class="main-actions">
+        <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
+        <button class="btn soft" onclick="stopDictation()">עצור</button>
+        <button class="btn gold" onclick="smartPunctuateAndCheck()">✨ סדר ופסק חכם</button>
+        <button class="btn success" onclick="copyText()">העתק להדבקה</button>
+      </div>
+
+      <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב..."></textarea>
+      <div class="interim" id="interim"></div>
+
+      <div class="quality-box" id="qualityBox">בדיקת עברית ופיסוק תופיע כאן אחרי לחיצה על “סדר ופסק חכם”.</div>
+
+      <div class="tool-grid">
+        <button class="chip" onclick="addText('. ')">נקודה</button>
+        <button class="chip" onclick="addText(', ')">פסיק</button>
+        <button class="chip" onclick="addText('? ')">סימן שאלה</button>
+        <button class="chip" onclick="addText('\n')">שורה חדשה</button>
+        <button class="chip" onclick="restoreDraft()">שחזר טיוטה</button>
+        <button class="chip danger" onclick="clearText()">נקה</button>
+      </div>
+
+      <section class="templates">
+        <h2>משפטים מהירים</h2>
+        <div class="template-grid">
+          <button onclick="insertTemplate('התלמיד השתתף בשיעור, עבד ברצינות, ויש להמשיך לעקוב אחר ביצוע המשימות.')">השתתפות טובה</button>
+          <button onclick="insertTemplate('התלמיד מתקשה בביצוע המשימות ונדרש תרגול נוסף בבית.')">נדרש תרגול</button>
+          <button onclick="insertTemplate('יש ליצור קשר עם ההורים ולעדכן אותם בהתקדמות ובקשיים שעלו.')">עדכון הורים</button>
+          <button onclick="insertTemplate('התלמיד לא הגיע לשיעור. יש לעקוב אחר השלמת החומר.')">אי הגעה</button>
+          <button onclick="insertTemplate('התלמיד גילה שיפור ביחס לשיעורים קודמים ומומלץ להמשיך לחזק אותו.')">שיפור חיובי</button>
+          <button onclick="insertTemplate('התלמיד זקוק להכוונה אישית בזמן העבודה ולבדיקה נוספת של הבנת ההוראות.')">זקוק להכוונה</button>
+        </div>
+      </section>
+
+      <p class="privacy">האפליקציה אינה שומרת טקסט בשרת ואינה שולחת טקסט ל־GPT. הטיוטה נשמרת בדפדפן בלבד. זיהוי הדיבור תלוי בדפדפן ובמערכת ההפעלה.</p>
+    </section>
+  </main>
+
+  <nav class="mobile-bar">
+    <button onclick="startDictation()">🎙️ דבר</button>
+    <button onclick="smartPunctuateAndCheck()">✨ סדר</button>
+    <button onclick="copyText()">📋 העתק</button>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>

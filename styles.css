@@ -1,0 +1,39 @@
+:root{--bg1:#07162f;--bg2:#123c7c;--card:rgba(255,255,255,.95);--text:#10203a;--muted:#5d6a80;--blue:#174ea6;--blue2:#0f2f6b;--gold:#d8ad46;--green:#087a45;--red:#a61d33;--line:rgba(23,78,166,.18);--shadow:0 24px 80px rgba(3,18,50,.30)}
+*{box-sizing:border-box}
+body{margin:0;direction:rtl;font-family:Arial,"Segoe UI",sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 12% 8%,rgba(216,173,70,.42),transparent 28%),radial-gradient(circle at 88% 18%,rgba(91,157,255,.36),transparent 30%),linear-gradient(135deg,var(--bg1),var(--bg2))}
+.manager-banner{width:100%;text-align:center;padding:7px 10px;font-size:13px;font-weight:800;color:white;background:linear-gradient(135deg,rgba(255,255,255,.28),rgba(216,173,70,.40));text-shadow:0 1px 4px rgba(0,0,0,.55);border-bottom:1px solid rgba(255,255,255,.24)}
+.app-shell{width:min(1120px,100%);margin:0 auto;padding:26px 16px 96px}
+.hero-card{background:var(--card);border:1px solid rgba(255,255,255,.66);border-radius:34px;box-shadow:var(--shadow);padding:28px;backdrop-filter:blur(18px)}
+.topline{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.pill{border-radius:999px;padding:7px 12px;font-size:14px;font-weight:900;color:#0f2f6b;background:#eaf2ff;border:1px solid #cbdcff}
+.pill.gold{color:#6f4d00;background:#fff4d2;border-color:#f1d18a}
+h1{margin:0 0 10px;font-size:clamp(30px,5vw,52px);letter-spacing:-.04em;color:#0b2557;line-height:1.1}
+.subtitle{margin:0 0 18px;font-size:clamp(17px,2.4vw,21px);line-height:1.65;color:#45566f}
+.diagnostics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
+.diag-card{border:1px solid var(--line);background:linear-gradient(135deg,#fff,#eef5ff);color:#20324c;border-radius:18px;padding:12px 13px;font-size:15px;font-weight:800}
+.diag-card.ok{background:#ecfff6;color:#075b38;border-color:#bfe8d3}
+.diag-card.warn{background:#fff8e1;color:#7a5200;border-color:#edd28a}
+.diag-card.bad{background:#fff0f2;color:#8c1d31;border-color:#f0c9d0}
+.status-panel,.quality-box{border:1px solid var(--line);background:linear-gradient(135deg,#f8fbff,#eef5ff);border-radius:20px;padding:14px 16px;font-size:17px;color:#20324c;margin:14px 0;line-height:1.55}
+.quality-box{background:linear-gradient(135deg,#fffdf7,#f5f9ff);color:#3b4658}
+.main-actions,.tool-grid{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.btn,.chip,.template-grid button,.mobile-bar button{border:0;cursor:pointer;font-weight:900;border-radius:18px;transition:.15s ease}
+.btn{padding:15px 20px;font-size:19px;color:white;box-shadow:0 10px 22px rgba(15,47,107,.18)}
+.btn:hover,.chip:hover,.template-grid button:hover,.mobile-bar button:hover{transform:translateY(-1px);filter:brightness(.98)}
+.primary{background:linear-gradient(135deg,#1c63d5,#0f2f6b)}
+.success{background:linear-gradient(135deg,#0a8f55,#075b38)}
+.gold{background:linear-gradient(135deg,#f2ce69,#b47c17);color:#2e1d03}
+.soft{color:#0f2f6b;background:#eef5ff;border:1px solid #c9d9f5}
+textarea{width:100%;min-height:380px;resize:vertical;direction:rtl;border:2px solid rgba(23,78,166,.45);border-radius:24px;padding:20px;font-size:23px;line-height:1.82;outline:none;color:#101d35;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:inset 0 2px 10px rgba(15,47,107,.05)}
+textarea:focus{border-color:#1c63d5;box-shadow:0 0 0 5px rgba(28,99,213,.15)}
+.interim{min-height:34px;padding:10px 3px;font-size:20px;color:#68758b}
+.chip{padding:12px 15px;font-size:17px;background:#f3f7ff;color:#0f2f6b;border:1px solid #d2e0f7}
+.chip.danger{background:#fff0f2;color:var(--red);border-color:#f0c9d0}
+.templates{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.templates h2{margin:0 0 12px;color:#0b2557;font-size:22px}
+.template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.template-grid button{text-align:right;padding:15px;font-size:16px;line-height:1.5;color:#0f2f6b;background:linear-gradient(135deg,#fff,#eef5ff);border:1px solid #d2e0f7}
+.privacy{margin:16px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+.mobile-bar{position:fixed;left:12px;right:12px;bottom:12px;display:none;gap:8px;padding:9px;background:rgba(7,22,47,.90);border:1px solid rgba(255,255,255,.22);border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.25);backdrop-filter:blur(14px);z-index:10}
+.mobile-bar button{flex:1;padding:13px 8px;color:white;font-size:16px;background:linear-gradient(135deg,#2b73e0,#153b86)}
+@media(max-width:720px){.app-shell{padding:12px 10px 92px}.hero-card{padding:18px;border-radius:26px}textarea{min-height:330px;font-size:21px}.main-actions .btn{flex:1 1 100%}.tool-grid .chip{flex:1 1 45%}.mobile-bar{display:flex}}
