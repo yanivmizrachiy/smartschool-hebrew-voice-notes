@@ -10,7 +10,7 @@
   "orientation": "any",
   "theme_color": "#123c7c",
   "background_color": "#07162f",
-  "categories": ["education", "productivity", "utilities"],
+  "categories": ["education","productivity","utilities"],
   "icons": [
     {
       "src": "icon.svg",

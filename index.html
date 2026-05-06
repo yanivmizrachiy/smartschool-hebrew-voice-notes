@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#123c7c">
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
-  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: התקנה במכשיר, דיבור, פיסוק עברי אוטומטי, התאמה אוטומטית למכשיר והעתקה.">
+  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: התקנה במכשיר, דיבור, פיסוק עברי אוטומטי והעתקה.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
@@ -15,36 +15,12 @@
 
   <main class="app-shell">
     <section class="hero-card">
-      <div class="topline">
-        <span class="pill">עברית מלאה</span>
-        <span class="pill gold">RTL</span>
-        <span class="pill">מחשב · טלפון · טאבלט</span>
-      </div>
-
       <h1>הכתבה בעברית להערות מעקב לסמרטקול</h1>
-      <p class="subtitle">מדברים בעברית, האתר מפסק ומסדר אוטומטית לפי ההקשר, מעתיקים — ומדביקים בהערות המעקב.</p>
+      <p class="subtitle">מדברים בעברית, הטקסט מפוסק אוטומטית, מעתיקים — ומדביקים בהערות המעקב.</p>
 
-      <section class="install-panel" aria-label="התקנת האפליקציה במכשיר">
-        <div class="install-copy">
-          <strong>שימוש קבוע מהמכשיר</strong>
-          <span id="installStatus">פתח את האתר, לחץ התקנה פעם אחת, ומאותו רגע תוכל לפתוח אותו כמו אפליקציה.</span>
-        </div>
+      <section class="install-panel install-only" id="installPanel" hidden>
         <button class="install-button" type="button" onclick="installApp()" id="installBtn">התקן במכשיר שלך</button>
-      </section>
-
-      <section class="device-hint" aria-live="polite">
-        <div>
-          <strong id="deviceTitle">מזהה את המכשיר...</strong>
-          <span id="deviceText">האתר מתאים את התצוגה אוטומטית. אין צורך לבחור נייד או נייח.</span>
-        </div>
-        <button class="device-toggle" type="button" onclick="toggleComfortMode()" id="comfortBtn">תצוגה גדולה</button>
-      </section>
-
-      <section class="diagnostics">
-        <div class="diag-card" id="diagSecure">בודק חיבור...</div>
-        <div class="diag-card" id="diagSpeech">בודק הכתבה...</div>
-        <div class="diag-card" id="diagMic">בודק מיקרופון...</div>
-        <div class="diag-card" id="diagDraft">בודק טיוטה...</div>
+        <p id="installText">התקנה חד־פעמית. אחרי ההתקנה האפליקציה תיפתח מהמכשיר כמו אפליקציה רגילה.</p>
       </section>
 
       <div class="status-panel" id="status">מוכן. הפיסוק האוטומטי פעיל. לחץ על “התחל הכתבה” ואשר מיקרופון אם תתבקש.</div>
@@ -58,7 +34,7 @@
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב. הפיסוק יתבצע אוטומטית..."></textarea>
       <div class="interim" id="interim"></div>
 
-      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל תמיד: בזמן הכתבה, אחרי עצירה, לפני העתקה, ואחרי שחזור טיוטה.</div>
+      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל תמיד.</div>
 
       <div class="tool-grid">
         <button class="chip" onclick="addText('. ')">נקודה</button>
@@ -66,15 +42,16 @@
         <button class="chip" onclick="addText('? ')">סימן שאלה</button>
         <button class="chip" onclick="addText('\n')">שורה חדשה</button>
         <button class="chip" onclick="restoreDraft()">שחזר טיוטה</button>
+        <button class="chip" onclick="checkForUpdates(true)">בדוק עדכונים</button>
         <button class="chip danger" onclick="clearText()">נקה</button>
       </div>
 
-      <p class="privacy">האפליקציה אינה שומרת טקסט בשרת ואינה שולחת טקסט ל־GPT. הטיוטה נשמרת בדפדפן בלבד. זיהוי הדיבור תלוי בדפדפן ובמערכת ההפעלה.</p>
+      <p class="privacy">הטיוטה נשמרת בדפדפן בלבד. האפליקציה אינה שומרת טקסט בשרת ואינה שולחת טקסט ל־GPT.</p>
     </section>
   </main>
 
   <nav class="mobile-bar">
-    <button onclick="installApp()">⬇️ התקן</button>
+    <button class="install-only" onclick="installApp()">⬇️ התקן</button>
     <button onclick="startDictation()">🎙️ דבר</button>
     <button onclick="copyText()">📋 העתק</button>
   </nav>
