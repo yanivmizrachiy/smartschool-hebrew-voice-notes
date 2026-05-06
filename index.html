@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#123c7c">
+  <meta name="theme-color" content="#0b1224">
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
@@ -22,9 +22,10 @@
 
       <div class="main-actions" aria-label="פעולות עיקריות">
         <button class="btn talk" onclick="startDictation()">🎙️ דבר</button>
-        <button class="btn stop" onclick="stopDictation()">■ עצור</button>
+        <button class="btn stop" onclick="stopDictation()">■</button>
         <button class="btn copy" onclick="copyText()">📋 העתק</button>
       </div>
+      <div class="copy-note" id="copyNote" aria-live="polite" hidden></div>
 
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית"></textarea>
       <div class="interim" id="interim" aria-live="polite"></div>
