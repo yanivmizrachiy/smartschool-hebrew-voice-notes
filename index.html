@@ -16,14 +16,10 @@
   <main class="app-shell">
     <section class="hero-card">
       <h1>הכתבה בעברית להערות מעקב לסמרטקול</h1>
-      <p class="subtitle">מדברים בעברית, הטקסט מפוסק אוטומטית, מעתיקים — ומדביקים בהערות המעקב.</p>
 
       <section class="install-panel install-only" id="installPanel" hidden>
         <button class="install-button" type="button" onclick="installApp()" id="installBtn">התקן במכשיר שלך</button>
-        <p id="installText">התקנה חד־פעמית. אחרי ההתקנה האפליקציה תיפתח מהמכשיר כמו אפליקציה רגילה.</p>
       </section>
-
-      <div class="status-panel" id="status">מוכן. הפיסוק האוטומטי פעיל. לחץ על “התחל הכתבה” ואשר מיקרופון אם תתבקש.</div>
 
       <div class="main-actions">
         <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
@@ -31,10 +27,10 @@
         <button class="btn success" onclick="copyText()">העתק להדבקה</button>
       </div>
 
-      <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב. הפיסוק יתבצע אוטומטית..."></textarea>
+      <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית"></textarea>
       <div class="interim" id="interim"></div>
-
-      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל תמיד.</div>
+      <div class="status-panel" id="status" aria-live="polite"></div>
+      <div class="quality-box" id="qualityBox" aria-live="polite"></div>
 
       <div class="tool-grid">
         <button class="chip" onclick="addText('. ')">נקודה</button>
@@ -45,8 +41,6 @@
         <button class="chip" onclick="checkForUpdates(true)">בדוק עדכונים</button>
         <button class="chip danger" onclick="clearText()">נקה</button>
       </div>
-
-      <p class="privacy">הטיוטה נשמרת בדפדפן בלבד. האפליקציה אינה שומרת טקסט בשרת ואינה שולחת טקסט ל־GPT.</p>
     </section>
   </main>
 
