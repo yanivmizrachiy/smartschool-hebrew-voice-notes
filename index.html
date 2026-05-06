@@ -21,10 +21,10 @@
         <button class="install-button" type="button" onclick="installApp()" id="installBtn">התקן במכשיר שלך</button>
       </section>
 
-      <div class="main-actions">
-        <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
-        <button class="btn soft" onclick="stopDictation()">עצור</button>
-        <button class="btn success" onclick="copyText()">העתק להדבקה</button>
+      <div class="main-actions" aria-label="פעולות עיקריות">
+        <button class="btn talk" onclick="startDictation()">🎙️ דבר</button>
+        <button class="btn stop" onclick="stopDictation()">■ עצור</button>
+        <button class="btn copy" onclick="copyText()">📋 העתק</button>
       </div>
 
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית"></textarea>
@@ -32,7 +32,7 @@
       <div class="status-panel" id="status" aria-live="polite" hidden></div>
       <div class="quality-box" id="qualityBox" aria-live="polite" hidden></div>
 
-      <div class="tool-grid">
+      <div class="tool-grid" aria-label="פעולות טקסט">
         <button class="chip" onclick="addText('. ')">נקודה</button>
         <button class="chip" onclick="addText(', ')">פסיק</button>
         <button class="chip" onclick="addText('? ')">סימן שאלה</button>
@@ -42,12 +42,6 @@
       </div>
     </section>
   </main>
-
-  <nav class="mobile-bar">
-    <button class="install-only" onclick="installApp()">⬇️ התקן</button>
-    <button onclick="startDictation()">🎙️ דבר</button>
-    <button onclick="copyText()">📋 העתק</button>
-  </nav>
 
   <script src="script.js"></script>
 </body>
