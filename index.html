@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#123c7c">
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
-  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, פיסוק עברי אוטומטי והעתקה.">
+  <meta name="description" content="כלי הכתבה בעברית להערות מעקב: דיבור, פיסוק עברי אוטומטי, התאמה אוטומטית למכשיר והעתקה.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
@@ -45,12 +45,13 @@
         <button class="btn primary" onclick="startDictation()">🎙️ התחל הכתבה</button>
         <button class="btn soft" onclick="stopDictation()">עצור</button>
         <button class="btn success" onclick="copyText()">העתק להדבקה</button>
+        <button class="btn share" onclick="shareApp()">שתף למורה</button>
       </div>
 
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית" placeholder="כאן יופיע הטקסט שתכתיב. הפיסוק יתבצע אוטומטית..."></textarea>
       <div class="interim" id="interim"></div>
 
-      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל: אחרי הכתבה, לפני העתקה, וביציאה מתיבת הטקסט.</div>
+      <div class="quality-box" id="qualityBox">פיסוק עברי אוטומטי פעיל תמיד: בזמן הכתבה, אחרי עצירה, לפני העתקה, ואחרי שחזור טיוטה.</div>
 
       <div class="tool-grid">
         <button class="chip" onclick="addText('. ')">נקודה</button>
