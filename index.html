@@ -28,9 +28,9 @@
       </div>
 
       <textarea id="txt" aria-label="אזור טקסט להכתבה בעברית"></textarea>
-      <div class="interim" id="interim"></div>
-      <div class="status-panel" id="status" aria-live="polite"></div>
-      <div class="quality-box" id="qualityBox" aria-live="polite"></div>
+      <div class="interim" id="interim" aria-live="polite"></div>
+      <div class="status-panel" id="status" aria-live="polite" hidden></div>
+      <div class="quality-box" id="qualityBox" aria-live="polite" hidden></div>
 
       <div class="tool-grid">
         <button class="chip" onclick="addText('. ')">נקודה</button>
@@ -38,7 +38,6 @@
         <button class="chip" onclick="addText('? ')">סימן שאלה</button>
         <button class="chip" onclick="addText('\n')">שורה חדשה</button>
         <button class="chip" onclick="restoreDraft()">שחזר טיוטה</button>
-        <button class="chip" onclick="checkForUpdates(true)">בדוק עדכונים</button>
         <button class="chip danger" onclick="clearText()">נקה</button>
       </div>
     </section>
