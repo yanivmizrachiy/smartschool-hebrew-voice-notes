@@ -1,299 +1,291 @@
 const txt=document.getElementById('txt');
 const statusBox=document.getElementById('status');
 const interimBox=document.getElementById('interim');
-const qualityBox=document.getElementById('qualityBox');
 const installPanel=document.getElementById('installPanel');
 const copyNote=document.getElementById('copyNote');
 
-const DRAFT_KEY='yaniv_tracking_voice_text_v2';
+const DRAFT_KEY='yaniv_voice_notes_v12_dedupe';
+const OLD_KEYS=['yaniv_tracking_voice_text_v2','yaniv_tracking_voice_text_v3','yaniv_voice_notes_v11'];
 let recognition=null;
-let autoPunctuationTimer=null;
-let isPunctuating=false;
-let deferredInstallPrompt=null;
-let swRegistration=null;
-let copyNoteTimer=null;
+let recent=[];
+let timer=null;
+let copyTimer=null;
+let promptEvent=null;
 
-function setBox(el,msg){
+function show(el,msg){
   if(!el)return;
-  const text=(msg||'').trim();
-  if(text){el.hidden=false;el.textContent=text;}else{el.textContent='';el.hidden=true;}
+  const t=(msg||'').trim();
+  el.hidden=!t;
+  el.textContent=t;
 }
 
-function setListening(active){document.body.classList.toggle('listening',!!active);}
-
-function showCopyNote(msg='הטקסט הועתק'){
-  if(!copyNote)return;
-  copyNote.hidden=false;
-  copyNote.textContent=msg;
-  clearTimeout(copyNoteTimer);
-  copyNoteTimer=setTimeout(()=>setBox(copyNote,''),2800);
-}
-
-if(txt){
-  txt.value=localStorage.getItem(DRAFT_KEY)||'';
-  txt.addEventListener('input',()=>{saveDraft();scheduleAutoPunctuation(850);});
-  txt.addEventListener('blur',()=>autoPunctuateNow('blur'));
-}
-
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;showInstallUi();});
-window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;markInstalled();});
-window.addEventListener('load',()=>{setupServiceWorker();detectInstalledMode();scheduleAutoPunctuation(250);});
-
-function saveDraft(){if(txt)localStorage.setItem(DRAFT_KEY,txt.value||'');}
-function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
-function showInstallUi(){if(installPanel)installPanel.hidden=false;document.body.classList.remove('installed');}
-function markInstalled(){document.body.classList.add('installed');if(installPanel)installPanel.hidden=true;}
-function detectInstalledMode(){if(isStandalone())markInstalled();else setTimeout(()=>{if(!deferredInstallPrompt)showInstallUi();},900);}
-
-async function installApp(){
-  if(isStandalone()){markInstalled();return;}
-  if(deferredInstallPrompt){
-    const promptEvent=deferredInstallPrompt;deferredInstallPrompt=null;
-    promptEvent.prompt();
-    const choice=await promptEvent.userChoice.catch(()=>null);
-    if(choice&&choice.outcome==='accepted')markInstalled();
-    return;
-  }
-  showInstallUi();
-}
-
-async function setupServiceWorker(){
-  if(!('serviceWorker' in navigator))return;
-  try{
-    swRegistration=await navigator.serviceWorker.register('sw.js');
-    await checkForUpdates(false);
-    navigator.serviceWorker.addEventListener('controllerchange',()=>{
-      if(sessionStorage.getItem('yaniv_reloaded_for_update')==='1')return;
-      sessionStorage.setItem('yaniv_reloaded_for_update','1');
-      location.reload();
-    });
-  }catch(e){}
-}
-
-async function checkForUpdates(manual){
-  if(!swRegistration)return;
-  try{
-    await swRegistration.update();
-    if(swRegistration.waiting){saveDraft();swRegistration.waiting.postMessage({type:'SKIP_WAITING'});}
-  }catch(e){}
-}
-
-function initRecognition(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){setBox(statusBox,'הדפדפן לא תומך בהכתבה');return false;}
-  recognition=new SR();
-  recognition.lang='he-IL';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;
-  recognition.onstart=()=>{setListening(true);setBox(statusBox,'');};
-  recognition.onend=()=>{setListening(false);autoPunctuateNow('speech-end');setBox(statusBox,'');};
-  recognition.onerror=e=>{
-    setListening(false);
-    let msg='';
-    if(e.error==='not-allowed')msg='המיקרופון חסום';
-    else if(e.error==='no-speech')msg='לא נקלט דיבור';
-    else if(e.error==='network')msg='בעיית רשת';
-    setBox(statusBox,msg);
-  };
-  recognition.onresult=event=>{
-    let interim='',changed=false;
-    for(let i=event.resultIndex;i<event.results.length;i++){
-      const spoken=event.results[i][0].transcript.trim();
-      if(event.results[i].isFinal){
-        if(txt.value&&!txt.value.endsWith(' ')&&!txt.value.endsWith('\n'))txt.value+=' ';
-        txt.value+=spoken;
-        changed=true;
-      }else interim+=spoken+' ';
-    }
-    if(interimBox)interimBox.textContent=interim;
-    if(changed){saveDraft();scheduleAutoPunctuation(260);}
-  };
-  return true;
-}
-
-function startDictation(){if(!recognition&&!initRecognition())return;try{recognition.start();}catch(e){}}
-function stopDictation(){setListening(false);if(recognition)recognition.stop();autoPunctuateNow('manual-stop');}
-function restoreDraft(){if(!txt)return;txt.value=localStorage.getItem(DRAFT_KEY)||'';autoPunctuateNow('restore');}
-function clearText(){if(!txt)return;if(confirm('לנקות את כל הטקסט?')){txt.value='';if(interimBox)interimBox.textContent='';localStorage.removeItem(DRAFT_KEY);setBox(statusBox,'');setBox(qualityBox,'');setBox(copyNote,'');}}
-
-function scheduleAutoPunctuation(delay=700){clearTimeout(autoPunctuationTimer);autoPunctuationTimer=setTimeout(()=>autoPunctuateNow('auto'),delay);}
-function autoPunctuateNow(reason='auto'){
-  if(isPunctuating||!txt)return;
-  const before=txt.value;if(!before||!before.trim())return;
-  isPunctuating=true;
-  const cursorAtEnd=txt.selectionStart===txt.value.length&&txt.selectionEnd===txt.value.length;
-  const fixed=smartHebrewPunctuation(before);
-  if(fixed&&fixed!==before){txt.value=fixed;if(cursorAtEnd)txt.selectionStart=txt.selectionEnd=txt.value.length;saveDraft();}
-  setBox(qualityBox,'');
-  isPunctuating=false;
-}
-
-function normalizeHebrewText(x){
-  return (x||'')
-    .replace(/[“”]/g,'"')
-    .replace(/[‘’]/g,"'")
-    .replace(/…/g,'...')
-    .replace(/[־–—]/g,'-')
-    .replace(/\u200f|\u200e/g,'')
-    .replace(/[ \t]+/g,' ')
-    .replace(/\s+\n/g,'\n')
-    .replace(/\n\s+/g,'\n')
+function norm(s){
+  return (s||'')
+    .replace(/[.,!?;:()\-]/g,'')
+    .replace(/\s+/g,' ')
     .trim();
 }
 
-function replaceWholeWord(x,from,to){
-  const re=new RegExp('(^|[^\\u0590-\\u05FF])'+escapeRegExp(from)+'(?=$|[^\\u0590-\\u05FF])','g');
-  return x.replace(re,'$1'+to);
+function words(s){
+  const n=norm(s);
+  return n?n.split(' ').filter(Boolean):[];
 }
 
-function replaceManyWords(x,pairs){
-  for(const [from,to] of pairs)x=replaceWholeWord(x,from,to);
-  return x;
+function save(){
+  if(txt)localStorage.setItem(DRAFT_KEY,txt.value||'');
 }
 
-function applyCommonHebrewCorrections(x){
-  const wordPairs=[
-    ['שעור','שיעור'],['שעורים','שיעורים'],['שיעוריםם','שיעורים'],
-    ['מתמתיקה','מתמטיקה'],['מטמתיקה','מתמטיקה'],['מתמטיקהה','מתמטיקה'],
-    ['מסימה','משימה'],['מסימות','משימות'],['משימותת','משימות'],
-    ['תרגולל','תרגול'],['תרגולים','תרגילים'],['תרגילם','תרגילים'],
-    ['הקטבה','הכתבה'],['החתבה','הכתבה'],['הכתווה','הכתבה'],
-    ['מאקב','מעקב'],['מעתק','העתק'],['טיוטע','טיוטה'],
-    ['ניראה','נראה'],['ניקר','ניכר'],['להמשיךך','להמשיך'],
-    ['לעקב','לעקוב'],['לעקובב','לעקוב'],['היתקדם','התקדם'],['היתקדמה','התקדמה'],['היתקדמות','התקדמות'],
-    ['הישתתף','השתתף'],['הישתתפה','השתתפה'],['הישתתפות','השתתפות'],
-    ['מיתקשה','מתקשה'],['מיתקשים','מתקשים'],['מיתקשות','מתקשות'],
-    ['הבנתת','הבנת'],['הוראותת','הוראות'],['רצינותת','רצינות'],
-    ['סמרטקול','סמארטסקול'],['סמרטסקול','סמארטסקול'],['סמארט סקול','סמארטסקול'],['סמרט סקול','סמארטסקול']
+function load(){
+  if(!txt)return;
+  txt.value=localStorage.getItem(DRAFT_KEY)||OLD_KEYS.map(k=>localStorage.getItem(k)).find(Boolean)||'';
+}
+
+function punct(s){
+  let x=(s||'').replace(/\s+/g,' ').trim();
+  if(!x)return '';
+
+  const commands=[
+    ['סימן שאלה','? '],
+    ['סימן קריאה','! '],
+    ['נקודה','. '],
+    ['סוף משפט','. '],
+    ['פסיק',', '],
+    ['נקודתיים',': '],
+    ['שורה חדשה','\n']
   ];
-  x=replaceManyWords(x,wordPairs);
+  for(const [a,b] of commands)x=x.replaceAll(a,b);
 
-  const phrasePairs=[
-    [/יש ליצור קשר אם ההורים/g,'יש ליצור קשר עם ההורים'],
-    [/עבד ברצינות/g,'עבד ברצינות'],
-    [/עבדה ברצינות/g,'עבדה ברצינות'],
-    [/לאורך ה שיעור/g,'לאורך השיעור'],
-    [/במהלך ה שיעור/g,'במהלך השיעור'],
-    [/במהלך ה עבודה/g,'במהלך העבודה'],
-    [/צריך להמשיך לעקוב/g,'יש להמשיך לעקוב'],
-    [/חשוב לשים לב ש/g,'חשוב לשים לב כי'],
-    [/נראה ש/g,'נראה כי'],
-    [/ניכר ש/g,'ניכר כי']
-  ];
-  for(const [re,to] of phrasePairs)x=x.replace(re,to);
-  return x;
-}
-
-function applyGenderAgreementFixes(x){
-  const pairs=[
-    [/התלמידה\s+צריך/g,'התלמידה צריכה'],[/התלמיד\s+צריכה/g,'התלמיד צריך'],
-    [/התלמידה\s+זקוק/g,'התלמידה זקוקה'],[/התלמיד\s+זקוקה/g,'התלמיד זקוק'],
-    [/התלמידה\s+השתתף/g,'התלמידה השתתפה'],[/התלמיד\s+השתתפה/g,'התלמיד השתתף'],
-    [/התלמידה\s+עבד/g,'התלמידה עבדה'],[/התלמיד\s+עבדה/g,'התלמיד עבד'],
-    [/התלמידה\s+גילה/g,'התלמידה גילתה'],[/התלמיד\s+גילתה/g,'התלמיד גילה'],
-    [/התלמידה\s+הראה/g,'התלמידה הראתה'],[/התלמיד\s+הראתה/g,'התלמיד הראה'],
-    [/התלמידה\s+לא\s+הגיע/g,'התלמידה לא הגיעה'],[/התלמיד\s+לא\s+הגיעה/g,'התלמיד לא הגיע'],
-    [/התלמידה\s+נדרש/g,'התלמידה נדרשת'],[/התלמיד\s+נדרשת/g,'התלמיד נדרש'],
-    [/היא\s+צריך/g,'היא צריכה'],[/הוא\s+צריכה/g,'הוא צריך'],
-    [/היא\s+זקוק/g,'היא זקוקה'],[/הוא\s+זקוקה/g,'הוא זקוק']
-  ];
-  for(const [re,to] of pairs)x=x.replace(re,to);
-  return x;
-}
-
-function replaceSpokenPunctuation(x){
-  const reps=[
-    [/[ ]?סימן שאלה[ ]?/g,'? '],[/[ ]?שאלה[ ]?סימן[ ]?/g,'? '],
-    [/[ ]?סימן קריאה[ ]?/g,'! '],[/[ ]?נקודה[ ]?/g,'. '],[/[ ]?סוף משפט[ ]?/g,'. '],
-    [/[ ]?פסיק[ ]?/g,', '],[/[ ]?נקודתיים[ ]?/g,': '],
-    [/[ ]?פתח סוגריים[ ]?/g,' ('],[/[ ]?סוגריים נפתחות[ ]?/g,' ('],[/[ ]?סגור סוגריים[ ]?/g,') '],[/[ ]?סוגריים נסגרות[ ]?/g,') '],
-    [/[ ]?מירכאות[ ]?/g,'"'],[/[ ]?מרכאות[ ]?/g,'"'],
-    [/[ ]?שורה חדשה[ ]?/g,'\n'],[/[ ]?סעיף חדש[ ]?/g,'\n']
-  ];
-  reps.forEach(([re,val])=>{x=x.replace(re,val);});
-  return x;
-}
-
-function addCommasAroundConnectors(x){
-  const connectors=['אבל','אולם','עם זאת','בנוסף','כמו כן','לעומת זאת','מצד שני','בכל זאת','למרות זאת','במקביל'];
-  connectors.forEach(w=>{x=x.replace(new RegExp('([^.!?\\n,])\\s+'+escapeRegExp(w)+'\\s+','g'),'$1, '+w+' ');});
-  x=x.replace(/,\s+(לכן|ולכן)\s+/g,'. $1 ');
-  x=x.replace(/([^.!?\n])\s+(לכן|ולכן)\s+/g,'$1. $2 ');
-  return x;
-}
-
-function breakBeforeTeacherActionClauses(x){
-  const phrases=[
-    'יש להמשיך','יש לעקוב','יש ליצור קשר','יש לשים לב','יש לחזק','יש לבדוק',
-    'מומלץ','נדרש','נדרשת','כדאי','חשוב','לסיכום','נראה כי','ניכר כי','בהמשך','בהמשך לכך'
-  ];
-  phrases.forEach(p=>{x=x.replace(new RegExp('([^.!?\\n])\\s+'+escapeRegExp(p)+'\\s+','g'),'$1. '+p+' ');});
-  return x;
-}
-
-function breakBeforeNewSubject(x){
-  return x.replace(/([^.!?\n]{28,})\s+(התלמידה?|הוא|היא)\s+/g,'$1. $2 ');
-}
-
-function addCommasAfterOpeners(x){
-  const openers=['במהלך השיעור','לאורך השיעור','בשיעור היום','בזמן העבודה','במהלך העבודה','בתחילת השיעור','בסוף השיעור','לאחר מכן','יחד עם זאת'];
-  openers.forEach(p=>{x=x.replace(new RegExp(escapeRegExp(p)+'\\s+(?=[^,\\n])','g'),p+', ');});
-  return x;
-}
-
-function splitVeryLongSentences(x){
-  const sentences=x.split(/(?<=[.!?])\s+/);
-  const out=[];
-  for(const sentence of sentences){
-    const words=sentence.trim().split(/\s+/).filter(Boolean);
-    if(words.length<=22){out.push(sentence.trim());continue;}
-    let rebuilt=[],count=0;
-    for(let i=0;i<words.length;i++){
-      const w=words[i];rebuilt.push(w);count++;
-      const plain=w.replace(/[,.!?:;]/g,'');
-      if(count>=14&&['אבל','בנוסף','לכן','ולכן','כדאי','מומלץ','נדרש','נדרשת','חשוב','בהמשך'].includes(plain)){
-        if(!/[.!?]$/.test(rebuilt[rebuilt.length-1]))rebuilt[rebuilt.length-1]=rebuilt[rebuilt.length-1].replace(/[,]?$/,'.');
-        count=0;
-      }
-    }
-    out.push(rebuilt.join(' '));
+  const commaWords=['אבל','אולם','עם זאת','בנוסף','כמו כן','לעומת זאת','מצד שני','בכל זאת'];
+  for(const w of commaWords){
+    x=x.replace(new RegExp('([^.!?\\n,])\\s+'+w+'\\s+','g'),'$1, '+w+' ');
   }
-  return out.join(' ');
-}
 
-function cleanupPunctuationSpacing(x){
-  return x
+  const openers=['יש להמשיך','יש לעקוב','יש ליצור קשר','מומלץ','נדרש','נדרשת','כדאי','חשוב','לסיכום','בהמשך'];
+  for(const p of openers){
+    x=x.replace(new RegExp('([^.!?\\n])\\s+'+p+'\\s+','g'),'$1. '+p+' ');
+  }
+
+  x=x
     .replace(/\s+([,.!?;:])/g,'$1')
     .replace(/([,.!?;:])([^\s\n])/g,'$1 $2')
     .replace(/([,.!?])\s*\1+/g,'$1')
     .replace(/,\s*\./g,'.')
     .replace(/\.\s*,/g,'.')
-    .replace(/:\s*[.:]/g,': ')
-    .replace(/\(\s+/g,'(')
-    .replace(/\s+\)/g,')')
-    .replace(/^\s*[,.]\s*/,'')
-    .replace(/[ ]{2,}/g,' ')
-    .replace(/\n{3,}/g,'\n\n')
+    .replace(/\s+/g,' ')
     .trim();
-}
 
-function smartHebrewPunctuation(raw){
-  let x=normalizeHebrewText(raw);if(!x)return '';
-  x=' '+x+' ';
-  x=replaceSpokenPunctuation(x);
-  x=applyCommonHebrewCorrections(x);
-  x=applyGenderAgreementFixes(x);
-  x=addCommasAfterOpeners(x);
-  x=addCommasAroundConnectors(x);
-  x=breakBeforeTeacherActionClauses(x);
-  x=breakBeforeNewSubject(x);
-  x=cleanupPunctuationSpacing(x);
-  x=splitVeryLongSentences(x);
-  x=cleanupPunctuationSpacing(x);
-  x=applyCommonHebrewCorrections(x);
-  x=applyGenderAgreementFixes(x);
-  if(x&&!/[.!?]$/.test(x)&&!x.endsWith(')'))x+='.';
+  if(x&&!/[.!?]$/.test(x))x+='.';
   return x;
 }
 
-async function copyText(){autoPunctuateNow('copy');try{await navigator.clipboard.writeText(txt.value);showCopyNote('הטקסט הועתק');}catch(e){txt.select();document.execCommand('copy');showCopyNote('הטקסט סומן להעתקה');}}
-function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
-window.startDictation=startDictation;window.stopDictation=stopDictation;window.copyText=copyText;window.restoreDraft=restoreDraft;window.clearText=clearText;window.installApp=installApp;window.checkForUpdates=checkForUpdates;
+function schedule(ms=700){
+  clearTimeout(timer);
+  timer=setTimeout(()=>{
+    if(!txt||!txt.value.trim())return;
+    const end=txt.selectionStart===txt.value.length&&txt.selectionEnd===txt.value.length;
+    const fixed=punct(txt.value);
+    if(fixed&&fixed!==txt.value){
+      txt.value=fixed;
+      if(end)txt.setSelectionRange(txt.value.length,txt.value.length);
+      save();
+    }
+  },ms);
+}
+
+function onlyNew(current,spoken){
+  const a=words(current);
+  const b=words(spoken);
+  if(!b.length)return '';
+
+  const now=Date.now();
+  const bn=b.join(' ');
+  recent=recent.filter(x=>now-x.time<15000);
+
+  if(recent.some(x=>x.text===bn))return '';
+
+  const an=a.join(' ');
+  const tail=a.slice(-Math.max(24,b.length+8)).join(' ');
+
+  if(an.endsWith(bn)||tail.endsWith(bn))return '';
+
+  let part=b;
+  for(let k=Math.min(a.length,b.length,28);k>0;k--){
+    if(a.slice(-k).join(' ')===b.slice(0,k).join(' ')){
+      part=b.slice(k);
+      break;
+    }
+  }
+
+  return part.join(' ');
+}
+
+function appendFinal(spoken){
+  if(!txt)return;
+  const part=onlyNew(txt.value,spoken);
+  if(!part)return;
+
+  if(txt.value&&!txt.value.endsWith(' ')&&!txt.value.endsWith('\n'))txt.value+=' ';
+  txt.value+=part;
+
+  recent.push({text:norm(part),time:Date.now()});
+  save();
+  schedule(650);
+}
+
+function initSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    show(statusBox,'הדפדפן לא תומך בהכתבה. מומלץ Chrome או Edge.');
+    return false;
+  }
+
+  recognition=new SR();
+  recognition.lang='he-IL';
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=1;
+
+  recognition.onstart=()=>{
+    recent=[];
+    document.body.classList.add('listening');
+    show(statusBox,'');
+  };
+
+  recognition.onend=()=>{
+    document.body.classList.remove('listening');
+    if(interimBox)interimBox.textContent='';
+    schedule(100);
+  };
+
+  recognition.onerror=e=>{
+    document.body.classList.remove('listening');
+    if(e.error==='not-allowed')show(statusBox,'המיקרופון חסום. אשר הרשאת מיקרופון בדפדפן.');
+    else if(e.error==='no-speech')show(statusBox,'לא נקלט דיבור. נסה לדבר ברור יותר.');
+    else if(e.error==='network')show(statusBox,'בעיית רשת בזיהוי הדיבור.');
+  };
+
+  recognition.onresult=e=>{
+    let mid='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const s=(e.results[i][0]&&e.results[i][0].transcript||'').trim();
+      if(!s)continue;
+
+      if(e.results[i].isFinal)appendFinal(s);
+      else mid+=s+' ';
+    }
+    if(interimBox)interimBox.textContent=mid;
+  };
+
+  return true;
+}
+
+function startDictation(){
+  if(!recognition&&!initSpeech())return;
+  try{recognition.start();}
+  catch(e){show(statusBox,'ההכתבה כבר פעילה.');}
+}
+
+function stopDictation(){
+  document.body.classList.remove('listening');
+  if(recognition){
+    try{recognition.stop();}
+    catch(e){}
+  }
+  if(interimBox)interimBox.textContent='';
+  schedule(100);
+}
+
+function restoreDraft(){
+  load();
+  schedule(50);
+}
+
+function clearText(){
+  if(txt&&confirm('לנקות את כל הטקסט?')){
+    txt.value='';
+    recent=[];
+    localStorage.removeItem(DRAFT_KEY);
+    show(statusBox,'');
+    show(copyNote,'');
+    if(interimBox)interimBox.textContent='';
+  }
+}
+
+function note(t){
+  if(copyNote){
+    copyNote.hidden=false;
+    copyNote.textContent=t;
+    clearTimeout(copyTimer);
+    copyTimer=setTimeout(()=>show(copyNote,''),2500);
+  }else{
+    show(statusBox,t);
+  }
+}
+
+async function copyText(){
+  if(txt){
+    txt.value=punct(txt.value);
+    save();
+  }
+
+  try{
+    await navigator.clipboard.writeText(txt.value||'');
+    note('הטקסט הועתק');
+  }catch(e){
+    if(txt){
+      txt.select();
+      document.execCommand('copy');
+    }
+    note('הטקסט סומן להעתקה');
+  }
+}
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  promptEvent=e;
+  if(installPanel)installPanel.hidden=false;
+});
+
+window.addEventListener('appinstalled',()=>{
+  promptEvent=null;
+  if(installPanel)installPanel.hidden=true;
+});
+
+async function installApp(){
+  if(promptEvent){
+    const p=promptEvent;
+    promptEvent=null;
+    p.prompt();
+    await p.userChoice.catch(()=>{});
+  }else if(installPanel){
+    installPanel.hidden=false;
+  }
+}
+
+async function checkForUpdates(){
+  if(navigator.serviceWorker){
+    const regs=await navigator.serviceWorker.getRegistrations();
+    regs.forEach(r=>r.update());
+  }
+}
+
+if(txt){
+  load();
+  txt.addEventListener('input',()=>{
+    save();
+    schedule();
+  });
+  txt.addEventListener('blur',()=>schedule(20));
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+window.startDictation=startDictation;
+window.stopDictation=stopDictation;
+window.copyText=copyText;
+window.restoreDraft=restoreDraft;
+window.clearText=clearText;
+window.installApp=installApp;
+window.checkForUpdates=checkForUpdates;
