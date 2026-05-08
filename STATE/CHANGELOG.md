@@ -44,3 +44,9 @@
 - ניקוי מוחק כל מפתח ישן שמתחיל ב-yaniv_voice_notes_ או yaniv_tracking_voice_text.
 - נשמר תיקון מניעת כפילות בזמן הכתבה.
 - עודכן cache buster ועודכן Service Worker.
+
+## clear-final-20260508-140419
+- תוקן סופית באג: אחרי ניקוי הטקסט לא חוזר מ-localStorage ישן.
+- ניקוי מוחק כל מפתח ישן שמתחיל ב-yaniv_voice_notes_ או yaniv_tracking_voice_text.
+- נשמר תיקון מניעת כפילות בזמן הכתבה.
+- עודכן cache buster ועודכן Service Worker.
