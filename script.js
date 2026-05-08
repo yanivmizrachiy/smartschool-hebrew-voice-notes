@@ -388,3 +388,174 @@ window.checkForUpdates=checkForUpdates;
   };
 })();
 // <<< YANIV_CLEAR_FINAL_OVERRIDE <<<
+
+
+// >>> YANIV_SMART_PUNCTUATION_V2 >>>
+// Updated: 20260508-174506
+// Smarter Hebrew punctuation override.
+// Keeps the existing dictation duplicate guard and clear-text fixes.
+// Improves automatic question detection: "מה נשמע" => "מה נשמע?"
+(function(){
+  function cleanSpaces(s){
+    return (s || '')
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[־–—]/g, '-')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function applySpokenCommands(x){
+    const commands = [
+      ['סימן שאלה', '? '],
+      ['שאלה סימן', '? '],
+      ['סימן קריאה', '! '],
+      ['נקודה', '. '],
+      ['סוף משפט', '. '],
+      ['פסיק', ', '],
+      ['נקודתיים', ': '],
+      ['שורה חדשה', '\n'],
+      ['סעיף חדש', '\n']
+    ];
+    for(const pair of commands){
+      x = x.replaceAll(pair[0], pair[1]);
+    }
+    return x;
+  }
+
+  function looksLikeQuestion(sentence){
+    const s = cleanSpaces(sentence)
+      .replace(/[,.!?:;]+$/g, '')
+      .trim();
+
+    if(!s) return false;
+
+    const directQuestionPhrases = [
+      'מה נשמע',
+      'מה שלומך',
+      'מה שלומכם',
+      'מה שלומכן',
+      'מה קורה',
+      'מה העניינים',
+      'איך הולך',
+      'איך היה',
+      'איך אפשר',
+      'האם אפשר',
+      'אפשר בבקשה',
+      'אפשר לדעת',
+      'אתה יכול',
+      'את יכולה',
+      'אתם יכולים',
+      'אתן יכולות',
+      'יש אפשרות',
+      'יש מצב'
+    ];
+
+    for(const phrase of directQuestionPhrases){
+      if(s.includes(phrase)) return true;
+    }
+
+    const questionStarts = [
+      'מה ',
+      'מי ',
+      'מתי ',
+      'איפה ',
+      'היכן ',
+      'לאן ',
+      'מאיפה ',
+      'איך ',
+      'למה ',
+      'מדוע ',
+      'כמה ',
+      'איזה ',
+      'איזו ',
+      'אילו ',
+      'האם ',
+      'אפשר ',
+      'ניתן ',
+      'צריך ',
+      'כדאי '
+    ];
+
+    for(const start of questionStarts){
+      if(s.startsWith(start)) return true;
+    }
+
+    const embeddedQuestion = /(^|\s)(מה|מי|מתי|איפה|היכן|לאן|איך|למה|מדוע|כמה|האם|אפשר)\s+/.test(s);
+    const hasQuestionTone = /(נכון|בסדר|טוב|כן|לא)$/.test(s) && /\b(זה|אפשר|כדאי|צריך|נראה)\b/.test(s);
+
+    return embeddedQuestion || hasQuestionTone;
+  }
+
+  function smartEnd(sentence){
+    let s = cleanSpaces(sentence);
+    if(!s) return '';
+
+    if(/[.!?]$/.test(s)) return s;
+
+    if(looksLikeQuestion(s)) return s + '?';
+
+    return s + '.';
+  }
+
+  function splitNaturalClauses(x){
+    const breakBefore = [
+      'יש להמשיך',
+      'יש לעקוב',
+      'יש ליצור קשר',
+      'יש לשים לב',
+      'מומלץ',
+      'נדרש',
+      'נדרשת',
+      'כדאי',
+      'חשוב',
+      'לסיכום',
+      'בהמשך'
+    ];
+
+    for(const p of breakBefore){
+      x = x.replace(new RegExp('([^.!?\\n])\\s+' + p + '\\s+', 'g'), '$1. ' + p + ' ');
+    }
+
+    const commaWords = ['אבל','אולם','עם זאת','בנוסף','כמו כן','לעומת זאת','מצד שני','בכל זאת'];
+    for(const w of commaWords){
+      x = x.replace(new RegExp('([^.!?\\n,])\\s+' + w + '\\s+', 'g'), '$1, ' + w + ' ');
+    }
+
+    return x;
+  }
+
+  window.punct = function(s){
+    let x = cleanSpaces(s);
+    if(!x) return '';
+
+    x = applySpokenCommands(x);
+    x = splitNaturalClauses(x);
+
+    x = x
+      .replace(/\s+([,.!?;:])/g, '$1')
+      .replace(/([,.!?;:])([^\s\n])/g, '$1 $2')
+      .replace(/([,.!?])\s*\1+/g, '$1')
+      .replace(/,\s*\./g, '.')
+      .replace(/\.\s*,/g, '.')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // If text already contains sentence boundaries, only repair the final unfinished part.
+    const parts = x.split(/(?<=[.!?])\s+/).filter(Boolean);
+    if(parts.length > 1){
+      const last = parts.pop();
+      parts.push(smartEnd(last));
+      return parts.join(' ');
+    }
+
+    return smartEnd(x);
+  };
+
+  // Also replace global function binding when the original script defined punct as a function declaration.
+  try {
+    punct = window.punct;
+  } catch(e) {}
+
+})();
+// <<< YANIV_SMART_PUNCTUATION_V2 <<<

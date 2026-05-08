@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-smartschool-buttons-clear-20260508-150512';
+const CACHE_NAME='yaniv-smartschool-smart-punct-20260508-174506';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
