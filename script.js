@@ -4,8 +4,17 @@ const interimBox=document.getElementById('interim');
 const installPanel=document.getElementById('installPanel');
 const copyNote=document.getElementById('copyNote');
 
-const DRAFT_KEY='yaniv_voice_notes_v12_dedupe';
-const OLD_KEYS=['yaniv_tracking_voice_text_v2','yaniv_tracking_voice_text_v3','yaniv_voice_notes_v11'];
+const DRAFT_KEY='yaniv_voice_notes_v15_clearfix';
+const CLEAR_FLAG='yaniv_voice_notes_clear_flag_v15';
+const OLD_KEYS=[
+  'yaniv_tracking_voice_text_v2',
+  'yaniv_tracking_voice_text_v3',
+  'yaniv_voice_notes_v11',
+  'yaniv_voice_notes_v12_dedupe',
+  'yaniv_voice_notes_v13_clearfix',
+  'yaniv_voice_notes_v14_clearfix'
+];
+
 let recognition=null;
 let recent=[];
 let timer=null;
@@ -31,13 +40,29 @@ function words(s){
   return n?n.split(' ').filter(Boolean):[];
 }
 
+function removeAllAppDrafts(){
+  OLD_KEYS.forEach(k=>localStorage.removeItem(k));
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith('yaniv_voice_notes_') || k.startsWith('yaniv_tracking_voice_text')){
+      localStorage.removeItem(k);
+    }
+  });
+  localStorage.removeItem(DRAFT_KEY);
+}
+
 function save(){
-  if(txt)localStorage.setItem(DRAFT_KEY,txt.value||'');
+  if(!txt)return;
+  localStorage.removeItem(CLEAR_FLAG);
+  localStorage.setItem(DRAFT_KEY,txt.value||'');
 }
 
 function load(){
   if(!txt)return;
-  txt.value=localStorage.getItem(DRAFT_KEY)||OLD_KEYS.map(k=>localStorage.getItem(k)).find(Boolean)||'';
+  if(localStorage.getItem(CLEAR_FLAG)==='1'){
+    txt.value='';
+    return;
+  }
+  txt.value=localStorage.getItem(DRAFT_KEY)||'';
 }
 
 function punct(s){
@@ -169,7 +194,6 @@ function initSpeech(){
     for(let i=e.resultIndex;i<e.results.length;i++){
       const s=(e.results[i][0]&&e.results[i][0].transcript||'').trim();
       if(!s)continue;
-
       if(e.results[i].isFinal)appendFinal(s);
       else mid+=s+' ';
     }
@@ -180,6 +204,7 @@ function initSpeech(){
 }
 
 function startDictation(){
+  localStorage.removeItem(CLEAR_FLAG);
   if(!recognition&&!initSpeech())return;
   try{recognition.start();}
   catch(e){show(statusBox,'ההכתבה כבר פעילה.');}
@@ -196,16 +221,20 @@ function stopDictation(){
 }
 
 function restoreDraft(){
+  localStorage.removeItem(CLEAR_FLAG);
   load();
   schedule(50);
 }
 
 function clearText(){
-  if(txt&&confirm('לנקות את כל הטקסט?')){
+  if(!txt)return;
+  if(confirm('לנקות את כל הטקסט?')){
     txt.value='';
     recent=[];
-    localStorage.removeItem(DRAFT_KEY);
-    show(statusBox,'');
+    clearTimeout(timer);
+    removeAllAppDrafts();
+    localStorage.setItem(CLEAR_FLAG,'1');
+    show(statusBox,'הטקסט נוקה ולא יחזור בפתיחה מחדש.');
     show(copyNote,'');
     if(interimBox)interimBox.textContent='';
   }
@@ -227,7 +256,6 @@ async function copyText(){
     txt.value=punct(txt.value);
     save();
   }
-
   try{
     await navigator.clipboard.writeText(txt.value||'');
     note('הטקסט הועתק');
@@ -272,8 +300,10 @@ async function checkForUpdates(){
 if(txt){
   load();
   txt.addEventListener('input',()=>{
-    save();
-    schedule();
+    if(txt.value.trim()){
+      save();
+      schedule();
+    }
   });
   txt.addEventListener('blur',()=>schedule(20));
 }

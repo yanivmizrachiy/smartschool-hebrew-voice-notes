@@ -38,3 +38,9 @@
 - נשמר פיסוק אוטומטי בעברית.
 - עודכן cache buster ב-index.html.
 - עודכן Service Worker cache name כדי שמכשירים יקבלו גרסה חדשה.
+
+## clear-final-20260508-140224
+- תוקן סופית באג: אחרי ניקוי הטקסט לא חוזר מ-localStorage ישן.
+- ניקוי מוחק כל מפתח ישן שמתחיל ב-yaniv_voice_notes_ או yaniv_tracking_voice_text.
+- נשמר תיקון מניעת כפילות בזמן הכתבה.
+- עודכן cache buster ועודכן Service Worker.
