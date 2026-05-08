@@ -319,3 +319,72 @@ window.restoreDraft=restoreDraft;
 window.clearText=clearText;
 window.installApp=installApp;
 window.checkForUpdates=checkForUpdates;
+
+
+// >>> YANIV_CLEAR_FINAL_OVERRIDE >>>
+// Updated: 20260508-150512
+// Purpose: make "נקה הכל" permanent, so old drafts do not return after cleaning.
+// This override keeps the dictation duplicate guard intact.
+(function(){
+  const CLEAR_FINAL_FLAG = 'yaniv_clear_text_final_flag_v1';
+
+  function removeAllVoiceDrafts(){
+    try {
+      Object.keys(localStorage).forEach(function(k){
+        if(k.indexOf('yaniv_voice_notes_') === 0 || k.indexOf('yaniv_tracking_voice_text') === 0){
+          localStorage.removeItem(k);
+        }
+      });
+    } catch(e) {}
+  }
+
+  function setSmallStatus(msg){
+    const status = document.getElementById('status');
+    if(status){
+      status.hidden = !msg;
+      status.textContent = msg || '';
+    }
+  }
+
+  const textarea = document.getElementById('txt');
+
+  if(textarea && localStorage.getItem(CLEAR_FINAL_FLAG) === '1'){
+    textarea.value = '';
+  }
+
+  if(textarea){
+    textarea.addEventListener('input', function(){
+      if(textarea.value && textarea.value.trim()) localStorage.removeItem(CLEAR_FINAL_FLAG);
+    }, true);
+  }
+
+  const previousRestore = window.restoreDraft;
+  window.restoreDraft = function(){
+    localStorage.removeItem(CLEAR_FINAL_FLAG);
+    if(typeof previousRestore === 'function') return previousRestore();
+  };
+
+  window.clearText = function(){
+    const t = document.getElementById('txt');
+    const interim = document.getElementById('interim');
+    const copyNote = document.getElementById('copyNote');
+
+    if(!t) return;
+
+    if(confirm('לנקות את כל הטקסט?')){
+      t.value = '';
+      removeAllVoiceDrafts();
+      localStorage.setItem(CLEAR_FINAL_FLAG, '1');
+
+      if(interim) interim.textContent = '';
+      if(copyNote){
+        copyNote.hidden = true;
+        copyNote.textContent = '';
+      }
+
+      setSmallStatus('הטקסט נוקה ולא יחזור בפתיחה מחדש.');
+      t.focus();
+    }
+  };
+})();
+// <<< YANIV_CLEAR_FINAL_OVERRIDE <<<

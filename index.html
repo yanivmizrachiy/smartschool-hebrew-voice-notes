@@ -7,7 +7,7 @@
   <title>הכתבה בעברית להערות מעקב לסמרטקול</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=buttons-clear-20260508-150512">
 </head>
 <body>
   <div class="manager-banner">האתר מנוהל ע"י יניב רז</div>
@@ -22,7 +22,7 @@
 
       <div class="main-actions" aria-label="פעולות עיקריות">
         <button class="btn talk" onclick="startDictation()">🎙️ דבר</button>
-        <button class="btn stop" onclick="stopDictation()">■</button>
+        <button class="btn stop" onclick="stopDictation()" aria-label="עצירת הכתבה">⏸ עצור</button>
         <button class="btn copy" onclick="copyText()">📋 העתק</button>
       </div>
       <div class="copy-note" id="copyNote" aria-live="polite" hidden></div>
@@ -34,11 +34,11 @@
 
       <div class="tool-grid" aria-label="פעולות טקסט">
         <button class="chip restore" onclick="restoreDraft()">שחזר טיוטה</button>
-        <button class="clear-big" onclick="clearText()">נקה</button>
+        <button class="clear-big" onclick="clearText()" aria-label="ניקוי כל הטקסט">🧹 נקה הכל</button>
       </div>
     </section>
   </main>
 
-  <script src="script.js?v=clearfix-20260508-140419"></script>
+  <script src="script.js?v=buttons-clear-20260508-150512"></script>
 </body>
 </html>

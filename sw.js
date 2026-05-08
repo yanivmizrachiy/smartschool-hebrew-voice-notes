@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-smartschool-voice-notes-clearfix-20260508-140419';
+const CACHE_NAME='yaniv-smartschool-buttons-clear-20260508-150512';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{

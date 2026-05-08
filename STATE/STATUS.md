@@ -1,8 +1,8 @@
 # STATUS
 
-Date: 2026-05-08T14:04:20+03:00
+Date: 20260508-150512
 Project: smartschool-hebrew-voice-notes
 Public URL: https://yanivmizrachiy.github.io/smartschool-hebrew-voice-notes/
 READY_NOW=YES
 Progress: 97%
-Latest change: fixed clear button so deleted text does not return from old local drafts/cache keys.
+Latest change: differentiated stop and clear buttons, enlarged clear button, preserved duplicate speech fix, and added final clear override.
