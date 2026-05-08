@@ -1,8 +1,8 @@
 {
   "name": "דבר - העתק -- הדבק",
   "short_name": "דבר העתק הדבק",
-  "description": "אפליקציית הכתבה בעברית: דבר, העתק והדבק הערות מעקב במהירות.",
-  "start_url": "./index.html",
+  "description": "אפליקציית הכתבה בעברית: דבר, העתק והדבק במהירות.",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "dir": "rtl",

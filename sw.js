@@ -1,8 +1,7 @@
-const CACHE_NAME='yaniv-speak-copy-paste-final-20260508-175548';
+const CACHE_NAME='yaniv-speak-copy-paste-auto-update-20260508-180741';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
-  self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)));
 });
 
@@ -19,13 +18,24 @@ self.addEventListener('message',event=>{
 });
 
 self.addEventListener('fetch',event=>{
-  if(event.request.mode==='navigate'){
-    event.respondWith(fetch(event.request).catch(()=>caches.match('./index.html')));
+  const req=event.request;
+
+  if(req.method!=='GET') return;
+
+  if(req.mode==='navigate'){
+    event.respondWith(
+      fetch(req,{
+        cache:'no-store'
+      }).catch(()=>caches.match('./index.html'))
+    );
     return;
   }
-  event.respondWith(fetch(event.request).then(response=>{
-    const copy=response.clone();
-    caches.open(CACHE_NAME).then(cache=>cache.put(event.request,copy));
-    return response;
-  }).catch(()=>caches.match(event.request)));
+
+  event.respondWith(
+    fetch(req,{cache:'no-store'}).then(response=>{
+      const copy=response.clone();
+      caches.open(CACHE_NAME).then(cache=>cache.put(req,copy));
+      return response;
+    }).catch(()=>caches.match(req))
+  );
 });

@@ -7,7 +7,7 @@
   <title>דבר - העתק -- הדבק</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg">
-  <link rel="stylesheet" href="styles.css?v=final-20260508-175548">
+  <link rel="stylesheet" href="styles.css?v=auto-update-20260508-180741">
 </head>
 <body>
   <div class="manager-banner">מנוהל ע"י יניב רז</div>
@@ -18,6 +18,10 @@
 
       <section class="install-panel install-only" id="installPanel" hidden>
         <button class="install-button" type="button" onclick="installApp()" id="installBtn">התקן במכשיר שלך</button>
+      </section>
+
+      <section class="update-panel" id="updatePanel" hidden>
+        <button class="update-button" type="button" onclick="applyPendingUpdate()" id="updateBtn">עדכן את האפליקציה במכשיר שלך</button>
       </section>
 
       <div class="main-actions" aria-label="פעולות עיקריות">
@@ -34,12 +38,11 @@
 
       <div class="tool-grid" aria-label="פעולות טקסט">
         <button class="chip restore" onclick="restoreDraft()">שחזר טיוטה</button>
-        <button class="chip update-check" onclick="checkForUpdates()">בדוק עדכונים</button>
         <button class="clear-big" onclick="clearText()" aria-label="ניקוי כל הטקסט">🧹 נקה הכל</button>
       </div>
     </section>
   </main>
 
-  <script src="script.js?v=manager-20260508-175930"></script>
+  <script src="script.js?v=auto-update-20260508-180741"></script>
 </body>
 </html>
