@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-smartschool-smart-punct-20260508-174506';
+const CACHE_NAME='yaniv-speak-copy-paste-final-20260508-175548';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{

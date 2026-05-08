@@ -1,16 +1,20 @@
 {
-  "name": "הכתבה בעברית להערות מעקב לסמרטקול",
-  "short_name": "הכתבה למעקב",
-  "description": "כלי הכתבה בעברית להערות מעקב עם פיסוק אוטומטי והעתקה.",
+  "name": "דבר - העתק -- הדבק",
+  "short_name": "דבר העתק הדבק",
+  "description": "אפליקציית הכתבה בעברית: דבר, העתק והדבק הערות מעקב במהירות.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "dir": "rtl",
   "lang": "he",
   "orientation": "any",
-  "theme_color": "#123c7c",
-  "background_color": "#07162f",
-  "categories": ["education","productivity","utilities"],
+  "theme_color": "#0b1224",
+  "background_color": "#050812",
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "icon.svg",

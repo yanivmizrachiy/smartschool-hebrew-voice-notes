@@ -559,3 +559,59 @@ window.checkForUpdates=checkForUpdates;
 
 })();
 // <<< YANIV_SMART_PUNCTUATION_V2 <<<
+
+
+// >>> YANIV_FINAL_CONSISTENCY_FIX >>>
+// Updated: 20260508-175548
+// Fixes:
+// 1. New official app name: דבר - העתק -- הדבק
+// 2. Starting a new dictation after clear removes the final clear flag.
+// 3. Check updates button gives real user feedback.
+(function(){
+  const FINAL_CLEAR_FLAG = 'yaniv_clear_text_final_flag_v1';
+
+  document.title = 'דבר - העתק -- הדבק';
+
+  const heading = document.querySelector('h1');
+  if(heading) heading.textContent = 'דבר - העתק -- הדבק';
+
+  const banner = document.querySelector('.manager-banner');
+  if(banner) banner.textContent = 'האתר מנוהל על ידי הנברז';
+
+  const previousStart = window.startDictation;
+  window.startDictation = function(){
+    try { localStorage.removeItem(FINAL_CLEAR_FLAG); } catch(e) {}
+    if(typeof previousStart === 'function') return previousStart();
+  };
+
+  const previousCheck = window.checkForUpdates;
+  window.checkForUpdates = async function(){
+    const status = document.getElementById('status');
+    try {
+      if(status) {
+        status.hidden = false;
+        status.textContent = 'בודק עדכונים...';
+      }
+
+      if(typeof previousCheck === 'function') {
+        await previousCheck();
+      }
+
+      if('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for(const reg of regs) await reg.update();
+      }
+
+      if(status) {
+        status.hidden = false;
+        status.textContent = 'בדיקת עדכונים הסתיימה.';
+      }
+    } catch(e) {
+      if(status) {
+        status.hidden = false;
+        status.textContent = 'לא ניתן לבדוק עדכונים כרגע.';
+      }
+    }
+  };
+})();
+// <<< YANIV_FINAL_CONSISTENCY_FIX <<<
