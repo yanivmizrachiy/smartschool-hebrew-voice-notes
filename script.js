@@ -790,3 +790,46 @@ window.checkForUpdates=checkForUpdates;
   });
 })();
 // <<< YANIV_PWA_AUTO_UPDATE_MANAGER <<<
+
+
+// >>> YANIV_COPY_FEEDBACK_ULTRA_SAFE >>>
+// Updated: 20260508-182154
+// UX-only wrapper: after copy, show small bottom confirmation.
+// Existing copyText is called first and remains the source of truth.
+(function(){
+  const previousCopyText = window.copyText;
+
+  function showCopyToast(){
+    const box = document.getElementById('copyNote');
+    if(!box) return;
+
+    box.hidden = false;
+    box.textContent = 'הטקסט הועתק';
+
+    clearTimeout(window.__yanivCopyToastTimer);
+    window.__yanivCopyToastTimer = setTimeout(function(){
+      box.hidden = true;
+      box.textContent = '';
+    }, 2200);
+  }
+
+  window.copyText = async function(){
+    if(typeof previousCopyText === 'function') {
+      await previousCopyText();
+      showCopyToast();
+      return;
+    }
+
+    const t = document.getElementById('txt');
+    if(t) {
+      try {
+        await navigator.clipboard.writeText(t.value || '');
+      } catch(e) {
+        t.select();
+        document.execCommand('copy');
+      }
+    }
+    showCopyToast();
+  };
+})();
+// <<< YANIV_COPY_FEEDBACK_ULTRA_SAFE <<<
