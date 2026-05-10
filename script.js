@@ -801,3 +801,123 @@ window.checkForUpdates=checkForUpdates;
 // Removed obsolete duplicate update managers.
 // This marker does not override app behavior.
 // <<< YANIV_SINGLE_UPDATE_MANAGER_AUDIT <<<
+
+
+// >>> YANIV_INSTALL_BUTTON_VISIBLE_FIX >>>
+// Updated: 20260510-120604
+// Purpose:
+// - Show "התקן במכשיר שלך" on new/non-standalone devices.
+// - Hide it when app is already opened as installed PWA.
+// - If native install prompt is unavailable, show clear browser instructions.
+// - Does not change dictation, punctuation, clear, copy, or update logic.
+(function(){
+  let installPromptEvent = null;
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function setStatus(msg) {
+    const box = byId('status');
+    if(!box) return;
+    box.hidden = !msg;
+    box.textContent = msg || '';
+  }
+
+  function showInstallPanel() {
+    const panel = byId('installPanel');
+    if(!panel) return;
+
+    if(isStandalone()) {
+      panel.hidden = true;
+      document.body.classList.add('installed');
+      return;
+    }
+
+    panel.hidden = false;
+    document.body.classList.remove('installed');
+
+    const btn = byId('installBtn');
+    if(btn) {
+      btn.textContent = 'התקן במכשיר שלך';
+      btn.setAttribute('aria-label', 'התקנת האפליקציה במכשיר');
+    }
+  }
+
+  function hideInstallPanel() {
+    const panel = byId('installPanel');
+    if(panel) panel.hidden = true;
+    document.body.classList.add('installed');
+  }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    installPromptEvent = e;
+    showInstallPanel();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    installPromptEvent = null;
+    hideInstallPanel();
+    setStatus('האפליקציה הותקנה במכשיר.');
+  });
+
+  const previousInstallApp = window.installApp;
+
+  window.installApp = async function(){
+    if(isStandalone()) {
+      hideInstallPanel();
+      return;
+    }
+
+    showInstallPanel();
+
+    if(installPromptEvent) {
+      const prompt = installPromptEvent;
+      installPromptEvent = null;
+
+      try {
+        prompt.prompt();
+        const result = await prompt.userChoice;
+        if(result && result.outcome === 'accepted') {
+          hideInstallPanel();
+          return;
+        }
+      } catch(e) {}
+    }
+
+    // If browser did not expose native install prompt, keep the button visible and show real instructions.
+    setStatus('להתקנה: פתח את תפריט הדפדפן ⋮ ובחר “הוסף למסך הבית” או “Install app”.');
+
+    // Fallback to previous install function only if it exists, but do not rely on it.
+    if(typeof previousInstallApp === 'function') {
+      try { previousInstallApp(); } catch(e) {}
+    }
+  };
+
+  window.addEventListener('load', function(){
+    document.title = 'דבר - העתק -- הדבק';
+
+    const h1 = document.querySelector('h1');
+    if(h1) h1.textContent = 'דבר - העתק -- הדבק';
+
+    const banner = document.querySelector('.manager-banner');
+    if(banner) banner.textContent = 'מנוהל ע"י יניב רז';
+
+    setTimeout(showInstallPanel, 500);
+    setTimeout(showInstallPanel, 1800);
+  });
+
+  window.addEventListener('pageshow', function(){
+    setTimeout(showInstallPanel, 400);
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) setTimeout(showInstallPanel, 400);
+  });
+})();
+// <<< YANIV_INSTALL_BUTTON_VISIBLE_FIX <<<
