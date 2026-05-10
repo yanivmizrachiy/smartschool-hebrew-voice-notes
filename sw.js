@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-speak-copy-paste-min-stable-20260510-100432';
+const CACHE_NAME='yaniv-speak-copy-paste-single-manager-20260510-100757';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
