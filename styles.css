@@ -506,3 +506,27 @@ body.listening .talk {
   }
 }
 /* <<< YANIV_RECORDING_NO_FLICKER_FIX <<< */
+
+
+/* >>> YANIV_MINIMAL_NO_FLICKER >>> */
+/* Updated: 20260510-100432
+   Minimal visual stability only.
+*/
+body::before {
+  animation: none !important;
+  opacity: .35 !important;
+}
+
+.hero-card {
+  animation: none !important;
+}
+
+.btn,
+.chip,
+.clear-big,
+.install-button,
+.update-button {
+  -webkit-tap-highlight-color: transparent;
+  backface-visibility: hidden;
+}
+/* <<< YANIV_MINIMAL_NO_FLICKER <<< */

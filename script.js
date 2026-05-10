@@ -808,3 +808,186 @@ window.checkForUpdates=checkForUpdates;
   });
 })();
 // <<< YANIV_STABLE_RECORDING_UPDATE_MANAGER <<<
+
+
+// >>> YANIV_MINIMAL_STABLE_UPDATE_MANAGER >>>
+// Updated: 20260510-100432
+// Minimal stability patch:
+// - No reload while recording.
+// - No aggressive repeated update checks.
+// - Temporary update button only when update waits.
+// - Does not change dictation, punctuation, clear, copy, or premium UI.
+(function(){
+  let deferredPrompt = null;
+  let waitingWorker = null;
+  let checking = false;
+  let recording = false;
+  let lastCheck = 0;
+
+  function byId(id) { return document.getElementById(id); }
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function hideInstall() {
+    const p = byId('installPanel');
+    if(p) p.hidden = true;
+  }
+
+  function showInstall() {
+    if(isStandalone()) return;
+    const p = byId('installPanel');
+    if(p) p.hidden = false;
+  }
+
+  function hideUpdate() {
+    const p = byId('updatePanel');
+    if(p) p.hidden = true;
+  }
+
+  function showUpdate(worker) {
+    waitingWorker = worker || waitingWorker;
+    const p = byId('updatePanel');
+    if(p) p.hidden = false;
+  }
+
+  function status(msg) {
+    const s = byId('status');
+    if(s) {
+      s.hidden = !msg;
+      s.textContent = msg || '';
+    }
+  }
+
+  async function calmUpdateCheck(reason) {
+    if(!('serviceWorker' in navigator)) return;
+    if(recording || document.body.classList.contains('listening')) return;
+
+    const now = Date.now();
+    if(checking) return;
+    if(reason !== 'manual' && now - lastCheck < 120000) return;
+
+    checking = true;
+    lastCheck = now;
+
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
+
+      if(reg.waiting && navigator.serviceWorker.controller) {
+        showUpdate(reg.waiting);
+      }
+
+      reg.addEventListener('updatefound', function(){
+        const worker = reg.installing;
+        if(!worker) return;
+        worker.addEventListener('statechange', function(){
+          if(worker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdate(worker);
+          }
+        });
+      });
+
+      try { await reg.update(); } catch(e) {}
+    } catch(e) {
+      // Silent. App must keep working even if update check fails.
+    } finally {
+      checking = false;
+    }
+  }
+
+  window.applyPendingUpdate = function(){
+    const t = byId('txt');
+    if(t && t.value) {
+      try { localStorage.setItem('yaniv_voice_notes_pending_update_backup', t.value); } catch(e) {}
+    }
+
+    if(waitingWorker) {
+      status('מעדכן את האפליקציה...');
+      waitingWorker.postMessage({type:'SKIP_WAITING'});
+      setTimeout(function(){ location.reload(); }, 900);
+    } else {
+      location.reload();
+    }
+  };
+
+  window.checkForUpdates = function(){
+    return calmUpdateCheck('manual');
+  };
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstall();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    document.body.classList.add('installed');
+    hideInstall();
+  });
+
+  window.installApp = async function(){
+    if(isStandalone()) {
+      hideInstall();
+      return;
+    }
+
+    if(!deferredPrompt) {
+      showInstall();
+      status('אם לא מופיעה התקנה, פתח את תפריט הדפדפן ובחר הוסף למסך הבית.');
+      return;
+    }
+
+    const p = deferredPrompt;
+    deferredPrompt = null;
+    p.prompt();
+
+    try {
+      const result = await p.userChoice;
+      if(result && result.outcome === 'accepted') hideInstall();
+    } catch(e) {}
+  };
+
+  const oldStart = window.startDictation;
+  window.startDictation = function(){
+    recording = true;
+    hideUpdate();
+    status('מקשיב...');
+    if(typeof oldStart === 'function') return oldStart();
+  };
+
+  const oldStop = window.stopDictation;
+  window.stopDictation = function(){
+    recording = false;
+    if(typeof oldStop === 'function') return oldStop();
+  };
+
+  window.addEventListener('load', function(){
+    document.title = 'דבר - העתק -- הדבק';
+
+    const h1 = document.querySelector('h1');
+    if(h1) h1.textContent = 'דבר - העתק -- הדבק';
+
+    const banner = document.querySelector('.manager-banner');
+    if(banner) banner.textContent = 'מנוהל ע"י יניב רז';
+
+    if(isStandalone()) {
+      document.body.classList.add('installed');
+      hideInstall();
+    }
+
+    hideUpdate();
+
+    setTimeout(function(){
+      calmUpdateCheck('load');
+    }, 5000);
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && !recording) {
+      setTimeout(function(){ calmUpdateCheck('visible'); }, 3000);
+    }
+  });
+})();
+// <<< YANIV_MINIMAL_STABLE_UPDATE_MANAGER <<<
