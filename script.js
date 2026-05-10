@@ -559,181 +559,6 @@ window.checkForUpdates=checkForUpdates;
 
 })();
 // <<< YANIV_SMART_PUNCTUATION_V2 <<<
-// >>> YANIV_PWA_AUTO_UPDATE_MANAGER >>>
-// Updated: 20260508-180741
-// Goals:
-// 1. No permanent "בדוק עדכונים" button.
-// 2. Auto-check updates when app opens / becomes visible / reconnects.
-// 3. Temporary big update button appears only when an update is actually waiting.
-// 4. Install button appears only when browser says installation is available.
-// 5. Installed PWA hides install panel.
-(function(){
-  const APP_VERSION = 'auto-update-20260508-180741';
-  const FINAL_CLEAR_FLAG = 'yaniv_clear_text_final_flag_v1';
-  let deferredPrompt = null;
-  let waitingWorker = null;
-  let reloadingForUpdate = false;
-
-  function byId(id) {
-    return document.getElementById(id);
-  }
-
-  function isStandalone() {
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  }
-
-  function setInstalledVisualState() {
-    if(isStandalone()) {
-      document.body.classList.add('installed');
-      const installPanel = byId('installPanel');
-      if(installPanel) installPanel.hidden = true;
-    }
-  }
-
-  function showInstallButton() {
-    if(isStandalone()) return;
-    const installPanel = byId('installPanel');
-    if(installPanel) installPanel.hidden = false;
-  }
-
-  function hideInstallButton() {
-    const installPanel = byId('installPanel');
-    if(installPanel) installPanel.hidden = true;
-  }
-
-  function showUpdateButton(worker) {
-    waitingWorker = worker || waitingWorker;
-    const panel = byId('updatePanel');
-    if(panel) panel.hidden = false;
-  }
-
-  function hideUpdateButton() {
-    const panel = byId('updatePanel');
-    if(panel) panel.hidden = true;
-  }
-
-  function hasUnsavedText() {
-    const t = byId('txt');
-    return !!(t && t.value && t.value.trim());
-  }
-
-  function saveBeforeUpdate() {
-    const t = byId('txt');
-    if(t && t.value) {
-      try { localStorage.setItem('yaniv_voice_notes_pending_update_backup', t.value); } catch(e) {}
-    }
-  }
-
-  function applyWorkerUpdate(worker) {
-    if(!worker) return;
-    saveBeforeUpdate();
-    worker.postMessage({type:'SKIP_WAITING'});
-  }
-
-  window.applyPendingUpdate = function(){
-    if(waitingWorker) applyWorkerUpdate(waitingWorker);
-    else location.reload();
-  };
-
-  async function registerAndCheck() {
-    if(!('serviceWorker' in navigator)) return;
-
-    const reg = await navigator.serviceWorker.register('sw.js?v=' + APP_VERSION, { updateViaCache: 'none' });
-
-    if(reg.waiting) {
-      if(hasUnsavedText()) showUpdateButton(reg.waiting);
-      else applyWorkerUpdate(reg.waiting);
-    }
-
-    reg.addEventListener('updatefound', function(){
-      const worker = reg.installing;
-      if(!worker) return;
-
-      worker.addEventListener('statechange', function(){
-        if(worker.state === 'installed' && navigator.serviceWorker.controller) {
-          if(hasUnsavedText()) showUpdateButton(worker);
-          else applyWorkerUpdate(worker);
-        }
-      });
-    });
-
-    try { await reg.update(); } catch(e) {}
-  }
-
-  navigator.serviceWorker && navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(reloadingForUpdate) return;
-    reloadingForUpdate = true;
-    hideUpdateButton();
-    location.reload();
-  });
-
-  window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallButton();
-  });
-
-  window.addEventListener('appinstalled', function(){
-    deferredPrompt = null;
-    hideInstallButton();
-    document.body.classList.add('installed');
-  });
-
-  window.installApp = async function(){
-    if(isStandalone()) {
-      hideInstallButton();
-      return;
-    }
-
-    if(!deferredPrompt) {
-      showInstallButton();
-      return;
-    }
-
-    const prompt = deferredPrompt;
-    deferredPrompt = null;
-    prompt.prompt();
-
-    try {
-      const result = await prompt.userChoice;
-      if(result && result.outcome === 'accepted') hideInstallButton();
-    } catch(e) {}
-  };
-
-  window.checkForUpdates = async function(){
-    await registerAndCheck();
-  };
-
-  const previousStart = window.startDictation;
-  window.startDictation = function(){
-    try { localStorage.removeItem(FINAL_CLEAR_FLAG); } catch(e) {}
-    if(typeof previousStart === 'function') return previousStart();
-  };
-
-  window.addEventListener('load', function(){
-    document.title = 'דבר - העתק -- הדבק';
-    const h1 = document.querySelector('h1');
-    if(h1) h1.textContent = 'דבר - העתק -- הדבק';
-
-    const banner = document.querySelector('.manager-banner');
-    if(banner) banner.textContent = 'מנוהל ע"י יניב רז';
-
-    setInstalledVisualState();
-    hideUpdateButton();
-    registerAndCheck().catch(function(){});
-  });
-
-  document.addEventListener('visibilitychange', function(){
-    if(!document.hidden) registerAndCheck().catch(function(){});
-  });
-
-  window.addEventListener('online', function(){
-    registerAndCheck().catch(function(){});
-  });
-})();
-// <<< YANIV_PWA_AUTO_UPDATE_MANAGER <<<
-
-
 // >>> YANIV_COPY_FEEDBACK_ULTRA_SAFE >>>
 // Updated: 20260508-182154
 // UX-only wrapper: after copy, show small bottom confirmation.
@@ -786,3 +611,200 @@ window.checkForUpdates=checkForUpdates;
 // Temporary pending-update button: YES, only when update waits.
 // This marker does not override app behavior.
 // <<< YANIV_RULES_SYNC_AUDIT_MARKER <<<
+
+
+// >>> YANIV_STABLE_RECORDING_UPDATE_MANAGER >>>
+// Updated: 20260510-095542
+// Purpose:
+// - stop flicker/reload loops
+// - never update/reload while recording
+// - no aggressive auto-refresh
+// - update button appears only when update is waiting
+// - preserve dictation, punctuation, clear, copy and premium UI
+(function(){
+  const VERSION = 'stable-recording-20260510-095542';
+  const FINAL_CLEAR_FLAG = 'yaniv_clear_text_final_flag_v1';
+
+  let deferredPrompt = null;
+  let waitingWorker = null;
+  let updateCheckRunning = false;
+  let lastCheck = 0;
+  let recording = false;
+
+  function byId(id) { return document.getElementById(id); }
+
+  function setStatus(msg) {
+    const s = byId('status');
+    if(!s) return;
+    s.hidden = !msg;
+    s.textContent = msg || '';
+  }
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function showInstall() {
+    if(isStandalone()) return;
+    const p = byId('installPanel');
+    if(p) p.hidden = false;
+  }
+
+  function hideInstall() {
+    const p = byId('installPanel');
+    if(p) p.hidden = true;
+  }
+
+  function showUpdate(worker) {
+    waitingWorker = worker || waitingWorker;
+    const p = byId('updatePanel');
+    if(p) p.hidden = false;
+  }
+
+  function hideUpdate() {
+    const p = byId('updatePanel');
+    if(p) p.hidden = true;
+  }
+
+  async function stableUpdateCheck(reason) {
+    if(!('serviceWorker' in navigator)) return;
+    if(recording || document.body.classList.contains('listening')) return;
+
+    const now = Date.now();
+    if(updateCheckRunning) return;
+    if(reason !== 'manual' && now - lastCheck < 90000) return;
+
+    updateCheckRunning = true;
+    lastCheck = now;
+
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
+
+      if(reg.waiting && navigator.serviceWorker.controller) {
+        showUpdate(reg.waiting);
+      }
+
+      reg.addEventListener('updatefound', function(){
+        const worker = reg.installing;
+        if(!worker) return;
+        worker.addEventListener('statechange', function(){
+          if(worker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdate(worker);
+          }
+        });
+      });
+
+      try { await reg.update(); } catch(e) {}
+    } catch(e) {
+      // Do not break the app if update check fails.
+    } finally {
+      updateCheckRunning = false;
+    }
+  }
+
+  window.applyPendingUpdate = function(){
+    const t = byId('txt');
+    if(t && t.value) {
+      try { localStorage.setItem('yaniv_voice_notes_pending_update_backup', t.value); } catch(e) {}
+    }
+
+    if(waitingWorker) {
+      setStatus('מעדכן את האפליקציה...');
+      waitingWorker.postMessage({type:'SKIP_WAITING'});
+      setTimeout(function(){ location.reload(); }, 900);
+    } else {
+      location.reload();
+    }
+  };
+
+  window.checkForUpdates = function(){
+    return stableUpdateCheck('manual');
+  };
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstall();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    document.body.classList.add('installed');
+    hideInstall();
+  });
+
+  window.installApp = async function(){
+    if(isStandalone()) {
+      hideInstall();
+      return;
+    }
+
+    if(!deferredPrompt) {
+      showInstall();
+      setStatus('אם ההתקנה לא מופיעה, פתח את תפריט הדפדפן ובחר הוסף למסך הבית.');
+      return;
+    }
+
+    const p = deferredPrompt;
+    deferredPrompt = null;
+    p.prompt();
+
+    try {
+      const result = await p.userChoice;
+      if(result && result.outcome === 'accepted') hideInstall();
+    } catch(e) {}
+  };
+
+  const originalStart = window.startDictation;
+  window.startDictation = function(){
+    try { localStorage.removeItem(FINAL_CLEAR_FLAG); } catch(e) {}
+    hideUpdate();
+    recording = true;
+    setStatus('מקשיב...');
+    if(typeof originalStart === 'function') return originalStart();
+  };
+
+  const originalStop = window.stopDictation;
+  window.stopDictation = function(){
+    recording = false;
+    if(typeof originalStop === 'function') {
+      const out = originalStop();
+      setTimeout(function(){ stableUpdateCheck('after-stop'); }, 2500);
+      return out;
+    }
+  };
+
+  window.addEventListener('load', function(){
+    document.title = 'דבר - העתק -- הדבק';
+
+    const h1 = document.querySelector('h1');
+    if(h1) h1.textContent = 'דבר - העתק -- הדבק';
+
+    const banner = document.querySelector('.manager-banner');
+    if(banner) banner.textContent = 'מנוהל ע"י יניב רז';
+
+    if(isStandalone()) {
+      document.body.classList.add('installed');
+      hideInstall();
+    }
+
+    hideUpdate();
+
+    setTimeout(function(){
+      stableUpdateCheck('load');
+    }, 3500);
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && !recording) {
+      setTimeout(function(){ stableUpdateCheck('visible'); }, 2500);
+    }
+  });
+
+  window.addEventListener('online', function(){
+    if(!recording) {
+      setTimeout(function(){ stableUpdateCheck('online'); }, 2500);
+    }
+  });
+})();
+// <<< YANIV_STABLE_RECORDING_UPDATE_MANAGER <<<

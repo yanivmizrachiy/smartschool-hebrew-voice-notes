@@ -471,3 +471,38 @@ body.listening .talk {
   }
 }
 /* <<< YANIV_PREMIUM_UI_ULTRA_SAFE <<< */
+
+
+/* >>> YANIV_RECORDING_NO_FLICKER_FIX >>> */
+/* Updated: 20260510-095542
+   Reduces flicker on phones while preserving premium UI.
+*/
+body::before {
+  animation: none !important;
+  transform: none !important;
+  opacity: .38 !important;
+}
+
+.hero-card {
+  animation: none !important;
+}
+
+.btn,
+.chip,
+.clear-big,
+.install-button,
+.update-button {
+  backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.listening .talk {
+  animation: premiumListeningPulse 1.6s ease-in-out infinite !important;
+}
+
+@media(max-width:720px) {
+  body::before {
+    opacity: .26 !important;
+  }
+}
+/* <<< YANIV_RECORDING_NO_FLICKER_FIX <<< */
