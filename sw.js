@@ -1,4 +1,4 @@
-const CACHE_NAME='yaniv-speak-copy-paste-premium-ui-20260508-182154';
+const CACHE_NAME='yaniv-speak-copy-paste-rules-sync-20260510-084450';
 const ASSETS=['./','./index.html','./styles.css','./script.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
