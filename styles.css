@@ -585,3 +585,32 @@ body.installed .install-only {
   }
 }
 /* <<< YANIV_INSTALL_BUTTON_VISIBLE_UI <<< */
+
+
+/* >>> YANIV_REAL_INSTALL_UPDATE_UI >>> */
+/* Updated: 20260510-142157
+   Real install/update separation:
+   - Non-installed browser: install button visible, update button hidden.
+   - Installed PWA: install hidden; update may appear only when JS detects a real waiting update.
+*/
+body:not(.installed) .update-panel {
+  display: none !important;
+}
+
+body.installed .install-panel,
+body.installed .install-only {
+  display: none !important;
+}
+
+.install-panel:not([hidden]) {
+  display: block !important;
+}
+
+.install-button {
+  width: 100% !important;
+  min-height: 76px !important;
+  border-radius: 24px !important;
+  font-size: clamp(20px, 4vw, 26px) !important;
+  font-weight: 1000 !important;
+}
+/* <<< YANIV_REAL_INSTALL_UPDATE_UI <<< */
