@@ -4,25 +4,42 @@
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "תכניות לימודים ופריסות הוראה — עדכון תוכנית הלימודים במתמטיקה החל מתשפ״ז",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/teaching-mathematics/tohnit-limudim/",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "official-index-verified; linked grade 7/8 geometry documents not yet opened in this environment",
+      "status": "official-index-verified; linked grade 7/8 geometry documents are listed by the official index",
       "gradeScope": ["ז", "ח"],
       "curriculumVersion": "תשפ״ז",
       "curriculumRole": "authoritative-index",
       "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים"]
     },
+    "moe-jhs-box-grade7": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "תיבה — נפח ושטח פנים",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/teiva/",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-junior-high-topic-page-verified; multiple activities explicitly marked כיתה ז",
+      "gradeScope": ["ז"],
+      "curriculumVersion": "תשפ״ז",
+      "curriculumRole": "verified-junior-high-skill",
+      "use": ["תיבה", "נפח", "שטח פנים", "פריסות", "מעבר בין תלת־ממד לדו־ממד", "ראייה מרחבית"],
+      "scopeNote": "מאמת מיומנויות מרחביות ופריסות בכיתה ז; אינו מאמת חרוט כנושא ליבה."
+    },
     "moe-jhs-pythagoras-grade8": {
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "משפט פיתגורס במישור ובמרחב",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/mishpat_pitagoras/",
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "official-topic-page-verified; multiple listed activities explicitly marked כיתה ח",
       "gradeScope": ["ח"],
+      "curriculumVersion": "תשפ״ז",
       "curriculumRole": "verified-junior-high-skill",
       "use": ["משפט פיתגורס", "חישובי אורכים", "יישום במרחב"],
-      "scopeNote": "מאמת את מיומנות משפט פיתגורס בכיתה ח; אינו מאמת את החרוט עצמו כנושא ליבה בתוכנית תשפ״ז."
+      "scopeNote": "מאמת את מיומנות משפט פיתגורס בכיתה ח; היישום במרחב המפורש בדף הוא בקוביות ובתיבות, ולכן אינו מאמת חרוט כנושא ליבה."
     },
     "moe-bodies-cone-net": {
       "type": "official",
@@ -80,6 +97,7 @@
     "requireOfficialSource": true,
     "requireQuestionExtractedForCurriculumLabel": true,
     "requireMatchingGradeScope": true,
-    "elementarySourcesCannotValidateJuniorHighCore": true
+    "elementarySourcesCannotValidateJuniorHighCore": true,
+    "verifiedSkillDoesNotImplyVerifiedConeContext": true
   }
 }
