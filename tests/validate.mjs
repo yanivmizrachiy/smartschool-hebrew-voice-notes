@@ -2,19 +2,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const workbook = JSON.parse(fs.readFileSync(path.join(root, 'content/workbook.json'), 'utf8'));
-const sourceRegistry = JSON.parse(fs.readFileSync(path.join(root, 'content/source-registry.json'), 'utf8'));
+const workbookPath = path.join(root, 'content/workbook.json');
+const registryPath = path.join(root, 'content/source-registry.json');
+const workbook = JSON.parse(fs.readFileSync(workbookPath, 'utf8'));
+const sourceRegistry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 const css = fs.readFileSync(path.join(root, 'worksheets/styles.css'), 'utf8');
 const errors = [];
-
 const fail = (msg) => errors.push(msg);
+const forbiddenOutputText = /\b(?:דמו|demo|placeholder|lorem|sample|mock|todo)\b/i;
 
 if (workbook.pages.length !== workbook.pageCount) fail(`workbook pageCount=${workbook.pageCount}, pages=${workbook.pages.length}`);
 if (!/@page\s*\{[^}]*size:\s*A4/i.test(css)) fail('styles.css: missing @page A4');
 if (!/width:\s*210mm/.test(css) || !/height:\s*297mm/.test(css)) fail('styles.css: missing 210mm × 297mm A4 geometry');
 if (!/\.gz-footer/.test(css)) fail('styles.css: missing .gz-footer');
 
-const forbiddenOutputText = /\b(?:דמו|demo|placeholder|lorem|sample|mock|fake|todo)\b/i;
+for (const [rel, text] of [
+  ['content/workbook.json', fs.readFileSync(workbookPath, 'utf8')],
+  ['content/source-registry.json', fs.readFileSync(registryPath, 'utf8')]
+]) {
+  if (forbiddenOutputText.test(text)) fail(`${rel}: demo/placeholder content is forbidden`);
+}
 
 for (const page of workbook.pages) {
   const rel = `worksheets/${page.slug}.html`;
@@ -29,7 +36,7 @@ for (const page of workbook.pages) {
   if (!html.includes(`עמוד ${page.id} / ${workbook.pageCount}`)) fail(`${rel}: wrong navigation count`);
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
-  if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder/temporary content is forbidden`);
+  if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder content is forbidden`);
   if (/class="rule-box"/.test(html)) fail(`${rel}: explanation/rule box is forbidden in student worksheets`);
   if (/<(?:h2|h3|p)[^>]*>[^<]*(?:תרגול|אתגר|העמקה|ביסוס|שלב\s*\d+)/.test(html)) fail(`${rel}: visible difficulty/stage label`);
   if (/שאלה\s*\d+/.test(html)) fail(`${rel}: visible question numbering is forbidden`);
@@ -42,7 +49,9 @@ for (const page of workbook.pages) {
   for (const id of sourceIds) {
     const src = sourceRegistry.sources[id];
     if (!src) fail(`${rel}: unknown data-source ${id}`);
-    else if (src.type !== 'official' || src.verified !== true) fail(`${rel}: data-source ${id} is not a verified official source`);
+    else if (src.type !== 'official' || src.sourceVerified !== true || src.questionExtracted !== true) {
+      fail(`${rel}: data-source ${id} is not an extracted verified official question`);
+    }
   }
 
   const svgCount = (html.match(/<svg\b/g) || []).length;
