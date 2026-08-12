@@ -1,6 +1,6 @@
 {
   "project": "חרוט",
-  "pageCount": 19,
+  "pageCount": 18,
   "openEndedSeries": true,
   "targetGrades": ["ז", "ח"],
   "targetCurriculumVersion": "תשפ״ז",
@@ -29,7 +29,7 @@
     {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"נושא החרוט מאומת בח׳; חישובי הנפח נשמרים כחלק מהתרגול/הרחבה ללא ייחוס של שאלה רשמית."},
     {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"יישומים והשוואות הם הרחבה תקינה של נושא חרוט/גליל; אין להציגם כשאלות משרד החינוך ללא מקור שאלה."},
     {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"grade8-topic-plus-verified-skill","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"משפט פיתגורס מאומת בכיתה ח׳."},
+    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"grade8-topic-plus-verified-skill","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"משפט פיתגורס מאומת בכיתה ח׳.","sourceReferenceId":"razpages-209","sourceQuestionRelation":"adapted-overlap","scopeNote":"מבנה המשימה חופף מהותית לשאלת RZ-209-1 מ-razpages; אין להוסיף את שאלת המקור כעמוד נפרד רק בשל שינוי נתונים."},
     {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":11,"slug":"page-11","title":"חרוט — פריסה במספרים","subtitle":"מקשרים בין גזרה, קשת והיקף בסיס","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":12,"slug":"page-12","title":"חרוט — חוקרים ומתכננים","subtitle":"בוחרים, בודקים, משווים ומנמקים","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
@@ -38,7 +38,6 @@
     {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"grade8-topic-integrative-assessment","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":17,"slug":"page-17","title":"דף מלווה המחשה","subtitle":"בס'ד","curriculumCoreStatus":"source-locked-user-document","sourceId":"drive-cone-companion-ayelet","specialLayout":true,"contentLocked":true},
-    {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."},
-    {"id":19,"slug":"page-19","title":"חרוט — שאלת מקור: גביע מיני־מקס","subtitle":"חתך צירי, משפט פיתגורס, נפח והשפעת שינוי ממדים","curriculumCoreStatus":"internal-source-question","sourceId":"razpages-209","sourceQuestionId":"RZ-209-1","sourceExactTask":true,"scopeNote":"שאלה שנשלפה בפועל מ-yanivmizrachiy/razpages, עמוד-209.html; אינה מוצגת כשאלת משרד החינוך."}
+    {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."}
   ]
 }
