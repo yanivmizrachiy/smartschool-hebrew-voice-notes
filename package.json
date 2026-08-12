@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node src/build.mjs",
+    "build:print": "node src/build-print.mjs",
     "validate": "node tests/validate.mjs",
-    "check": "npm run build && npm run validate"
+    "check": "npm run build && npm run build:print && npm run validate"
   }
 }
