@@ -39,8 +39,9 @@ for (const page of workbook.pages) {
   }
 
   // Mathematical labels and their answer blanks must stay as one visual unit.
-  // A raw r=/h= label followed by a blank in a normal paragraph can split in RTL print.
-  if (/<p[^>]*>[\s\S]{0,180}<span class="math-ltr">[rh]\s*=<\/span>\s*<span class="blank/i.test(studentHtml)) {
+  // Detect only r=/h= + blank combinations that actually live inside the same <p>.
+  const paragraphMathField = /<p[^>]*>(?:(?!<\/p>)[\s\S])*?<span class="math-ltr">[rh]\s*=<\/span>\s*<span class="blank(?:(?!<\/p>)[\s\S])*?<\/p>/i;
+  if (paragraphMathField.test(studentHtml)) {
     errors.push(`${rel}: r=/h= answer field must use .answer-inline so the symbol, blank and unit cannot split`);
   }
 
