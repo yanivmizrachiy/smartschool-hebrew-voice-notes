@@ -16,9 +16,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Sync generated chrome
+      - name: Sync generated worksheet chrome
         run: npm run build
-      - name: Ensure generated files are committed
-        run: git diff --exit-code
+      - name: Build A4 print bundle
+        run: npm run build:print
       - name: Validate workbook contracts
         run: npm run validate
+      - name: Ensure worksheet sources stayed synchronized
+        run: git diff --exit-code -- worksheets content src tests package.json
+      - name: Verify print bundle exists
+        run: test -s print/harut-a4.html && test -s print/styles.css
