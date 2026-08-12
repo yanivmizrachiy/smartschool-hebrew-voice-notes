@@ -1,12 +1,12 @@
 {
   "project": "חרוט",
-  "pageCount": 16,
+  "pageCount": 17,
   "openEndedSeries": true,
   "targetGrades": ["ז", "ח"],
   "targetCurriculumVersion": "תשפ״ז",
   "curriculumCoreVerified": false,
   "curriculumStatus": "supplementary-until-explicit-grade-7-8-cone-verification",
-  "curriculumStatusNote": "16 הדפים נשמרים במלואם. אין להציג את החרוט כליבת תוכנית ז׳–ח׳ או להשתמש בתוויות 'מתוך/בהתאם לתוכנית הלימודים' עד אימות מפורש של חרוט במסמכי התחום הגאומטרי המעודכנים לתשפ״ז.",
+  "curriculumStatusNote": "17 הדפים נשמרים במלואם. אין להציג את החרוט כליבת תוכנית ז׳–ח׳ או להשתמש בתוויות 'מתוך/בהתאם לתוכנית הלימודים' עד אימות מפורש של חרוט במסמכי התחום הגאומטרי המעודכנים לתשפ״ז.",
   "credit": {
     "line1": "יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים",
     "line2": "הדרכה במחוז ירושלים והעיר ירושלים - מנח\"י, בהובלת איילת קריספין"
@@ -32,6 +32,7 @@
     {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"legacy-reference-only","verifiedSkill":"גליל הופיע במסגרת ח׳ שלפני עדכון תשפ״ז; יחס חרוט–גליל אינו מאומת כליבת התוכנית החדשה."},
     {"id":14,"slug":"page-14","title":"חרוט — חתכים והסקה","subtitle":"מנבאים, משווים ומנמקים לפי מקום החיתוך","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"חתכי חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
     {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"יוצר וזווית מרכזית בפריסת חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
-    {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"משלב כמה רכיבי חרוט שאינם מאומתים כליבת ז׳–ח׳ תשפ״ז."}
+    {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"משלב כמה רכיבי חרוט שאינם מאומתים כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":17,"slug":"page-17","title":"חרוט — דף מלווה המחשה","subtitle":"בונים, מתבוננים, מסמנים ומנסחים","curriculumCoreStatus":"source-based-enrichment","sourceId":"drive-cone-companion-ayelet","specialLayout":true,"curriculumNote":"דף פעילות נוסף המבוסס על דף Google Docs שנקרא בפועל; אינו מוצג כליבת ז׳–ח׳ תשפ״ז ואינו מקבל תווית תוכנית לימודים."}
   ]
 }

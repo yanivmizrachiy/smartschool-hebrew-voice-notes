@@ -17,7 +17,9 @@ for (const page of workbook.pages) {
 }
 
 const baseCss = fs.readFileSync(path.join(root, 'worksheets', 'styles.css'), 'utf8');
-const printCss = `${baseCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n`;
+const specialCssPath = path.join(root, 'worksheets', 'ayelet-special.css');
+const specialCss = fs.existsSync(specialCssPath) ? fs.readFileSync(specialCssPath, 'utf8') : '';
+const printCss = `${baseCss}\n\n${specialCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n`;
 fs.writeFileSync(path.join(outDir, 'styles.css'), printCss, 'utf8');
 
 const book = `<!doctype html>

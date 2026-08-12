@@ -91,6 +91,19 @@
       "gradeScope": ["חומר פנימי"],
       "curriculumRole": "design-and-question-pattern-reference",
       "use": ["חרוט", "חתך צירי", "נפח", "יישום"]
+    },
+    "drive-cone-companion-ayelet": {
+      "type": "user-drive-reference",
+      "publisher": "Google Drive — מקור משתמש",
+      "title": "דף מלווה המחשה חרוט. מקוצר (6)",
+      "sourceVerified": true,
+      "questionExtracted": true,
+      "status": "full-document-read-and-pedagogically-adapted",
+      "location": "connected-user-google-drive",
+      "publicUrlStored": false,
+      "curriculumRole": "activity-source-reference",
+      "use": ["בניית דגם חרוט", "זיהוי חלקי חרוט", "בסיס", "שפת הבסיס", "קודקוד", "יוצר", "גובה", "ניסוח הגדרה"],
+      "scopeNote": "המסמך נקרא בפועל ועובד לדף 17 בעיצוב חדש ובניסוח מתמטי מדויק יותר. אין לראות בו כשלעצמו הוכחה לליבת ז׳–ח׳ תשפ״ז ואין להציגו תחת תווית תוכנית לימודים."
     }
   },
   "rules": {
