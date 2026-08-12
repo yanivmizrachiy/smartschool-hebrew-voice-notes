@@ -4,33 +4,42 @@
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "הכרת גופים — חרוט: מפריסה לגוף",
-      "verified": true,
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "source-page-verified",
       "use": ["פריסה", "מעבר בין ייצוגים"]
     },
     "moe-nets-sections": {
       "type": "official",
       "publisher": "משרד החינוך",
-      "title": "פריסות וחתכים",
-      "verified": true,
-      "use": ["פריסות", "חתכים", "חשיבה מרחבית"]
+      "title": "פריסות וחתכים — 3 פעילויות",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "source-page-verified; activity files not yet opened",
+      "use": ["פריסות", "חתכים", "גופי סיבוב", "חשיבה מרחבית"]
     },
     "moe-cone-pyramid-volume": {
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "נפח חרוט ופירמידה",
-      "verified": true,
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "source-page-verified",
       "use": ["נפח חרוט"]
     },
     "razpages-209": {
       "type": "internal-reference",
       "publisher": "yanivmizrachiy/razpages",
       "title": "עמוד-209.html",
-      "verified": true,
+      "sourceVerified": true,
+      "questionExtracted": true,
+      "status": "full-task-read",
       "use": ["חרוט", "חתך צירי", "נפח", "יישום"]
     }
   },
   "rules": {
     "curriculumLabel": "מתוך תוכנית הלימודים",
-    "requireVerifiedSourceForCurriculumLabel": true
+    "requireOfficialSource": true,
+    "requireQuestionExtractedForCurriculumLabel": true
   }
 }
