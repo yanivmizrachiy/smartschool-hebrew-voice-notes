@@ -76,7 +76,8 @@ for (const page of workbook.pages) {
     }
   }
 
-  const svgTags = [...html.matchAll(/<svg\b[^>]*>/g)].map(m => m[0]);
+  const accessibilityHtml = html.replace(/<div class="ay-bg"[^>]*aria-hidden="true">[\s\S]*?<\/div>/g, '');
+  const svgTags = [...accessibilityHtml.matchAll(/<svg\b[^>]*>/g)].map(m => m[0]);
   const contentSvgs = svgTags.filter(tag => !/aria-hidden="true"/.test(tag));
   const labelledContentSvgs = contentSvgs.filter(tag => /role="img"/.test(tag) && /aria-label="[^"]+"/.test(tag));
   if (contentSvgs.length !== labelledContentSvgs.length) {
