@@ -7,12 +7,12 @@
       "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/teaching-mathematics/tohnit-limudim/",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "official-index-verified; linked grade 7/8 geometry documents are listed by the official index",
+      "status": "official-index-verified; the index explicitly lists grade 7 geometry, grade 8 geometry, and geometry companion materials for grades 7-8",
       "gradeScope": ["ז", "ח"],
       "curriculumVersion": "תשפ״ז",
       "curriculumVersionVerified": true,
       "curriculumRole": "authoritative-index",
-      "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים"]
+      "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים", "איתור מסמכי הגאומטריה וחומרי הליווי"]
     },
     "moe-jhs-box-grade7": {
       "type": "official",
@@ -21,13 +21,40 @@
       "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/teiva/",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "official-junior-high-topic-page-verified; multiple activities explicitly marked כיתה ז",
+      "status": "official-junior-high-topic-page-verified; activities explicitly marked כיתה ז include volume, nets and spatial representations",
       "gradeScope": ["ז"],
       "curriculumVersion": "not-version-specific",
       "curriculumVersionVerified": false,
-      "curriculumRole": "verified-junior-high-skill",
-      "use": ["תיבה", "נפח", "שטח פנים", "פריסות", "מעבר בין תלת־ממד לדו־ממד", "ראייה מרחבית"],
-      "scopeNote": "מאמת מיומנויות מרחביות ופריסות בכיתה ז; אינו מאמת שהן חלק מעדכון תשפ״ז ואינו מאמת חרוט כנושא ליבה."
+      "curriculumRole": "verified-junior-high-skill-and-wording-source",
+      "use": ["תיבה", "נפח", "שטח פנים", "פריסות", "מעבר בין תלת־ממד לדו־ממד", "ראייה מרחבית", "מושגי קודקוד/פאה/מקצוע"]
+    },
+    "moe-jhs-circle-grade7": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "היקף מעגל ושטח עיגול",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/hekef-magal-shetah-igul/",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-junior-high-topic-page-verified; official page gives concepts and formulas and lists grade 7 activities",
+      "gradeScope": ["ז"],
+      "curriculumVersion": "not-version-specific",
+      "curriculumVersionVerified": false,
+      "curriculumRole": "verified-junior-high-skill-and-wording-source",
+      "use": ["מעגל", "עיגול", "מרכז", "רדיוס", "קוטר", "π", "היקף מעגל", "שטח עיגול"]
+    },
+    "moe-jhs-rectangle-grade7": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "מלבן — כיתה ז",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/malben-6th/",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-junior-high-topic-page-verified; page explicitly states teaching emphases from the grade 7 curriculum",
+      "gradeScope": ["ז"],
+      "curriculumVersion": "not-version-specific",
+      "curriculumVersionVerified": false,
+      "curriculumRole": "verified-junior-high-skill-and-wording-source",
+      "use": ["זווית ישרה", "ניצבות", "מקבילות", "צלעות סמוכות ונגדיות", "קודקודים", "אלכסון"]
     },
     "moe-jhs-pythagoras-grade8": {
       "type": "official",
@@ -36,26 +63,40 @@
       "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/noseem_nilmadim/mishpat_pitagoras/",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "official-topic-page-verified; multiple listed activities explicitly marked כיתה ח",
+      "status": "official-topic-page-verified; page gives the theorem, teaching emphases and multiple activities explicitly marked כיתה ח",
       "gradeScope": ["ח"],
       "curriculumVersion": "not-version-specific",
       "curriculumVersionVerified": false,
-      "curriculumRole": "verified-junior-high-skill",
-      "use": ["משפט פיתגורס", "חישובי אורכים", "יישום במרחב"],
-      "scopeNote": "מאמת את מיומנות משפט פיתגורס בכיתה ח; אינו מאמת שהדף עצמו הוא מסמך עדכון תשפ״ז. היישום במרחב המפורש בדף הוא בקוביות ובתיבות, ולכן אינו מאמת חרוט כנושא ליבה."
+      "curriculumRole": "verified-junior-high-skill-and-wording-source",
+      "use": ["משפט פיתגורס", "ניצבים", "יתר", "שורש ריבועי", "חישובי אורכים", "יישום במרחב", "הבחנה בין אלכסון פאה לאלכסון תיבה"]
+    },
+    "moe-jhs-filmed-lessons-7-8": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "שיעורים מצולמים — מתמטיקה חטיבת ביניים",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/chativat-beynayim/teaching-mathematics/filmed-lessons/",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-grade-index-verified; lists grade 7 circle/area and box/surface-area/volume/net lessons and grade 8 Pythagoras lessons",
+      "gradeScope": ["ז", "ח"],
+      "curriculumVersion": "not-version-specific",
+      "curriculumVersionVerified": false,
+      "curriculumRole": "grade-sequencing-evidence",
+      "use": ["בדיקת רצף יסודות לפני משימות מרחב", "מיפוי מיומנויות קדם"]
     },
     "moe-bodies-cone-net": {
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "הכרת גופים — חרוט: מפריסה לגוף",
+      "url": "https://pop.education.gov.il/tchumey_daat/matmatika/yesodi/noseem_nilmadim/hakarat-gofim/",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "source-page-verified; item is on the elementary portal but no explicit grade is shown for this specific cone applet",
+      "status": "source-page-verified; the official elementary page explicitly lists a cone net-to-solid applet",
       "schoolStage": "יסודי",
       "gradeScope": [],
       "gradeScopeStatus": "not-explicit-on-item",
       "curriculumRole": "reference-only-for-junior-high",
-      "use": ["פריסה", "מעבר בין ייצוגים"]
+      "use": ["פריסת חרוט", "מעבר בין ייצוגים"]
     },
     "moe-nets-sections": {
       "type": "official",
@@ -103,7 +144,7 @@
       "publicUrlStored": false,
       "curriculumRole": "activity-source-reference",
       "use": ["בניית דגם חרוט", "זיהוי חלקי חרוט", "בסיס", "שפת הבסיס", "קודקוד", "יוצר", "גובה", "ניסוח הגדרה"],
-      "scopeNote": "המסמך נקרא בפועל ועובד לדף 17 בעיצוב חדש ובניסוח מתמטי מדויק יותר. אין לראות בו כשלעצמו הוכחה לליבת ז׳–ח׳ תשפ״ז ואין להציגו תחת תווית תוכנית לימודים."
+      "scopeNote": "המסמך נקרא בפועל ועובד לדף 17 בעיצוב חדש ובניסוח מתמטי מדויק יותר. אין לראות בו כשלעצמו הוכחה לליבת ז׳–ח׳ תשפ״ז."
     }
   },
   "rules": {
@@ -114,7 +155,12 @@
     "requireQuestionExtractedForCurriculumLabel": true,
     "requireMatchingGradeScope": true,
     "requireExplicitCurriculumVersionVerification": true,
+    "officialExplanationsMaySupportWording": true,
     "elementarySourcesCannotValidateJuniorHighCore": true,
-    "verifiedSkillDoesNotImplyVerifiedConeContext": true
+    "verifiedSkillDoesNotImplyVerifiedConeContext": true,
+    "verbalOpenResponseSupportRequired": true,
+    "verbalSupportPage": "page-18",
+    "acceptedVerbalSupportModes": ["word-bank", "multiple-choice", "matching", "sentence-frame"],
+    "cone5787LabelRequiresDirectGeometryDocumentRead": true
   }
 }
