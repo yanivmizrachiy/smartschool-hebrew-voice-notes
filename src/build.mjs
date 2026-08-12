@@ -9,10 +9,7 @@ function replaceOne(text, re, replacement, label, file) {
   return text.replace(re, replacement);
 }
 
-for (let index = 0; index < workbook.pages.length; index += 1) {
-  const page = workbook.pages[index];
-  const prev = workbook.pages[index - 1];
-  const next = workbook.pages[index + 1];
+for (const page of workbook.pages) {
   const file = path.join(root, 'worksheets', `${page.slug}.html`);
   if (!fs.existsSync(file)) throw new Error(`Missing worksheet: ${file}`);
   let html = fs.readFileSync(file, 'utf8');
@@ -22,9 +19,8 @@ for (let index = 0; index < workbook.pages.length; index += 1) {
   html = replaceOne(html, /<p class="page-subtitle">[\s\S]*?<\/p>/, `<p class="page-subtitle">${page.subtitle}</p>`, 'page subtitle', file);
   html = replaceOne(html, /<div class="page-number">[\s\S]*?<\/div>/, `<div class="page-number">${page.id}</div>`, 'page number', file);
 
-  const nav = `<nav class="preview-nav" aria-label="ניווט בין דפי החרוט">${prev ? `<a href="${prev.slug}.html">הקודם</a>` : '<span></span>'}<span class="meta">חרוט — עמוד ${page.id} / ${workbook.pageCount}</span>${next ? `<a href="${next.slug}.html">הבא</a>` : '<span></span>'}</nav>`;
-  html = replaceOne(html, /<nav class="preview-nav"[\s\S]*?<\/nav>/, nav, 'preview navigation', file);
-
+  // Preview navigation is hidden in print and maintained as source markup.
+  // Do not rewrite it during build: generated chrome must not dirty worksheet sources.
   html = html.replace(/\sdata-word-bank="[^"]*"/g, '');
 
   html = replaceOne(
@@ -38,4 +34,4 @@ for (let index = 0; index < workbook.pages.length; index += 1) {
   fs.writeFileSync(file, html, 'utf8');
 }
 
-console.log(`Synced ${workbook.pages.length} printable worksheet pages and navigation from content/workbook.json`);
+console.log(`Synced ${workbook.pages.length} printable worksheet pages from content/workbook.json`);
