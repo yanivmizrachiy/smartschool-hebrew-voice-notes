@@ -1,6 +1,6 @@
 {
   "project": "חרוט",
-  "pageCount": 18,
+  "pageCount": 19,
   "openEndedSeries": true,
   "targetGrades": ["ז", "ח"],
   "targetCurriculumVersion": "תשפ״ז",
@@ -38,6 +38,7 @@
     {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"grade8-topic-integrative-assessment","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":17,"slug":"page-17","title":"דף מלווה המחשה","subtitle":"בס'ד","curriculumCoreStatus":"source-locked-user-document","sourceId":"drive-cone-companion-ayelet","specialLayout":true,"contentLocked":true},
-    {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."}
+    {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."},
+    {"id":19,"slug":"page-19","title":"חרוט — שאלת מקור: גביע מיני־מקס","subtitle":"חתך צירי, משפט פיתגורס, נפח והשפעת שינוי ממדים","curriculumCoreStatus":"internal-source-question","sourceId":"razpages-209","sourceQuestionId":"RZ-209-1","sourceExactTask":true,"scopeNote":"שאלה שנשלפה בפועל מ-yanivmizrachiy/razpages, עמוד-209.html; אינה מוצגת כשאלת משרד החינוך."}
   ]
 }
