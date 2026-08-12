@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>חרוט — הדפסת כל החוברת</title>
+  <link rel="stylesheet" href="worksheets/styles.css">
+  <link rel="stylesheet" href="viewer/print.css">
+</head>
+<body>
+  <header class="print-toolbar">
+    <a href="./">חזרה לדפדוף</a>
+    <span id="print-status" class="print-status">טוען את החוברת…</span>
+    <button id="print-all-button" type="button" disabled>הדפס את כל החוברת</button>
+  </header>
+  <main id="print-pages" class="print-pages" aria-live="polite"></main>
+  <script type="module" src="viewer/print.js"></script>
+</body>
+</html>
