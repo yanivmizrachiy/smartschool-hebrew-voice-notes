@@ -25,7 +25,7 @@ const book = `<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>חרוט — 8 דפי תרגול A4 להדפסה</title>
+  <title>חרוט — ${workbook.pageCount} דפי תרגול A4 להדפסה</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
