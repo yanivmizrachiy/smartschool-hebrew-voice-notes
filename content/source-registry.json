@@ -141,6 +141,24 @@
       "curriculumRole": "reference-only-for-junior-high",
       "use": ["נפח חרוט"]
     },
+    "moe-cone-question-6-minimax-user-supplied": {
+      "type": "official-user-supplied",
+      "publisher": "משרד החינוך",
+      "title": "שאלה 6 — גביע ה״מיני־מקס״ בצורת חרוט",
+      "sourceVerified": true,
+      "verificationMode": "user-supplied screenshot and explicit user attestation that this is a Ministry of Education question",
+      "questionExtracted": true,
+      "questionTranscription": "questions/OFFICIAL-CONE-QUESTION-6.md",
+      "exactSourceUrlKnown": false,
+      "publicUrlStored": false,
+      "gradeScope": ["ח"],
+      "curriculumVersion": "תשפ״ז",
+      "curriculumVersionVerified": "by project context and user-supplied curriculum source; exact question-page URL still pending",
+      "curriculumRole": "official-target-question",
+      "use": ["חרוט", "חתך צירי", "משפט פיתגורס", "מציאת גובה", "נפח חרוט", "הקשר מציאותי"],
+      "requiredStudentLabel": "מתוך תוכנית הלימודים",
+      "scopeNote": "יש לשמר את נוסח שאלת המקור בדף הרשמי. הערות למורה/לכותב שהופיעו לצד המקור אינן חלק משאלת התלמיד. לפני השאלה יש לבנות רצף יסוד מדורג."
+    },
     "razpages-209": {
       "type": "internal-reference",
       "publisher": "yanivmizrachiy/razpages",

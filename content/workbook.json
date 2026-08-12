@@ -10,7 +10,7 @@
   "curriculumCoreGrade": "ח",
   "curriculumSourceId": "moe-jhs-5787-grade8-plan",
   "curriculumStatus": "grade8-cone-cylinder-official-topic-verified",
-  "curriculumStatusNote": "נושא גליל וחרוט מופיע בתוכנית הרשמית המעודכנת לכיתה ח׳ תשפ״ז, בהיקף 6 שעות הוראה באוקטובר. בכיתה ז׳ החרוט אינו נושא הליבה; דפי ז׳ משמשים למיומנויות קדם. תווית 'מתוך תוכנית הלימודים' שמורה רק לשאלה רשמית שנשלפה בפועל ממקור משרד החינוך.",
+  "curriculumStatusNote": "נושא גליל וחרוט מופיע בתוכנית הרשמית המעודכנת לכיתה ח׳ תשפ״ז, בהיקף 6 שעות הוראה באוקטובר. בכיתה ז׳ החרוט אינו נושא הליבה; דפי ז׳ משמשים למיומנויות קדם. התקבלה גם שאלת משרד החינוך בנושא גביע חרוטי, שנרשמה כמקור נפרד; תווית 'מתוך תוכנית הלימודים' שמורה רק לשאלה רשמית שנשלפה ונרשמה.",
   "optionalSupportPage": 18,
   "credit": {
     "line1": "יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים",
@@ -29,7 +29,7 @@
     {"id":4,"slug":"page-4","title":"חרוט — ייצוגים ומבטים","subtitle":"עוברים בין גוף, מבט ותיאור","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"ראייה מרחבית ומעבר בין ייצוג תלת־ממדי לדו־ממדי מאומתים בכיתה ז׳."},
     {"id":5,"slug":"page-5","title":"חרוט — פריסות וחתכים","subtitle":"משלימים, משווים ומנמקים","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"נושא החרוט מאומת בח׳; פריסות וחתכים ספציפיים נשמרים כהרחבה עד מקור מפורש לתת־המיומנות."},
     {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"נושא החרוט מאומת בח׳; חישובי הנפח נשמרים כחלק מהתרגול/הרחבה ללא ייחוס של שאלה רשמית."},
-    {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"יישומים והשוואות הם הרחבה תקינה של נושא חרוט/גליל; אין להציגם כשאלות משרד החינוך ללא מקור שאלה."},
+    {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"יישומים והשוואות הם הרחבה תקינה של נושא החרוט; גליל מופיע רק בהשוואה ישירה שמשרתת הבנת חרוט."},
     {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"grade8-topic-plus-verified-skill","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"משפט פיתגורס מאומת בכיתה ח׳.","sourceReferenceId":"razpages-209","sourceQuestionRelation":"adapted-overlap","scopeNote":"מבנה המשימה חופף מהותית לשאלת RZ-209-1 מ-razpages; אין להוסיף את שאלת המקור כעמוד נפרד רק בשל שינוי נתונים."},
     {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
@@ -43,10 +43,10 @@
     {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."}
   ],
   "visualPages": [
-    {"slug":"puzzle-1-question","title":"שעשועון ראשון — כמה חרוטים מסתתרים?","type":"puzzle-question","answerSlug":"puzzle-1-answer","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
-    {"slug":"puzzle-2-question","title":"שעשועון שני — איפה החרוט היחיד?","type":"puzzle-question","answerSlug":"puzzle-2-answer","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"},
-    {"slug":"puzzle-1-answer","title":"שעשועון ראשון — דף תשובות","type":"puzzle-answer","questionSlug":"puzzle-1-question","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
-    {"slug":"puzzle-2-answer","title":"שעשועון שני — דף תשובות","type":"puzzle-answer","questionSlug":"puzzle-2-question","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"}
+    {"slug":"puzzle-1-question","title":"כמה חרוטים מסתתרים בתמונה?","type":"puzzle-question","answerSlug":"puzzle-1-answer","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
+    {"slug":"puzzle-2-question","title":"איפה מסתתר החרוט?","type":"puzzle-question","answerSlug":"puzzle-2-answer","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"},
+    {"slug":"puzzle-1-answer","title":"דף תשובות — כמה חרוטים מסתתרים בתמונה?","type":"puzzle-answer","questionSlug":"puzzle-1-question","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
+    {"slug":"puzzle-2-answer","title":"דף תשובות — איפה מסתתר החרוט?","type":"puzzle-answer","questionSlug":"puzzle-2-question","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"}
   ],
   "printSequence": [
     {"kind":"worksheet","id":1},{"kind":"worksheet","id":2},{"kind":"worksheet","id":3},{"kind":"worksheet","id":4},{"kind":"worksheet","id":5},{"kind":"worksheet","id":6},{"kind":"worksheet","id":7},{"kind":"worksheet","id":8},
