@@ -10,6 +10,7 @@ const css = fs.readFileSync(path.join(root, 'worksheets/styles.css'), 'utf8');
 const errors = [];
 const fail = (msg) => errors.push(msg);
 const forbiddenOutputText = /\b(?:דמו|demo|placeholder|lorem|sample|mock|todo)\b/i;
+const forbiddenInternalStudentText = /(?:RULES\.md|workbook\.json|source-registry|\bQA\b|הוראת עורך|הוראה פנימית|טקסט פנימי)/i;
 const oldProjectText = /smartschool|voice[- ]?notes|סמרטקול|הכתבה בעברית/i;
 
 const allowedRootEntries = new Set([
@@ -56,6 +57,7 @@ for (const page of workbook.pages) {
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
   if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder content is forbidden`);
+  if (forbiddenInternalStudentText.test(html)) fail(`${rel}: internal editor/QA text is forbidden in student output`);
   if (oldProjectText.test(html)) fail(`${rel}: old project branding/content is forbidden`);
   if (/class="rule-box"/.test(html)) fail(`${rel}: explanation/rule box is forbidden in student worksheets`);
   if (/<(?:h2|h3|p)[^>]*>[^<]*(?:תרגול|אתגר|העמקה|ביסוס|שלב\s*\d+)/.test(html)) fail(`${rel}: visible difficulty/stage label`);
@@ -74,9 +76,13 @@ for (const page of workbook.pages) {
     }
   }
 
-  const svgCount = (html.match(/<svg\b/g) || []).length;
-  const labelledSvgCount = (html.match(/<svg[^>]*role="img"[^>]*aria-label="[^"]+"/g) || []).length;
-  if (svgCount !== labelledSvgCount) fail(`${rel}: every SVG must have role="img" and aria-label (${svgCount}/${labelledSvgCount})`);
+  const accessibilityHtml = html.replace(/<div class="ay-bg"[^>]*aria-hidden="true">[\s\S]*?<\/div>/g, '');
+  const svgTags = [...accessibilityHtml.matchAll(/<svg\b[^>]*>/g)].map(m => m[0]);
+  const contentSvgs = svgTags.filter(tag => !/aria-hidden="true"/.test(tag));
+  const labelledContentSvgs = contentSvgs.filter(tag => /role="img"/.test(tag) && /aria-label="[^"]+"/.test(tag));
+  if (contentSvgs.length !== labelledContentSvgs.length) {
+    fail(`${rel}: every non-decorative SVG must have role="img" and aria-label (${contentSvgs.length}/${labelledContentSvgs.length})`);
+  }
 }
 
 const indexPath = path.join(root, 'index.html');
@@ -122,11 +128,12 @@ if (!fs.existsSync(printHtmlPath) || !fs.existsSync(printCssPath)) {
 } else {
   const printHtml = fs.readFileSync(printHtmlPath, 'utf8');
   const printCss = fs.readFileSync(printCssPath, 'utf8');
-  const a4Count = (printHtml.match(/<main class="a4-page(?:\s+dense)?">/g) || []).length;
+  const a4Count = (printHtml.match(/<main\b[^>]*class="[^"]*\ba4-page\b[^"]*"[^>]*>/g) || []).length;
   if (a4Count !== workbook.pageCount) fail(`print/harut-a4.html: expected ${workbook.pageCount} A4 pages, found ${a4Count}`);
   if (/<nav\b/i.test(printHtml)) fail('print/harut-a4.html: navigation is forbidden in print output');
   if (/<style\b/i.test(printHtml) || /\sstyle="/i.test(printHtml)) fail('print/harut-a4.html: inline CSS is forbidden');
   if (forbiddenOutputText.test(printHtml)) fail('print/harut-a4.html: demo/placeholder content is forbidden');
+  if (forbiddenInternalStudentText.test(printHtml)) fail('print/harut-a4.html: internal editor/QA text is forbidden');
   if (oldProjectText.test(printHtml)) fail('print/harut-a4.html: old project branding/content is forbidden');
   if (!/@page\s*\{[^}]*size:\s*A4/i.test(printCss)) fail('print/styles.css: missing @page A4');
   for (const page of workbook.pages) {
