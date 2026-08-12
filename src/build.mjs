@@ -9,14 +9,6 @@ function replaceOne(text, re, replacement, label, file) {
   return text.replace(re, replacement);
 }
 
-function escapeAttr(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
-}
-
 for (let index = 0; index < workbook.pages.length; index += 1) {
   const page = workbook.pages[index];
   const prev = workbook.pages[index - 1];
@@ -34,15 +26,6 @@ for (let index = 0; index < workbook.pages.length; index += 1) {
   html = replaceOne(html, /<nav class="preview-nav"[\s\S]*?<\/nav>/, nav, 'preview navigation', file);
 
   html = html.replace(/\sdata-word-bank="[^"]*"/g, '');
-  if (page.verbalBank && page.verbalSupportExempt !== true) {
-    html = replaceOne(
-      html,
-      /<main class="([^"]*\ba4-page\b[^"]*)">/,
-      `<main class="$1" data-word-bank="${escapeAttr(page.verbalBank)}">`,
-      'A4 main element',
-      file
-    );
-  }
 
   html = replaceOne(
     html,
@@ -55,4 +38,4 @@ for (let index = 0; index < workbook.pages.length; index += 1) {
   fs.writeFileSync(file, html, 'utf8');
 }
 
-console.log(`Synced ${workbook.pages.length} printable worksheet pages, navigation and verbal-support banks from content/workbook.json`);
+console.log(`Synced ${workbook.pages.length} printable worksheet pages and navigation from content/workbook.json`);
