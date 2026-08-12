@@ -37,6 +37,16 @@ for (const page of workbook.pages) {
   if (page.id === 17 && /מחסן המילים|עמוד 18/.test(studentHtml)) {
     errors.push(`${rel}: locked source page must not contain project word-bank instructions`);
   }
+
+  // Mathematical labels and their answer blanks must stay as one visual unit.
+  // A raw r=/h= label followed by a blank in a normal paragraph can split in RTL print.
+  if (/<p[^>]*>[\s\S]{0,180}<span class="math-ltr">[rh]\s*=<\/span>\s*<span class="blank/i.test(studentHtml)) {
+    errors.push(`${rel}: r=/h= answer field must use .answer-inline so the symbol, blank and unit cannot split`);
+  }
+
+  if (/class="answer-inline"/.test(studentHtml) && !/class="answer-row"/.test(studentHtml)) {
+    errors.push(`${rel}: .answer-inline must be placed inside an .answer-row container`);
+  }
 }
 
 if (errors.length) {
@@ -44,4 +54,4 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`OK: ${workbook.pageCount} student worksheets contain no internal/demo/editorial text or blanket word-bank injection.`);
+console.log(`OK: ${workbook.pageCount} student worksheets contain no internal/demo/editorial text, blanket word-bank injection, or splittable r=/h= answer fields.`);
