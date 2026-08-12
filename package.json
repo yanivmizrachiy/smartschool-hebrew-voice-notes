@@ -1,0 +1,10 @@
+{
+  "name": "harut-workbook",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "validate": "node tests/validate.mjs",
+    "check": "npm run build && npm run validate"
+  }
+}
