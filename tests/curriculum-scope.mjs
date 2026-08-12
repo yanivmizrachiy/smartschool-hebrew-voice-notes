@@ -27,6 +27,14 @@ for (const [id, source] of Object.entries(registry.sources || {})) {
   if (isElementaryOnly && source.curriculumRole !== 'reference-only-for-junior-high') {
     fail(`${id}: elementary source must be reference-only-for-junior-high`);
   }
+
+  if (source.curriculumVersion === workbook.targetCurriculumVersion && source.curriculumVersionVerified !== true) {
+    fail(`${id}: target curriculum version requires curriculumVersionVerified=true`);
+  }
+
+  if (source.curriculumRole === 'verified-junior-high-skill' && source.curriculumVersion === workbook.targetCurriculumVersion) {
+    fail(`${id}: a generic junior-high skill page cannot validate the תשפ״ז version unless it is registered as an explicit versioned curriculum source`);
+  }
 }
 
 for (const page of workbook.pages) {
@@ -57,11 +65,11 @@ for (const page of workbook.pages) {
     const sourceGrades = new Set(source.gradeScope || []);
     const gradeMatches = workbook.targetGrades.some(grade => sourceGrades.has(grade));
     if (!gradeMatches) fail(`${page.slug}: source ${sourceId} does not match target grades ז-ח`);
-    if (source.curriculumVersion !== workbook.targetCurriculumVersion) {
-      fail(`${page.slug}: source ${sourceId} does not explicitly match curriculum version תשפ״ז`);
+    if (source.curriculumVersion !== workbook.targetCurriculumVersion || source.curriculumVersionVerified !== true) {
+      fail(`${page.slug}: source ${sourceId} does not explicitly and verifiably match curriculum version תשפ״ז`);
     }
-    if (source.curriculumRole === 'reference-only-for-junior-high') {
-      fail(`${page.slug}: source ${sourceId} is reference-only and cannot validate a junior-high curriculum label`);
+    if (source.curriculumRole === 'reference-only-for-junior-high' || source.curriculumRole === 'verified-junior-high-skill') {
+      fail(`${page.slug}: source ${sourceId} cannot validate a junior-high curriculum label in the cone context`);
     }
     if (source.type !== 'official' || source.sourceVerified !== true || source.questionExtracted !== true) {
       fail(`${page.slug}: source ${sourceId} is not an extracted, verified official question`);
@@ -75,4 +83,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`OK: curriculum scope is locked to grades ז-ח, תשפ״ז; elementary cone sources cannot validate junior-high core labels.`);
+console.log(`OK: curriculum scope is locked to grades ז-ח, תשפ״ז; curriculum-version provenance is explicit; elementary and generic skill sources cannot validate cone curriculum labels.`);
