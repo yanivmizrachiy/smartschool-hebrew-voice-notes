@@ -16,84 +16,22 @@
   min-height:100%;
   color:var(--ay-navy);
 }
-.ayelet-sheet::before {
-  content:"";
-  position:absolute;
-  inset:-5mm -5mm auto auto;
-  width:72mm;
-  height:72mm;
-  border-radius:50%;
-  background:radial-gradient(circle at 60% 40%,rgba(37,99,235,.12),rgba(8,145,178,.04) 58%,transparent 60%);
-  pointer-events:none;
-}
-.ayelet-hero {
-  position:relative;
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:8px;
-  align-items:center;
-  margin-bottom:7px;
-  padding:8px 10px;
-  border:1px solid #b8cee7;
-  border-radius:13px;
-  background:linear-gradient(135deg,#f4f9ff 0%,#ffffff 52%,#f3fbfb 100%);
-  overflow:hidden;
-}
-.ayelet-hero::after {
-  content:"";
-  position:absolute;
-  width:64mm;
-  height:64mm;
-  left:-22mm;
-  bottom:-42mm;
-  border:7mm solid rgba(124,58,237,.06);
-  border-radius:50%;
-}
-.ayelet-kicker {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  width:max-content;
-  margin-bottom:4px;
-  padding:3px 8px;
-  border-radius:999px;
-  background:#e0f2fe;
-  color:#075985;
-  font-size:10.5px;
-  font-weight:800;
-  letter-spacing:.02em;
-}
+.ayelet-sheet::before { content:""; position:absolute; inset:-5mm -5mm auto auto; width:72mm; height:72mm; border-radius:50%; background:radial-gradient(circle at 60% 40%,rgba(37,99,235,.12),rgba(8,145,178,.04) 58%,transparent 60%); pointer-events:none; }
+.ayelet-hero { position:relative; display:grid; grid-template-columns:1.2fr .8fr; gap:8px; align-items:center; margin-bottom:7px; padding:8px 10px; border:1px solid #b8cee7; border-radius:13px; background:linear-gradient(135deg,#f4f9ff 0%,#ffffff 52%,#f3fbfb 100%); overflow:hidden; }
+.ayelet-hero::after { content:""; position:absolute; width:64mm; height:64mm; left:-22mm; bottom:-42mm; border:7mm solid rgba(124,58,237,.06); border-radius:50%; }
+.ayelet-kicker { display:inline-flex; align-items:center; gap:6px; width:max-content; margin-bottom:4px; padding:3px 8px; border-radius:999px; background:#e0f2fe; color:#075985; font-size:10.5px; font-weight:800; letter-spacing:.02em; }
 .ayelet-hero h2 { margin:0; font-size:20px; line-height:1.1; color:var(--ay-navy); }
 .ayelet-hero p { margin:4px 0 0; color:#49617a; font-size:11.4px; line-height:1.35; }
 .ayelet-hero svg { width:100%; max-height:105px; display:block; }
 .ayelet-tools { display:flex; flex-wrap:wrap; gap:5px; margin:0 0 7px; }
-.ayelet-tool {
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:4px 7px;
-  border:1px solid #d8e3ef;
-  border-radius:999px;
-  background:#fff;
-  font-size:10.4px;
-  font-weight:700;
-  color:#3d536b;
-}
+.ayelet-tool { display:inline-flex; align-items:center; gap:5px; padding:4px 7px; border:1px solid #d8e3ef; border-radius:999px; background:#fff; font-size:10.4px; font-weight:700; color:#3d536b; }
 .ayelet-tool::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--tool-color,#2563eb); }
 .ayelet-tool:nth-child(2)::before { background:#0f766e; }
 .ayelet-tool:nth-child(3)::before { background:#7c3aed; }
 .ayelet-tool:nth-child(4)::before { background:#d97706; }
 .ayelet-tool:nth-child(5)::before { background:#e11d48; }
 .ayelet-build-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:7px; }
-.ayelet-build-card {
-  position:relative;
-  min-height:125px;
-  padding:7px 8px 8px;
-  border:1px solid var(--ay-line);
-  border-radius:11px;
-  background:#fff;
-  overflow:hidden;
-}
+.ayelet-build-card { position:relative; min-height:125px; padding:7px 8px 8px; border:1px solid var(--ay-line); border-radius:11px; background:#fff; overflow:hidden; }
 .ayelet-build-card::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--accent,#2563eb); }
 .ayelet-build-card:nth-child(2)::before { background:#0f766e; }
 .ayelet-build-card:nth-child(3)::before { background:#e11d48; }
@@ -114,18 +52,7 @@
 .ayelet-cone-map { border:1px solid #b9cae0; border-radius:12px; background:linear-gradient(180deg,#fbfdff,#f7fbff); padding:5px; }
 .ayelet-cone-map svg { width:100%; height:165px; display:block; }
 .ayelet-legend { display:grid; gap:5px; align-content:start; }
-.ayelet-term {
-  display:grid;
-  grid-template-columns:11px 1fr;
-  gap:6px;
-  align-items:start;
-  padding:6px 7px;
-  border:1px solid #d6e1ec;
-  border-radius:8px;
-  background:#fff;
-  font-size:10.5px;
-  line-height:1.25;
-}
+.ayelet-term { display:grid; grid-template-columns:11px 1fr; gap:6px; align-items:start; padding:6px 7px; border:1px solid #d6e1ec; border-radius:8px; background:#fff; font-size:10.5px; line-height:1.25; }
 .ayelet-swatch { width:9px; height:9px; border-radius:50%; margin-top:2px; background:#0891b2; }
 .ayelet-term:nth-child(2) .ayelet-swatch { background:#06b6d4; }
 .ayelet-term:nth-child(3) .ayelet-swatch { background:#e11d48; }
@@ -139,22 +66,12 @@
 .ayelet-mini-check { border:1px solid #f3d2b0; border-radius:11px; padding:7px 9px; background:linear-gradient(135deg,#fffaf3,#fff); }
 .ayelet-mini-check h3 { margin:0 0 5px; color:#9a4d06; font-size:12.6px; }
 .ayelet-mini-check p { margin:4px 0; font-size:10.7px; line-height:1.35; }
-.ayelet-credit-band {
-  margin-top:4px;
-  padding:5px 8px;
-  border:1px solid #b9d7d1;
-  border-radius:9px;
-  background:linear-gradient(90deg,#effcf8,#f8fffd);
-  text-align:center;
-  color:#285e57;
-  font-size:9.8px;
-  font-weight:700;
-}
+.ayelet-credit-band { margin-top:4px; padding:5px 8px; border:1px solid #b9d7d1; border-radius:9px; background:linear-gradient(90deg,#effcf8,#f8fffd); text-align:center; color:#285e57; font-size:9.8px; font-weight:700; }
 .ayelet-credit-band strong { color:#0f5f56; }
+.ayelet-source-emphasis { padding:4px 6px; border-radius:7px; background:#eef8ff; color:#16324f; font-weight:700; }
+.ayelet-source-math { border:1px solid #d8e3ef; border-radius:10px; background:#fff; padding:7px 9px; }
 .ayelet-sheet .blank { border-color:#56697d; }
+.ayelet-page .gz-footer::before { content:none !important; display:none !important; }
 @media print {
-  .ayelet-hero,.ayelet-build-card,.ayelet-panel,.ayelet-cone-map,.ayelet-term,.ayelet-fill,.ayelet-mini-check,.ayelet-credit-band {
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-  }
+  .ayelet-hero,.ayelet-build-card,.ayelet-panel,.ayelet-cone-map,.ayelet-term,.ayelet-fill,.ayelet-mini-check,.ayelet-credit-band,.ayelet-source-math { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
