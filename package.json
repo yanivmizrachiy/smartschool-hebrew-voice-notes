@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node src/build.mjs",
     "build:print": "node src/build-print.mjs",
-    "validate": "node tests/validate.mjs",
+    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs",
     "check": "npm run build && npm run build:print && npm run validate"
   }
 }
