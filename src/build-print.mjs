@@ -16,7 +16,9 @@ for (const page of workbook.pages) {
   pages.push(match[0]);
 }
 
-fs.copyFileSync(path.join(root, 'worksheets', 'styles.css'), path.join(outDir, 'styles.css'));
+const baseCss = fs.readFileSync(path.join(root, 'worksheets', 'styles.css'), 'utf8');
+const printCss = `${baseCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n`;
+fs.writeFileSync(path.join(outDir, 'styles.css'), printCss, 'utf8');
 
 const book = `<!doctype html>
 <html lang="he" dir="rtl">
@@ -25,11 +27,6 @@ const book = `<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>חרוט — 8 דפי תרגול A4 להדפסה</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body{background:#fff}
-    .a4-page{margin:0 auto;box-shadow:none;page-break-after:always;break-after:page}
-    .a4-page:last-child{page-break-after:auto;break-after:auto}
-  </style>
 </head>
 <body>
 ${pages.join('\n')}
