@@ -18,6 +18,11 @@ for (const page of workbook.pages) {
   html = replaceOne(html, /<h1 class="page-title">[\s\S]*?<\/h1>/, `<h1 class="page-title">${page.title}</h1>`, 'page title', file);
   html = replaceOne(html, /<p class="page-subtitle">[\s\S]*?<\/p>/, `<p class="page-subtitle">${page.subtitle}</p>`, 'page subtitle', file);
   html = replaceOne(html, /<div class="page-number">[\s\S]*?<\/div>/, `<div class="page-number">${page.id}</div>`, 'page number', file);
+
+  // Preview navigation is hidden in print and maintained as source markup.
+  // Do not rewrite it during build: generated chrome must not dirty worksheet sources.
+  html = html.replace(/\sdata-word-bank="[^"]*"/g, '');
+
   html = replaceOne(
     html,
     /<footer class="gz-footer">[\s\S]*?<\/footer>/,
