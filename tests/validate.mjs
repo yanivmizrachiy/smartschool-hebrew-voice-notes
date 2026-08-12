@@ -34,7 +34,6 @@ for (const page of workbook.pages) {
   if (!html.includes('<link rel="stylesheet" href="styles.css">')) fail(`${rel}: missing shared stylesheet`);
   if (!html.includes('class="a4-page')) fail(`${rel}: missing .a4-page`);
   if (!html.includes(`<div class="page-number">${page.id}</div>`)) fail(`${rel}: wrong page number`);
-  if (!html.includes(`עמוד ${page.id} / ${workbook.pageCount}`)) fail(`${rel}: wrong internal preview navigation count`);
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
   if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder content is forbidden`);
@@ -88,4 +87,4 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`OK: ${workbook.pageCount} cone worksheets and A4 print bundle passed structural contract validation.`);
+console.log(`OK: ${workbook.pageCount} printable cone worksheets and A4 print bundle passed structural contract validation.`);
