@@ -1,16 +1,19 @@
 {
   "project": "חרוט",
-  "pageCount": 18,
-  "visualPageCount": 4,
-  "printSheetCount": 22,
+  "pageCount": 38,
+  "visualPageCount": 8,
+  "printSheetCount": 46,
   "openEndedSeries": true,
-  "targetGrades": ["ז", "ח"],
+  "targetGrades": [
+    "ז",
+    "ח"
+  ],
   "targetCurriculumVersion": "תשפ״ז",
   "curriculumCoreVerified": true,
   "curriculumCoreGrade": "ח",
   "curriculumSourceId": "moe-jhs-5787-grade8-plan",
   "curriculumStatus": "grade8-cone-cylinder-official-topic-verified",
-  "curriculumStatusNote": "נושא גליל וחרוט מופיע בתוכנית הרשמית המעודכנת לכיתה ח׳ תשפ״ז, בהיקף 6 שעות הוראה באוקטובר. בכיתה ז׳ החרוט אינו נושא הליבה; דפי ז׳ משמשים למיומנויות קדם. התקבלה גם שאלת משרד החינוך בנושא גביע חרוטי, שנרשמה כמקור נפרד; תווית 'מתוך תוכנית הלימודים' שמורה רק לשאלה רשמית שנשלפה ונרשמה.",
+  "curriculumStatusNote": "נושא גליל וחרוט מופיע בתוכנית הרשמית המעודכנת לכיתה ח׳ תשפ״ז. החוברת מתמקדת בחרוט בלבד, שומרת את כל 22 דפי הבסיס ומרחיבה אותם ל-46 דפי A4 מדורגים. שאלת גביע המיני־מקס שסופקה כמקור משרד החינוך משובצת לאחר רצף הכנה מפורש.",
   "optionalSupportPage": 18,
   "credit": {
     "line1": "יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים",
@@ -23,37 +26,588 @@
     "original": ""
   },
   "pages": [
-    {"id":1,"slug":"page-1","title":"חרוט — זיהוי ותכונות","subtitle":"מזהים, מסמנים ומשווים","curriculumCoreStatus":"grade8-topic-foundation","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":2,"slug":"page-2","title":"חרוט — מפריסה לגוף","subtitle":"מתאימים, משלימים ומנמקים","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"פריסות ומעבר בין תלת־ממד לדו־ממד מאומתים גם בכיתה ז׳ דרך תיבה וקובייה."},
-    {"id":3,"slug":"page-3","title":"חרוט — בודקים טענות","subtitle":"מכריעים, מתקנים ומסבירים","curriculumCoreStatus":"grade8-topic-foundation","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":4,"slug":"page-4","title":"חרוט — ייצוגים ומבטים","subtitle":"עוברים בין גוף, מבט ותיאור","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"ראייה מרחבית ומעבר בין ייצוג תלת־ממדי לדו־ממדי מאומתים בכיתה ז׳."},
-    {"id":5,"slug":"page-5","title":"חרוט — פריסות וחתכים","subtitle":"משלימים, משווים ומנמקים","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"נושא החרוט מאומת בח׳; פריסות וחתכים ספציפיים נשמרים כהרחבה עד מקור מפורש לתת־המיומנות."},
-    {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"נושא החרוט מאומת בח׳; חישובי הנפח נשמרים כחלק מהתרגול/הרחבה ללא ייחוס של שאלה רשמית."},
-    {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"grade8-topic-extension","curriculumSourceId":"moe-jhs-5787-grade8-plan","scopeNote":"יישומים והשוואות הם הרחבה תקינה של נושא החרוט; גליל מופיע רק בהשוואה ישירה שמשרתת הבנת חרוט."},
-    {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"grade8-topic-related","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"grade8-topic-plus-verified-skill","curriculumSourceId":"moe-jhs-5787-grade8-plan","verifiedSkill":"משפט פיתגורס מאומת בכיתה ח׳.","sourceReferenceId":"razpages-209","sourceQuestionRelation":"adapted-overlap","scopeNote":"מבנה המשימה חופף מהותית לשאלת RZ-209-1 מ-razpages; אין להוסיף את שאלת המקור כעמוד נפרד רק בשל שינוי נתונים."},
-    {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":11,"slug":"page-11","title":"חרוט — פריסה במספרים","subtitle":"מקשרים בין גזרה, קשת והיקף בסיס","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":12,"slug":"page-12","title":"חרוט — חוקרים ומתכננים","subtitle":"בוחרים, בודקים, משווים ומנמקים","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"grade8-official-topic-pair","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":14,"slug":"page-14","title":"חרוט — חתכים והסקה","subtitle":"מנבאים, משווים ומנמקים לפי מקום החיתוך","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"advanced-grade8-topic-application","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"grade8-topic-integrative-assessment","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
-    {"id":17,"slug":"page-17","title":"דף מלווה המחשה","subtitle":"בס'ד","curriculumCoreStatus":"source-locked-user-document","sourceId":"drive-cone-companion-ayelet","specialLayout":true,"contentLocked":true},
-    {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."}
+    {
+      "id": 1,
+      "slug": "page-1",
+      "title": "חרוט — זיהוי ותכונות",
+      "subtitle": "מזהים, מסמנים ומשווים",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 2,
+      "slug": "page-2",
+      "title": "חרוט — מפריסה לגוף",
+      "subtitle": "מתאימים, משלימים ומנמקים",
+      "curriculumCoreStatus": "grade8-topic-related",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "פריסות ומעבר בין תלת־ממד לדו־ממד מאומתים גם בכיתה ז׳ דרך תיבה וקובייה."
+    },
+    {
+      "id": 3,
+      "slug": "page-3",
+      "title": "חרוט — בודקים טענות",
+      "subtitle": "מכריעים, מתקנים ומסבירים",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 4,
+      "slug": "page-4",
+      "title": "חרוט — ייצוגים ומבטים",
+      "subtitle": "עוברים בין גוף, מבט ותיאור",
+      "curriculumCoreStatus": "grade8-topic-related",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "ראייה מרחבית ומעבר בין ייצוג תלת־ממדי לדו־ממדי מאומתים בכיתה ז׳."
+    },
+    {
+      "id": 5,
+      "slug": "page-5",
+      "title": "חרוט — פריסות וחתכים",
+      "subtitle": "משלימים, משווים ומנמקים",
+      "curriculumCoreStatus": "grade8-topic-extension",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "scopeNote": "נושא החרוט מאומת בח׳; פריסות וחתכים ספציפיים נשמרים כהרחבה עד מקור מפורש לתת־המיומנות."
+    },
+    {
+      "id": 6,
+      "slug": "page-6",
+      "title": "חרוט — נפח",
+      "subtitle": "מחשבים, משווים ומסיקים",
+      "curriculumCoreStatus": "grade8-topic-extension",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "scopeNote": "נושא החרוט מאומת בח׳; חישובי הנפח נשמרים כחלק מהתרגול/הרחבה ללא ייחוס של שאלה רשמית."
+    },
+    {
+      "id": 7,
+      "slug": "page-7",
+      "title": "חרוט — השוואות ויישומים",
+      "subtitle": "משלבים ייצוגים, חישוב ונימוק",
+      "curriculumCoreStatus": "grade8-topic-extension",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "scopeNote": "יישומים והשוואות הם הרחבה תקינה של נושא החרוט; גליל מופיע רק בהשוואה ישירה שמשרתת הבנת חרוט."
+    },
+    {
+      "id": 8,
+      "slug": "page-8",
+      "title": "חרוט — משימות מסכמות",
+      "subtitle": "מזהים, מקשרים, מחשבים ומנמקים",
+      "curriculumCoreStatus": "grade8-topic-related",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 9,
+      "slug": "page-9",
+      "title": "חרוט — יישום רב־שלבי",
+      "subtitle": "חתך צירי, פיתגורס, נפח והשוואה",
+      "curriculumCoreStatus": "grade8-topic-plus-verified-skill",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳.",
+      "sourceReferenceId": "razpages-209",
+      "sourceQuestionRelation": "adapted-overlap",
+      "scopeNote": "מבנה המשימה חופף מהותית לשאלת RZ-209-1 מ-razpages; אין להוסיף את שאלת המקור כעמוד נפרד רק בשל שינוי נתונים."
+    },
+    {
+      "id": 10,
+      "slug": "page-10",
+      "title": "חרוט — מתכננים לפי נתונים",
+      "subtitle": "עובדים לאחור מנפח וממידות",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 11,
+      "slug": "page-11",
+      "title": "חרוט — פריסה במספרים",
+      "subtitle": "מקשרים בין גזרה, קשת והיקף בסיס",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 12,
+      "slug": "page-12",
+      "title": "חרוט — חוקרים ומתכננים",
+      "subtitle": "בוחרים, בודקים, משווים ומנמקים",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 13,
+      "slug": "page-13",
+      "title": "חרוט וגליל — משווים נפחים",
+      "subtitle": "אותו בסיס, אותו גובה — קשרים, חישובים והסברים",
+      "curriculumCoreStatus": "grade8-official-topic-pair",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 14,
+      "slug": "page-14",
+      "title": "חרוט — חתכים והסקה",
+      "subtitle": "מנבאים, משווים ומנמקים לפי מקום החיתוך",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 15,
+      "slug": "page-15",
+      "title": "חרוט — פריסה, יוצר וזווית",
+      "subtitle": "מקשרים בין גוף תלת־ממדי לגזרת העיגול",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 16,
+      "slug": "page-16",
+      "title": "חרוט — הערכה אינטגרטיבית",
+      "subtitle": "משלבים זיהוי, פריסה, חתך, חישוב והסבר",
+      "curriculumCoreStatus": "grade8-topic-integrative-assessment",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 17,
+      "slug": "page-17",
+      "title": "דף מלווה המחשה",
+      "subtitle": "בס'ד",
+      "curriculumCoreStatus": "source-locked-user-document",
+      "sourceId": "drive-cone-companion-ayelet",
+      "specialLayout": true,
+      "contentLocked": true
+    },
+    {
+      "id": 18,
+      "slug": "page-18",
+      "title": "יסודות לחרוט — מחסן מילים והגדרות",
+      "subtitle": "מושגי קדם מחטיבת הביניים לפני שאלות החרוט",
+      "curriculumCoreStatus": "verified-junior-high-foundations",
+      "sourceIds": [
+        "moe-jhs-circle-grade7",
+        "moe-jhs-box-grade7",
+        "moe-jhs-pythagoras-grade8"
+      ],
+      "curriculumNote": "עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."
+    },
+    {
+      "id": 19,
+      "slug": "page-19",
+      "title": "חרוט — פוגשים אותו בעולם",
+      "subtitle": "מזהים חרוט לפי תכונות, לא רק לפי מראה",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 20,
+      "slug": "page-20",
+      "title": "חרוט — רדיוס, גובה ויוצר",
+      "subtitle": "קוראים סימונים ומבחינים בין המידות",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 21,
+      "slug": "page-21",
+      "title": "חרוט — קוראים את נוסחת הנפח",
+      "subtitle": "מבינים כל סימון לפני שמחשבים",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 22,
+      "slug": "page-22",
+      "title": "חרוט — נפח בצעד אחד",
+      "subtitle": "מציבים רדיוס וגובה ומקפידים על יחידות",
+      "curriculumCoreStatus": "grade8-topic-core-practice",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 23,
+      "slug": "page-23",
+      "title": "חרוט — בוחרים חישוב נכון",
+      "subtitle": "לומדים מטעויות אופייניות בנפח",
+      "curriculumCoreStatus": "grade8-topic-core-practice",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 24,
+      "slug": "page-24",
+      "title": "חרוט — מבינים חתך צירי",
+      "subtitle": "מחברים בין הגוף למשולש שמתקבל בחיתוך",
+      "curriculumCoreStatus": "grade8-topic-plus-verified-skill",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 25,
+      "slug": "page-25",
+      "title": "חרוט — שטח החתך הצירי",
+      "subtitle": "משתמשים בקוטר כבסיס המשולש",
+      "curriculumCoreStatus": "grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 26,
+      "slug": "page-26",
+      "title": "חרוט — פיתגורס בתוך החתך",
+      "subtitle": "מזהים ניצבים, יתר ומשוואה מתאימה",
+      "curriculumCoreStatus": "grade8-topic-plus-verified-skill",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    },
+    {
+      "id": 27,
+      "slug": "page-27",
+      "title": "חרוט — מוצאים את הגובה",
+      "subtitle": "משתמשים בפיתגורס בלי לערבב עדיין נפח",
+      "curriculumCoreStatus": "grade8-topic-plus-verified-skill",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    },
+    {
+      "id": 28,
+      "slug": "page-28",
+      "title": "חרוט — מוצאים רדיוס או יוצר",
+      "subtitle": "משנים את הנעלם ושומרים על אותו קשר גאומטרי",
+      "curriculumCoreStatus": "grade8-topic-plus-verified-skill",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    },
+    {
+      "id": 29,
+      "slug": "page-29",
+      "title": "חרוט — המרת מידות",
+      "subtitle": "מאחדים יחידות לפני חישוב",
+      "curriculumCoreStatus": "grade8-topic-foundation",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 30,
+      "slug": "page-30",
+      "title": "חרוט — המרה ונפח",
+      "subtitle": "שומרים על יחידות עקביות בתוך בעיה",
+      "curriculumCoreStatus": "grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 31,
+      "slug": "page-31",
+      "title": "חרוט — בחיי היום־יום",
+      "subtitle": "משתמשים במודל חרוטי בתוך חפצים אמיתיים",
+      "curriculumCoreStatus": "grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 32,
+      "slug": "page-32",
+      "title": "חרוט — מתכוננים למשימה רב־שלבית",
+      "subtitle": "מחברים פיתגורס ונפח בלי לדלג על שלבים",
+      "curriculumCoreStatus": "grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 33,
+      "slug": "page-33",
+      "title": "חרוט — גביע ה״מיני־מקס״",
+      "subtitle": "משימת יעד רשמית: חתך צירי, פיתגורס ונפח",
+      "curriculumCoreStatus": "official-grade8-question",
+      "sourceId": "moe-cone-question-6-minimax-user-supplied",
+      "sourceQuestionRelation": "exact-source-transcription"
+    },
+    {
+      "id": 34,
+      "slug": "page-34",
+      "title": "חרוט — פיתגורס ושטח חתך",
+      "subtitle": "מוצאים מידה חסרה ואז מחשבים שטח",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    },
+    {
+      "id": 35,
+      "slug": "page-35",
+      "title": "חרוט — עובדים לאחור מנפח",
+      "subtitle": "משנים את נקודת המוצא של הבעיה",
+      "curriculumCoreStatus": "advanced-grade8-topic-application",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 36,
+      "slug": "page-36",
+      "title": "חרוט — משווים פתרונות",
+      "subtitle": "מאתרים טעות, מכריעים ומתקנים",
+      "curriculumCoreStatus": "grade8-topic-reasoning",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan"
+    },
+    {
+      "id": 37,
+      "slug": "page-37",
+      "title": "חרוט — האם הנתונים אפשריים?",
+      "subtitle": "משתמשים בפיתגורס גם ככלי לבדיקת היגיון",
+      "curriculumCoreStatus": "grade8-topic-reasoning",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    },
+    {
+      "id": 38,
+      "slug": "page-38",
+      "title": "חרוט — משימה מסכמת חדשה",
+      "subtitle": "משלבים מידות, פיתגורס, נפח ושטח חתך בהקשר חדש",
+      "curriculumCoreStatus": "grade8-topic-integrative-assessment",
+      "curriculumSourceId": "moe-jhs-5787-grade8-plan",
+      "verifiedSkill": "משפט פיתגורס מאומת בכיתה ח׳."
+    }
   ],
   "visualPages": [
-    {"slug":"puzzle-1-question","title":"כמה חרוטים מסתתרים בתמונה?","type":"puzzle-question","answerSlug":"puzzle-1-answer","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
-    {"slug":"puzzle-2-question","title":"איפה מסתתר החרוט?","type":"puzzle-question","answerSlug":"puzzle-2-answer","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"},
-    {"slug":"puzzle-1-answer","title":"דף תשובות — כמה חרוטים מסתתרים בתמונה?","type":"puzzle-answer","questionSlug":"puzzle-1-question","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
-    {"slug":"puzzle-2-answer","title":"דף תשובות — איפה מסתתר החרוט?","type":"puzzle-answer","questionSlug":"puzzle-2-question","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"}
+    {
+      "slug": "puzzle-1-question",
+      "title": "כמה חרוטים מסתתרים בתמונה?",
+      "type": "puzzle-question",
+      "answerSlug": "puzzle-1-answer",
+      "verifiedConeCount": 15,
+      "sceneAsset": "visual-assets/count-scene.svg"
+    },
+    {
+      "slug": "puzzle-2-question",
+      "title": "איפה מסתתר החרוט?",
+      "type": "puzzle-question",
+      "answerSlug": "puzzle-2-answer",
+      "verifiedConeCount": 1,
+      "sceneAsset": "visual-assets/find-scene.svg"
+    },
+    {
+      "slug": "puzzle-1-answer",
+      "title": "דף תשובות — כמה חרוטים מסתתרים בתמונה?",
+      "type": "puzzle-answer",
+      "questionSlug": "puzzle-1-question",
+      "verifiedConeCount": 15,
+      "sceneAsset": "visual-assets/count-scene.svg"
+    },
+    {
+      "slug": "puzzle-2-answer",
+      "title": "דף תשובות — איפה מסתתר החרוט?",
+      "type": "puzzle-answer",
+      "questionSlug": "puzzle-2-question",
+      "verifiedConeCount": 1,
+      "sceneAsset": "visual-assets/find-scene.svg"
+    },
+    {
+      "slug": "jerusalem-cone-vision",
+      "title": "חרוט — לומדים ורואים רחוק",
+      "type": "image-page",
+      "sceneAsset": "visual-assets/jerusalem-cone-vision.svg",
+      "imageOnly": true,
+      "creditRequired": false,
+      "verifiedConeCount": 0
+    },
+    {
+      "slug": "cone-in-my-head",
+      "title": "הכול חרוט לי בראש",
+      "type": "image-page",
+      "sceneAsset": "visual-assets/cone-in-my-head.svg",
+      "imageOnly": true,
+      "creditRequired": false,
+      "verifiedConeCount": 0
+    },
+    {
+      "slug": "world-of-cones",
+      "title": "עולם החרוטים",
+      "type": "image-page",
+      "sceneAsset": "visual-assets/world-of-cones.svg",
+      "imageOnly": true,
+      "creditRequired": false,
+      "verifiedConeCount": 0
+    },
+    {
+      "slug": "anis-basics",
+      "title": "מה המצב הלימודי של אניס?",
+      "type": "image-page",
+      "sceneAsset": "visual-assets/anis-basics.svg",
+      "imageOnly": true,
+      "creditRequired": false,
+      "verifiedConeCount": 0
+    }
   ],
   "printSequence": [
-    {"kind":"worksheet","id":1},{"kind":"worksheet","id":2},{"kind":"worksheet","id":3},{"kind":"worksheet","id":4},{"kind":"worksheet","id":5},{"kind":"worksheet","id":6},{"kind":"worksheet","id":7},{"kind":"worksheet","id":8},
-    {"kind":"visual","slug":"puzzle-1-question"},
-    {"kind":"worksheet","id":9},{"kind":"worksheet","id":10},{"kind":"worksheet","id":11},{"kind":"worksheet","id":12},
-    {"kind":"visual","slug":"puzzle-2-question"},
-    {"kind":"worksheet","id":13},{"kind":"worksheet","id":14},{"kind":"worksheet","id":15},{"kind":"worksheet","id":16},{"kind":"worksheet","id":17},{"kind":"worksheet","id":18},
-    {"kind":"visual","slug":"puzzle-1-answer"},{"kind":"visual","slug":"puzzle-2-answer"}
+    {
+      "kind": "worksheet",
+      "id": 1
+    },
+    {
+      "kind": "worksheet",
+      "id": 19
+    },
+    {
+      "kind": "worksheet",
+      "id": 3
+    },
+    {
+      "kind": "worksheet",
+      "id": 20
+    },
+    {
+      "kind": "visual",
+      "slug": "anis-basics"
+    },
+    {
+      "kind": "worksheet",
+      "id": 4
+    },
+    {
+      "kind": "worksheet",
+      "id": 2
+    },
+    {
+      "kind": "visual",
+      "slug": "jerusalem-cone-vision"
+    },
+    {
+      "kind": "worksheet",
+      "id": 5
+    },
+    {
+      "kind": "visual",
+      "slug": "puzzle-1-question"
+    },
+    {
+      "kind": "worksheet",
+      "id": 21
+    },
+    {
+      "kind": "worksheet",
+      "id": 22
+    },
+    {
+      "kind": "worksheet",
+      "id": 6
+    },
+    {
+      "kind": "worksheet",
+      "id": 23
+    },
+    {
+      "kind": "visual",
+      "slug": "cone-in-my-head"
+    },
+    {
+      "kind": "worksheet",
+      "id": 7
+    },
+    {
+      "kind": "worksheet",
+      "id": 24
+    },
+    {
+      "kind": "worksheet",
+      "id": 25
+    },
+    {
+      "kind": "worksheet",
+      "id": 14
+    },
+    {
+      "kind": "worksheet",
+      "id": 26
+    },
+    {
+      "kind": "visual",
+      "slug": "world-of-cones"
+    },
+    {
+      "kind": "worksheet",
+      "id": 27
+    },
+    {
+      "kind": "worksheet",
+      "id": 28
+    },
+    {
+      "kind": "worksheet",
+      "id": 9
+    },
+    {
+      "kind": "worksheet",
+      "id": 29
+    },
+    {
+      "kind": "worksheet",
+      "id": 30
+    },
+    {
+      "kind": "worksheet",
+      "id": 31
+    },
+    {
+      "kind": "visual",
+      "slug": "puzzle-2-question"
+    },
+    {
+      "kind": "worksheet",
+      "id": 32
+    },
+    {
+      "kind": "worksheet",
+      "id": 33
+    },
+    {
+      "kind": "worksheet",
+      "id": 34
+    },
+    {
+      "kind": "worksheet",
+      "id": 8
+    },
+    {
+      "kind": "worksheet",
+      "id": 10
+    },
+    {
+      "kind": "worksheet",
+      "id": 35
+    },
+    {
+      "kind": "worksheet",
+      "id": 13
+    },
+    {
+      "kind": "worksheet",
+      "id": 36
+    },
+    {
+      "kind": "worksheet",
+      "id": 11
+    },
+    {
+      "kind": "worksheet",
+      "id": 15
+    },
+    {
+      "kind": "worksheet",
+      "id": 37
+    },
+    {
+      "kind": "worksheet",
+      "id": 12
+    },
+    {
+      "kind": "worksheet",
+      "id": 38
+    },
+    {
+      "kind": "worksheet",
+      "id": 16
+    },
+    {
+      "kind": "worksheet",
+      "id": 17
+    },
+    {
+      "kind": "worksheet",
+      "id": 18
+    },
+    {
+      "kind": "visual",
+      "slug": "puzzle-1-answer"
+    },
+    {
+      "kind": "visual",
+      "slug": "puzzle-2-answer"
+    }
   ]
 }
