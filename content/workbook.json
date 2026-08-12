@@ -1,6 +1,8 @@
 {
   "project": "חרוט",
   "pageCount": 18,
+  "visualPageCount": 4,
+  "printSheetCount": 22,
   "openEndedSeries": true,
   "targetGrades": ["ז", "ח"],
   "targetCurriculumVersion": "תשפ״ז",
@@ -39,5 +41,19 @@
     {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"grade8-topic-integrative-assessment","curriculumSourceId":"moe-jhs-5787-grade8-plan"},
     {"id":17,"slug":"page-17","title":"דף מלווה המחשה","subtitle":"בס'ד","curriculumCoreStatus":"source-locked-user-document","sourceId":"drive-cone-companion-ayelet","specialLayout":true,"contentLocked":true},
     {"id":18,"slug":"page-18","title":"יסודות לחרוט — מחסן מילים והגדרות","subtitle":"מושגי קדם מחטיבת הביניים לפני שאלות החרוט","curriculumCoreStatus":"verified-junior-high-foundations","sourceIds":["moe-jhs-circle-grade7","moe-jhs-box-grade7","moe-jhs-pythagoras-grade8"],"curriculumNote":"עמוד תמיכה אופציונלי המבוסס על מושגים ומיומנויות רשמיים. השאלות בעמוד זה אינן שאלות מועתקות ממשרד החינוך ולכן אינן מסומנות 'מתוך תוכנית הלימודים'."}
+  ],
+  "visualPages": [
+    {"slug":"puzzle-1-question","title":"שעשועון ראשון — כמה חרוטים מסתתרים?","type":"puzzle-question","answerSlug":"puzzle-1-answer","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
+    {"slug":"puzzle-2-question","title":"שעשועון שני — איפה החרוט היחיד?","type":"puzzle-question","answerSlug":"puzzle-2-answer","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"},
+    {"slug":"puzzle-1-answer","title":"שעשועון ראשון — דף תשובות","type":"puzzle-answer","questionSlug":"puzzle-1-question","verifiedConeCount":15,"sceneAsset":"visual-assets/count-scene.svg"},
+    {"slug":"puzzle-2-answer","title":"שעשועון שני — דף תשובות","type":"puzzle-answer","questionSlug":"puzzle-2-question","verifiedConeCount":1,"sceneAsset":"visual-assets/find-scene.svg"}
+  ],
+  "printSequence": [
+    {"kind":"worksheet","id":1},{"kind":"worksheet","id":2},{"kind":"worksheet","id":3},{"kind":"worksheet","id":4},{"kind":"worksheet","id":5},{"kind":"worksheet","id":6},{"kind":"worksheet","id":7},{"kind":"worksheet","id":8},
+    {"kind":"visual","slug":"puzzle-1-question"},
+    {"kind":"worksheet","id":9},{"kind":"worksheet","id":10},{"kind":"worksheet","id":11},{"kind":"worksheet","id":12},
+    {"kind":"visual","slug":"puzzle-2-question"},
+    {"kind":"worksheet","id":13},{"kind":"worksheet","id":14},{"kind":"worksheet","id":15},{"kind":"worksheet","id":16},{"kind":"worksheet","id":17},{"kind":"worksheet","id":18},
+    {"kind":"visual","slug":"puzzle-1-answer"},{"kind":"visual","slug":"puzzle-2-answer"}
   ]
 }
