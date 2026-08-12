@@ -1,5 +1,17 @@
 {
   "sources": {
+    "moe-jhs-5787-curriculum-index": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "תכניות לימודים ופריסות הוראה — עדכון תוכנית הלימודים במתמטיקה החל מתשפ״ז",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-index-verified; linked grade 7/8 geometry documents not yet opened in this environment",
+      "gradeScope": ["ז", "ח"],
+      "curriculumVersion": "תשפ״ז",
+      "curriculumRole": "authoritative-index",
+      "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים"]
+    },
     "moe-bodies-cone-net": {
       "type": "official",
       "publisher": "משרד החינוך",
@@ -7,6 +19,8 @@
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "source-page-verified",
+      "gradeScope": ["ה", "ו"],
+      "curriculumRole": "reference-only-for-junior-high",
       "use": ["פריסה", "מעבר בין ייצוגים"]
     },
     "moe-nets-sections": {
@@ -16,6 +30,8 @@
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "source-page-verified; activity files not yet opened",
+      "gradeScope": ["ה", "ו"],
+      "curriculumRole": "reference-only-for-junior-high",
       "use": ["פריסות", "חתכים", "גופי סיבוב", "חשיבה מרחבית"]
     },
     "moe-cone-pyramid-volume": {
@@ -25,6 +41,8 @@
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "source-page-verified",
+      "gradeScope": ["ו"],
+      "curriculumRole": "reference-only-for-junior-high",
       "use": ["נפח חרוט"]
     },
     "razpages-209": {
@@ -34,12 +52,18 @@
       "sourceVerified": true,
       "questionExtracted": true,
       "status": "full-task-read",
+      "gradeScope": ["חומר פנימי"],
+      "curriculumRole": "design-and-question-pattern-reference",
       "use": ["חרוט", "חתך צירי", "נפח", "יישום"]
     }
   },
   "rules": {
+    "targetGrades": ["ז", "ח"],
+    "targetCurriculumVersion": "תשפ״ז",
     "curriculumLabel": "מתוך תוכנית הלימודים",
     "requireOfficialSource": true,
-    "requireQuestionExtractedForCurriculumLabel": true
+    "requireQuestionExtractedForCurriculumLabel": true,
+    "requireMatchingGradeScope": true,
+    "elementarySourcesCannotValidateJuniorHighCore": true
   }
 }
