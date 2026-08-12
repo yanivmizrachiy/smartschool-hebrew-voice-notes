@@ -25,11 +25,11 @@
     {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"not-verified"},
     {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"not-verified"},
     {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"partial-skill-alignment-only","verifiedSkill":"משפט פיתגורס מתאים לכיתה ח׳; ההקשר החרוטי עצמו טרם אומת בתשפ״ז"},
+    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"enrichment-application","verifiedSkill":"פיתגורס הוא מיומנות של כיתה ח׳; משרד החינוך מציין יישום במרחב בקוביות ובתיבות. יישום בחרוט נשמר כהעשרה עד אימות מפורש בתשפ״ז."},
     {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"not-verified"},
     {"id":11,"slug":"page-11","title":"חרוט — פריסה במספרים","subtitle":"מקשרים בין גזרה, קשת והיקף בסיס","curriculumCoreStatus":"not-verified"},
     {"id":12,"slug":"page-12","title":"חרוט — חוקרים ומתכננים","subtitle":"בוחרים, בודקים, משווים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"partial-skill-alignment-only","verifiedSkill":"גליל הוא נושא מאומת בתוכנית ח׳ הקודמת; יחס חרוט–גליל טרם אומת בתשפ״ז"},
+    {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"legacy-reference-only","verifiedSkill":"גליל מופיע בתוכנית ח׳ שלפני עדכון תשפ״ז; יחס חרוט–גליל אינו מאומת כליבת התוכנית החדשה."},
     {"id":14,"slug":"page-14","title":"חרוט — חתכים והסקה","subtitle":"מנבאים, משווים ומנמקים לפי מקום החיתוך","curriculumCoreStatus":"not-verified"},
     {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"not-verified"},
     {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"not-verified"}
