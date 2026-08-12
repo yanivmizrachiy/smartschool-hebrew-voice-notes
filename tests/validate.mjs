@@ -14,6 +14,8 @@ if (!/@page\s*\{[^}]*size:\s*A4/i.test(css)) fail('styles.css: missing @page A4'
 if (!/width:\s*210mm/.test(css) || !/height:\s*297mm/.test(css)) fail('styles.css: missing 210mm × 297mm A4 geometry');
 if (!/\.gz-footer/.test(css)) fail('styles.css: missing .gz-footer');
 
+const forbiddenOutputText = /\b(?:דמו|demo|placeholder|lorem|sample|mock|fake|todo)\b/i;
+
 for (const page of workbook.pages) {
   const rel = `worksheets/${page.slug}.html`;
   const file = path.join(root, rel);
@@ -27,7 +29,7 @@ for (const page of workbook.pages) {
   if (!html.includes(`עמוד ${page.id} / ${workbook.pageCount}`)) fail(`${rel}: wrong navigation count`);
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
-  if (/\b(?:דמו|placeholder|lorem)\b/i.test(html)) fail(`${rel}: demo/placeholder content`);
+  if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder/temporary content is forbidden`);
   if (/class="rule-box"/.test(html)) fail(`${rel}: explanation/rule box is forbidden in student worksheets`);
   if (/<(?:h2|h3|p)[^>]*>[^<]*(?:תרגול|אתגר|העמקה|ביסוס|שלב\s*\d+)/.test(html)) fail(`${rel}: visible difficulty/stage label`);
   if (/שאלה\s*\d+/.test(html)) fail(`${rel}: visible question numbering is forbidden`);
