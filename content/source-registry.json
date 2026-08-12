@@ -147,10 +147,23 @@
       "title": "עמוד-209.html",
       "sourceVerified": true,
       "questionExtracted": true,
-      "status": "full-task-read",
+      "status": "full-task-read; overlaps page-9 and is not duplicated as a separate worksheet",
       "gradeScope": ["חומר פנימי"],
       "curriculumRole": "design-and-question-pattern-reference",
       "use": ["חרוט", "חתך צירי", "נפח", "יישום"]
+    },
+    "user-image-cone-question-2026-08-12": {
+      "type": "user-provided-image-reference",
+      "publisher": "מקור משתמש",
+      "title": "צילום שאלה בנושא חרוט — 2026-08-12",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "image-visible-in-chat; registered as a user source; binary image was not exposed as a downloadable conversation file to the GitHub connector",
+      "location": "current-chat-image",
+      "publicUrlStored": false,
+      "curriculumRole": "user-question-source-reference",
+      "use": ["חרוט", "בדיקת שאלות", "מניעת כפילות", "הרחבת בנק המקורות"],
+      "scopeNote": "יש לשמור את המקור כצילום משתמש בלבד ולא לייחס אותו למשרד החינוך או למקור חיצוני אחר ללא אימות. אין ליצור עמוד נוסף אם תוכן השאלה חופף מהותית לדף קיים."
     },
     "drive-cone-companion-ayelet": {
       "type": "user-drive-reference",

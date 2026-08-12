@@ -35,8 +35,13 @@ body { direction:rtl; font-family:"Rubik","Noto Sans Hebrew",Arial,sans-serif; c
 .figure-medium { max-height:150px; }
 .mini-figure { max-height:100px; }
 .math-ltr { direction:ltr; unicode-bidi:isolate; display:inline-block; font-family:"Noto Sans",Arial,sans-serif; font-weight:700; }
-.blank { display:inline-block; min-width:var(--blank-width,6ch); height:1.2em; border-bottom:1.5px solid var(--ink); vertical-align:-.08em; }
+.blank { display:inline-block; min-width:var(--blank-width,6ch); height:1.2em; border-bottom:1.5px solid var(--ink); vertical-align:-.08em; break-inside:avoid; page-break-inside:avoid; }
 .bw-3 { --blank-width:3ch; } .bw-4 { --blank-width:4ch; } .bw-5 { --blank-width:5ch; } .bw-6 { --blank-width:6ch; } .bw-8 { --blank-width:8ch; } .bw-10 { --blank-width:10ch; } .bw-12 { --blank-width:12ch; } .bw-16 { --blank-width:16ch; } .bw-20 { --blank-width:20ch; } .bw-32 { --blank-width:32ch; }
+.answer-row { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 18px; margin:5px 0; }
+.answer-inline { display:inline-flex; direction:rtl; align-items:baseline; gap:5px; white-space:nowrap; unicode-bidi:isolate; break-inside:avoid; page-break-inside:avoid; }
+.answer-inline .math-ltr { flex:0 0 auto; }
+.answer-inline .blank { flex:0 0 auto; }
+.answer-inline .unit { flex:0 0 auto; white-space:nowrap; }
 .answer-lines { margin-top:4px; }
 .answer-line { height:1.25em; border-bottom:1px solid #8994a5; margin-top:4px; }
 .draw-box { height:72px; border:1.5px dashed #94a3b8; border-radius:8px; background:#fff; }
