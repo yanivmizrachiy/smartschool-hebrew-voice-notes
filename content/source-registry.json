@@ -12,14 +12,28 @@
       "curriculumRole": "authoritative-index",
       "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים"]
     },
+    "moe-jhs-pythagoras-grade8": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "משפט פיתגורס במישור ובמרחב",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-topic-page-verified; multiple listed activities explicitly marked כיתה ח",
+      "gradeScope": ["ח"],
+      "curriculumRole": "verified-junior-high-skill",
+      "use": ["משפט פיתגורס", "חישובי אורכים", "יישום במרחב"],
+      "scopeNote": "מאמת את מיומנות משפט פיתגורס בכיתה ח; אינו מאמת את החרוט עצמו כנושא ליבה בתוכנית תשפ״ז."
+    },
     "moe-bodies-cone-net": {
       "type": "official",
       "publisher": "משרד החינוך",
       "title": "הכרת גופים — חרוט: מפריסה לגוף",
       "sourceVerified": true,
       "questionExtracted": false,
-      "status": "source-page-verified",
-      "gradeScope": ["ה", "ו"],
+      "status": "source-page-verified; item is on the elementary portal but no explicit grade is shown for this specific cone applet",
+      "schoolStage": "יסודי",
+      "gradeScope": [],
+      "gradeScopeStatus": "not-explicit-on-item",
       "curriculumRole": "reference-only-for-junior-high",
       "use": ["פריסה", "מעבר בין ייצוגים"]
     },
@@ -30,6 +44,7 @@
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "source-page-verified; activity files not yet opened",
+      "schoolStage": "יסודי",
       "gradeScope": ["ה", "ו"],
       "curriculumRole": "reference-only-for-junior-high",
       "use": ["פריסות", "חתכים", "גופי סיבוב", "חשיבה מרחבית"]
@@ -41,6 +56,7 @@
       "sourceVerified": true,
       "questionExtracted": false,
       "status": "source-page-verified",
+      "schoolStage": "יסודי",
       "gradeScope": ["ו"],
       "curriculumRole": "reference-only-for-junior-high",
       "use": ["נפח חרוט"]
