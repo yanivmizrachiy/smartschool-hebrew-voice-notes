@@ -14,6 +14,25 @@
       "curriculumRole": "authoritative-index",
       "use": ["קביעת מקור האמת לתוכנית החדשה של חטיבת הביניים", "איתור מסמכי הגאומטריה וחומרי הליווי"]
     },
+    "moe-jhs-5787-grade8-plan": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "תוכנית לימודים ופריסת הוראה במתמטיקה לכיתה ח׳ — תשפ״ז",
+      "url": "https://meyda.education.gov.il/files/Pop/0files/matmatika/Chativat-Beynayim/tashpaz/plan_8.pdf",
+      "sourceVerified": true,
+      "questionExtracted": false,
+      "status": "official-PDF-source-provided-by-user; automated fetch from Ministry server returned 403; source URL and curriculum facts supplied directly by user on 2026-08-12",
+      "machineFetchStatus": "403-forbidden",
+      "gradeScope": ["ח"],
+      "curriculumVersion": "תשפ״ז",
+      "curriculumVersionVerified": true,
+      "curriculumRole": "authoritative-grade8-curriculum-plan",
+      "verifiedTopic": "גליל וחרוט",
+      "verifiedTeachingHours": 6,
+      "verifiedMonth": "אוקטובר",
+      "use": ["אימות חרוט וגליל כנושא רשמי בכיתה ח׳ תשפ״ז", "מיפוי דפי החרוט לכיתה ח׳", "בסיס לתווית בהתאם לתוכנית הלימודים"],
+      "scopeNote": "המקור מאמת את נושא חרוט/גליל בכיתה ח׳ תשפ״ז. הוא אינו כשלעצמו שאלה רשמית שנשלפה, ולכן אין להשתמש בו לבדו בתווית 'מתוך תוכנית הלימודים' על שאלה."
+    },
     "moe-jhs-box-grade7": {
       "type": "official",
       "publisher": "משרד החינוך",
@@ -139,28 +158,32 @@
       "title": "דף מלווה המחשה חרוט. מקוצר (6)",
       "sourceVerified": true,
       "questionExtracted": true,
-      "status": "full-document-read-and-pedagogically-adapted",
+      "status": "full-document-read; content locked; design-only reproduction in page 17",
       "location": "connected-user-google-drive",
       "publicUrlStored": false,
       "curriculumRole": "activity-source-reference",
-      "use": ["בניית דגם חרוט", "זיהוי חלקי חרוט", "בסיס", "שפת הבסיס", "קודקוד", "יוצר", "גובה", "ניסוח הגדרה"],
-      "scopeNote": "המסמך נקרא בפועל ועובד לדף 17 בעיצוב חדש ובניסוח מתמטי מדויק יותר. אין לראות בו כשלעצמו הוכחה לליבת ז׳–ח׳ תשפ״ז."
+      "use": ["בניית דגם חרוט", "זיהוי חלקי חרוט", "בסיס", "קודקוד", "קו יוצר", "גובה", "ניסוח הגדרה"],
+      "scopeNote": "עמוד 17 חייב לשמור את תוכן ה-Google Doc ללא שינוי תוכני; מותר לשנות רק עיצוב, פריסה ואיורים."
     }
   },
   "rules": {
     "targetGrades": ["ז", "ח"],
     "targetCurriculumVersion": "תשפ״ז",
     "curriculumLabel": "מתוך תוכנית הלימודים",
+    "curriculumAlignedLabel": "בהתאם לתוכנית הלימודים",
     "requireOfficialSource": true,
     "requireQuestionExtractedForCurriculumLabel": true,
     "requireMatchingGradeScope": true,
     "requireExplicitCurriculumVersionVerification": true,
     "officialExplanationsMaySupportWording": true,
+    "grade8ConeCylinderCoreVerified": true,
+    "grade8ConeCylinderSource": "moe-jhs-5787-grade8-plan",
     "elementarySourcesCannotValidateJuniorHighCore": true,
-    "verifiedSkillDoesNotImplyVerifiedConeContext": true,
-    "verbalOpenResponseSupportRequired": true,
+    "verifiedSkillDoesNotImplyVerifiedQuestionProvenance": true,
+    "verbalOpenResponseSupportRequiredForProjectAuthoredPages": true,
     "verbalSupportPage": "page-18",
+    "verbalSupportExemptPages": ["page-17"],
     "acceptedVerbalSupportModes": ["word-bank", "multiple-choice", "matching", "sentence-frame"],
-    "cone5787LabelRequiresDirectGeometryDocumentRead": true
+    "officialQuestionLabelRequiresExtractedOfficialQuestion": true
   }
 }
