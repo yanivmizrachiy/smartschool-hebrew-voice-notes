@@ -23,7 +23,7 @@ if (JSON.stringify(registry.rules?.targetGrades) !== JSON.stringify(workbook.tar
 
 for (const [id, source] of Object.entries(registry.sources || {})) {
   const grades = new Set(source.gradeScope || []);
-  const isElementaryOnly = [...grades].length > 0 && [...grades].every(g => ['ה', 'ו'].includes(g));
+  const isElementaryOnly = source.schoolStage === 'יסודי' || ([...grades].length > 0 && [...grades].every(g => ['ה', 'ו'].includes(g)));
   if (isElementaryOnly && source.curriculumRole !== 'reference-only-for-junior-high') {
     fail(`${id}: elementary source must be reference-only-for-junior-high`);
   }
