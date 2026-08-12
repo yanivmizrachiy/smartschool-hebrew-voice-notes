@@ -5,8 +5,8 @@
   "targetGrades": ["ז", "ח"],
   "targetCurriculumVersion": "תשפ״ז",
   "curriculumCoreVerified": false,
-  "curriculumStatus": "supplementary-until-explicit-grade-7-8-verification",
-  "curriculumStatusNote": "16 הדפים נשמרים במלואם. אין להציגם כליבת תוכנית ז׳–ח׳ או כ'בהתאם לתוכנית הלימודים' עד אימות מפורש במסמכי התחום הגאומטרי המעודכנים לתשפ״ז.",
+  "curriculumStatus": "supplementary-until-explicit-grade-7-8-cone-verification",
+  "curriculumStatusNote": "16 הדפים נשמרים במלואם. אין להציג את החרוט כליבת תוכנית ז׳–ח׳ או להשתמש בתוויות 'מתוך/בהתאם לתוכנית הלימודים' עד אימות מפורש של חרוט במסמכי התחום הגאומטרי המעודכנים לתשפ״ז.",
   "credit": {
     "line1": "יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים",
     "line2": "הדרכה במחוז ירושלים והעיר ירושלים - מנח\"י, בהובלת איילת קריספין"
@@ -17,21 +17,21 @@
     "original": ""
   },
   "pages": [
-    {"id":1,"slug":"page-1","title":"חרוט — זיהוי ותכונות","subtitle":"מזהים, מסמנים ומשווים","curriculumCoreStatus":"not-verified"},
-    {"id":2,"slug":"page-2","title":"חרוט — מפריסה לגוף","subtitle":"מתאימים, משלימים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":3,"slug":"page-3","title":"חרוט — בודקים טענות","subtitle":"מכריעים, מתקנים ומסבירים","curriculumCoreStatus":"not-verified"},
-    {"id":4,"slug":"page-4","title":"חרוט — ייצוגים ומבטים","subtitle":"עוברים בין גוף, מבט ותיאור","curriculumCoreStatus":"not-verified"},
-    {"id":5,"slug":"page-5","title":"חרוט — פריסות וחתכים","subtitle":"משלימים, משווים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"not-verified"},
-    {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"not-verified"},
-    {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"enrichment-application","verifiedSkill":"פיתגורס הוא מיומנות של כיתה ח׳; משרד החינוך מציין יישום במרחב בקוביות ובתיבות. יישום בחרוט נשמר כהעשרה עד אימות מפורש בתשפ״ז."},
-    {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"not-verified"},
-    {"id":11,"slug":"page-11","title":"חרוט — פריסה במספרים","subtitle":"מקשרים בין גזרה, קשת והיקף בסיס","curriculumCoreStatus":"not-verified"},
-    {"id":12,"slug":"page-12","title":"חרוט — חוקרים ומתכננים","subtitle":"בוחרים, בודקים, משווים ומנמקים","curriculumCoreStatus":"not-verified"},
-    {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"legacy-reference-only","verifiedSkill":"גליל מופיע בתוכנית ח׳ שלפני עדכון תשפ״ז; יחס חרוט–גליל אינו מאומת כליבת התוכנית החדשה."},
-    {"id":14,"slug":"page-14","title":"חרוט — חתכים והסקה","subtitle":"מנבאים, משווים ומנמקים לפי מקום החיתוך","curriculumCoreStatus":"not-verified"},
-    {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"not-verified"},
-    {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"not-verified"}
+    {"id":1,"slug":"page-1","title":"חרוט — זיהוי ותכונות","subtitle":"מזהים, מסמנים ומשווים","curriculumCoreStatus":"enrichment","curriculumNote":"חרוט עצמו לא אומת כנושא ליבה בז׳–ח׳ תשפ״ז."},
+    {"id":2,"slug":"page-2","title":"חרוט — מפריסה לגוף","subtitle":"מתאימים, משלימים ומנמקים","curriculumCoreStatus":"enrichment-skill-application","verifiedSkill":"פריסות ומעבר בין תלת־ממד לדו־ממד מאומתים בכיתה ז׳ דרך תיבה וקובייה; ההקשר החרוטי נשאר העשרה."},
+    {"id":3,"slug":"page-3","title":"חרוט — בודקים טענות","subtitle":"מכריעים, מתקנים ומסבירים","curriculumCoreStatus":"enrichment","curriculumNote":"נשען על מושג החרוט שאינו מאומת כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":4,"slug":"page-4","title":"חרוט — ייצוגים ומבטים","subtitle":"עוברים בין גוף, מבט ותיאור","curriculumCoreStatus":"enrichment-skill-application","verifiedSkill":"ראייה מרחבית ומעבר בין ייצוג תלת־ממדי לדו־ממדי מאומתים בכיתה ז׳; ההקשר החרוטי נשאר העשרה."},
+    {"id":5,"slug":"page-5","title":"חרוט — פריסות וחתכים","subtitle":"משלימים, משווים ומנמקים","curriculumCoreStatus":"enrichment","curriculumNote":"פריסות הן מיומנות רלוונטית, אך חתכי חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":6,"slug":"page-6","title":"חרוט — נפח","subtitle":"מחשבים, משווים ומסיקים","curriculumCoreStatus":"enrichment","curriculumNote":"נפח חרוט לא אומת בתוכנית ז׳–ח׳ החדשה; המקור הרשמי שנמצא הוא יסודי/כיתה ו׳."},
+    {"id":7,"slug":"page-7","title":"חרוט — השוואות ויישומים","subtitle":"משלבים ייצוגים, חישוב ונימוק","curriculumCoreStatus":"enrichment","curriculumNote":"נשען על נפח חרוט שאינו מאומת כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":8,"slug":"page-8","title":"חרוט — משימות מסכמות","subtitle":"מזהים, מקשרים, מחשבים ומנמקים","curriculumCoreStatus":"enrichment","curriculumNote":"משלב רכיבי חרוט שאינם מאומתים כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":9,"slug":"page-9","title":"חרוט — יישום רב־שלבי","subtitle":"חתך צירי, פיתגורס, נפח והשוואה","curriculumCoreStatus":"enrichment-skill-application","verifiedSkill":"משפט פיתגורס מאומת בכיתה ח׳; משרד החינוך מציין יישום במרחב בקוביות ובתיבות. יישום בחרוט נשמר כהעשרה."},
+    {"id":10,"slug":"page-10","title":"חרוט — מתכננים לפי נתונים","subtitle":"עובדים לאחור מנפח וממידות","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"תכנון לאחור טוב מתמטית, אך נשען על נפח חרוט שאינו מאומת כליבה."},
+    {"id":11,"slug":"page-11","title":"חרוט — פריסה במספרים","subtitle":"מקשרים בין גזרה, קשת והיקף בסיס","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"קשרי קשת–היקף בפריסת חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":12,"slug":"page-12","title":"חרוט — חוקרים ומתכננים","subtitle":"בוחרים, בודקים, משווים ומנמקים","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"חקר ותכנון טובים, אך ההקשר החרוטי אינו עוגן ליבה מאומת."},
+    {"id":13,"slug":"page-13","title":"חרוט וגליל — משווים נפחים","subtitle":"אותו בסיס, אותו גובה — קשרים, חישובים והסברים","curriculumCoreStatus":"legacy-reference-only","verifiedSkill":"גליל הופיע במסגרת ח׳ שלפני עדכון תשפ״ז; יחס חרוט–גליל אינו מאומת כליבת התוכנית החדשה."},
+    {"id":14,"slug":"page-14","title":"חרוט — חתכים והסקה","subtitle":"מנבאים, משווים ומנמקים לפי מקום החיתוך","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"חתכי חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":15,"slug":"page-15","title":"חרוט — פריסה, יוצר וזווית","subtitle":"מקשרים בין גוף תלת־ממדי לגזרת העיגול","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"יוצר וזווית מרכזית בפריסת חרוט לא אומתו כליבת ז׳–ח׳ תשפ״ז."},
+    {"id":16,"slug":"page-16","title":"חרוט — הערכה אינטגרטיבית","subtitle":"משלבים זיהוי, פריסה, חתך, חישוב והסבר","curriculumCoreStatus":"advanced-enrichment","curriculumNote":"משלב כמה רכיבי חרוט שאינם מאומתים כליבת ז׳–ח׳ תשפ״ז."}
   ]
 }
