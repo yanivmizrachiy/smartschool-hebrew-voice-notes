@@ -180,10 +180,10 @@
     "grade8ConeCylinderSource": "moe-jhs-5787-grade8-plan",
     "elementarySourcesCannotValidateJuniorHighCore": true,
     "verifiedSkillDoesNotImplyVerifiedQuestionProvenance": true,
-    "verbalOpenResponseSupportRequiredForProjectAuthoredPages": true,
-    "verbalSupportPage": "page-18",
-    "verbalSupportExemptPages": ["page-17"],
-    "acceptedVerbalSupportModes": ["word-bank", "multiple-choice", "matching", "sentence-frame"],
+    "targetedVerbalSupportOnlyWhenNeeded": true,
+    "optionalSupportPage": "page-18",
+    "acceptedVerbalSupportModes": ["multiple-choice", "matching", "sentence-frame", "local-word-bank", "diagram"],
+    "blanketWordBankForbidden": true,
     "officialQuestionLabelRequiresExtractedOfficialQuestion": true
   }
 }
