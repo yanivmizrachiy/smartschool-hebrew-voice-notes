@@ -1,0 +1,36 @@
+{
+  "sources": {
+    "moe-bodies-cone-net": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "הכרת גופים — חרוט: מפריסה לגוף",
+      "verified": true,
+      "use": ["פריסה", "מעבר בין ייצוגים"]
+    },
+    "moe-nets-sections": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "פריסות וחתכים",
+      "verified": true,
+      "use": ["פריסות", "חתכים", "חשיבה מרחבית"]
+    },
+    "moe-cone-pyramid-volume": {
+      "type": "official",
+      "publisher": "משרד החינוך",
+      "title": "נפח חרוט ופירמידה",
+      "verified": true,
+      "use": ["נפח חרוט"]
+    },
+    "razpages-209": {
+      "type": "internal-reference",
+      "publisher": "yanivmizrachiy/razpages",
+      "title": "עמוד-209.html",
+      "verified": true,
+      "use": ["חרוט", "חתך צירי", "נפח", "יישום"]
+    }
+  },
+  "rules": {
+    "curriculumLabel": "מתוך תוכנית הלימודים",
+    "requireVerifiedSourceForCurriculumLabel": true
+  }
+}
