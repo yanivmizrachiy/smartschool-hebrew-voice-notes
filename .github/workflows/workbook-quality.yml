@@ -1,0 +1,24 @@
+name: Cone workbook quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sync generated chrome
+        run: npm run build
+      - name: Ensure generated files are committed
+        run: git diff --exit-code
+      - name: Validate workbook contracts
+        run: npm run validate
