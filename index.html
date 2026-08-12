@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <title>חרוט — דפי עבודה להדפסה</title>
+  <link rel="stylesheet" href="viewer/viewer.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-kicker">דפי עבודה A4 להדפסה</div>
+      <h1>חרוט</h1>
+    </div>
+    <div class="header-actions">
+      <button id="print-current" class="btn btn-secondary" type="button">הדפס עמוד נוכחי</button>
+      <a class="btn btn-primary" href="print.html" target="_blank" rel="noopener">הדפס את כל החוברת</a>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="toolbar" aria-label="ניווט בין דפי העבודה">
+      <button id="prev-page" class="nav-button" type="button" aria-label="העמוד הקודם">הקודם</button>
+      <div class="page-picker-wrap">
+        <label for="page-picker">עמוד</label>
+        <select id="page-picker" aria-label="בחירת דף עבודה"></select>
+        <span id="page-status" class="page-status"></span>
+      </div>
+      <button id="next-page" class="nav-button" type="button" aria-label="העמוד הבא">הבא</button>
+    </section>
+
+    <section class="viewer-card">
+      <div id="loading" class="loading">טוען את דפי העבודה…</div>
+      <iframe id="worksheet-frame" title="דף עבודה להדפסה" loading="eager"></iframe>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>יניב רז - מדריך מחוזי חט"ב בעיר ירושלים</span>
+    <span>הדרכה במחוז ירושלים והעיר ירושלים - מנח"י, בהובלת איילת קריספין</span>
+  </footer>
+
+  <script type="module" src="viewer/app.js"></script>
+</body>
+</html>
