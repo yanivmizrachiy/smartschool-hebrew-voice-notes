@@ -1,0 +1,40 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd();
+const workbook = JSON.parse(fs.readFileSync(path.join(root, 'content/workbook.json'), 'utf8'));
+const outDir = path.join(root, 'print');
+fs.mkdirSync(outDir, { recursive: true });
+
+const pages = [];
+for (const page of workbook.pages) {
+  const src = path.join(root, 'worksheets', `${page.slug}.html`);
+  let html = fs.readFileSync(src, 'utf8');
+  html = html.replace(/<nav class="preview-nav"[\s\S]*?<\/nav>/, '');
+  const match = html.match(/<main class="a4-page[^>]*>[\s\S]*?<\/main>/);
+  if (!match) throw new Error(`Cannot extract A4 page from ${src}`);
+  pages.push(match[0]);
+}
+
+fs.copyFileSync(path.join(root, 'worksheets', 'styles.css'), path.join(outDir, 'styles.css'));
+
+const book = `<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>חרוט — 8 דפי תרגול A4 להדפסה</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{background:#fff}
+    .a4-page{margin:0 auto;box-shadow:none;page-break-after:always;break-after:page}
+    .a4-page:last-child{page-break-after:auto;break-after:auto}
+  </style>
+</head>
+<body>
+${pages.join('\n')}
+</body>
+</html>`;
+
+fs.writeFileSync(path.join(outDir, 'harut-a4.html'), book, 'utf8');
+console.log(`Built print/harut-a4.html with ${pages.length} A4 pages.`);
