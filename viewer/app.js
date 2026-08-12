@@ -5,6 +5,7 @@ const prev = document.querySelector('#prev-page');
 const next = document.querySelector('#next-page');
 const printCurrent = document.querySelector('#print-current');
 const loading = document.querySelector('#loading');
+const summary = document.querySelector('#workbook-summary');
 
 let workbook = null;
 let currentIndex = 0;
@@ -64,6 +65,8 @@ fetch('content/workbook.json', { cache: 'no-store' })
   })
   .then(data => {
     workbook = data;
+    if (summary) summary.textContent = `${workbook.pages.length} דפי עבודה A4 להדפסה`;
+    document.title = `חרוט — ${workbook.pages.length} דפי עבודה להדפסה`;
     renderPicker();
     const requested = requestedPage();
     const found = workbook.pages.findIndex(page => page.id === requested);
