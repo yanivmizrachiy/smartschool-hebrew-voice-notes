@@ -13,12 +13,8 @@ for (const page of workbook.pages) {
   const file = path.join(root, 'worksheets', `${page.slug}.html`);
   if (!fs.existsSync(file)) throw new Error(`Missing worksheet: ${file}`);
   let html = fs.readFileSync(file, 'utf8');
-  const prev = page.id > 1 ? `<a href="page-${page.id - 1}.html">הקודם</a>` : '<span></span>';
-  const next = page.id < workbook.pageCount ? `<a href="page-${page.id + 1}.html">הבא</a>` : '<span></span>';
-  const nav = `<nav class="preview-nav" aria-label="ניווט בין דפי החרוט">${prev}<span class="meta">חרוט — עמוד ${page.id} / ${workbook.pageCount}</span>${next}</nav>`;
 
   html = replaceOne(html, /<title>[^<]*<\/title>/, `<title>${page.title}</title>`, 'document title', file);
-  html = replaceOne(html, /<nav class="preview-nav"[\s\S]*?<\/nav>/, nav, 'preview nav', file);
   html = replaceOne(html, /<h1 class="page-title">[\s\S]*?<\/h1>/, `<h1 class="page-title">${page.title}</h1>`, 'page title', file);
   html = replaceOne(html, /<p class="page-subtitle">[\s\S]*?<\/p>/, `<p class="page-subtitle">${page.subtitle}</p>`, 'page subtitle', file);
   html = replaceOne(html, /<div class="page-number">[\s\S]*?<\/div>/, `<div class="page-number">${page.id}</div>`, 'page number', file);
@@ -33,4 +29,4 @@ for (const page of workbook.pages) {
   fs.writeFileSync(file, html, 'utf8');
 }
 
-console.log(`Synced ${workbook.pages.length} worksheet pages from content/workbook.json`);
+console.log(`Synced ${workbook.pages.length} printable worksheet pages from content/workbook.json`);
