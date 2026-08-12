@@ -5,6 +5,7 @@ const printButton = document.querySelector('#print-all-button');
 async function loadEntry(entry, workbook) {
   let url;
   let label;
+  let isVisual = false;
   if (entry.kind === 'worksheet') {
     const page = workbook.pages.find(item => item.id === entry.id);
     if (!page) throw new Error(`עמוד ${entry.id}: לא נמצא במקור האמת`);
@@ -15,6 +16,7 @@ async function loadEntry(entry, workbook) {
     if (!page) throw new Error(`דף חזותי ${entry.slug}: לא נמצא במקור האמת`);
     url = `visual-pages/${page.slug}.html`;
     label = page.title;
+    isVisual = true;
   } else {
     throw new Error(`סוג דף לא מוכר: ${entry.kind}`);
   }
@@ -24,6 +26,11 @@ async function loadEntry(entry, workbook) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const main = doc.querySelector('.a4-page');
   if (!main) throw new Error(`${label}: לא נמצא A4`);
+  if (isVisual) {
+    for (const image of main.querySelectorAll('img[src^="../visual-assets/"]')) {
+      image.setAttribute('src', image.getAttribute('src').replace(/^\.\.\//, ''));
+    }
+  }
   return main;
 }
 
