@@ -1,10 +1,10 @@
-name: Apply textbook batch B
+name: Apply final reasoning pages
 
 on:
-  workflow_dispatch:
   push:
     paths:
-      - tools/apply-textbook-batch-b.py
+      - tools/apply-page36-layout.py
+      - tools/apply-page37-layout.py
 
 permissions:
   contents: write
@@ -20,10 +20,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: python3 tools/apply-textbook-batch-b.py
-      - run: npm run build
-      - run: npm run build:print
-      - run: npm run validate
+      - name: Apply focused textbook edits
+        run: |
+          python3 tools/apply-page36-layout.py
+          python3 tools/apply-page37-layout.py
+          npm run build
+          npm run build:print
+          npm run validate
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Expand volume sequence into full textbook workspaces
+          commit_message: Expand final reasoning pages into full textbook workspaces
