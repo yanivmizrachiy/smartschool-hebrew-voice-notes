@@ -60,7 +60,8 @@ addEventListener('load', () => {
         const rect = el.getBoundingClientRect();
         if (rect.top >= zoneBottom) continue;
         contentBottom = Math.max(contentBottom, Math.min(rect.bottom, zoneBottom));
-        blockInfo.push(`${el.tagName.toLowerCase()}.${String(el.className || '').replace(/\\s+/g,'.').slice(0,60)}:${Math.round(rect.height)}`);
+        const cls = String(el.className || '').replace(/\\s+/g,'.').slice(0,60);
+        blockInfo.push(el.tagName.toLowerCase() + '.' + cls + ':' + Math.round(rect.height));
       }
 
       const gapPx = Math.max(0, zoneBottom - contentBottom);
