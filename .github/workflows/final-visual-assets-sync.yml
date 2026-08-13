@@ -1,0 +1,130 @@
+name: Final visual assets sync
+
+on:
+  push:
+    branches: [fix/final-visual-assets-20260813]
+    paths: [.github/workflows/final-visual-assets-sync.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/final-visual-assets-20260813
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download verified Drive originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/harut-src
+          declare -A ids=(
+            [anis]='1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1'
+            [head]='1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm'
+            [jer]='1sha_Sz6qyoz-biOnlZFT6Q1Jb6DMuyc4'
+            [ym]='1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue'
+            [bridge]='1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN'
+            [ein]='1-CP3q-zkq_7bpmLDfRGuvXpSpfyp-atg'
+            [market]='15BHe9AvZS0lcfm4-mnFxSdiPxBlQDHZz'
+          )
+          for key in anis head jer ym bridge ein market; do
+            curl -L --fail --retry 2 --connect-timeout 20 \
+              "https://drive.usercontent.google.com/download?id=${ids[$key]}&export=download&confirm=t" \
+              -o "/tmp/harut-src/$key.png"
+            test "$(stat -c%s "/tmp/harut-src/$key.png")" -gt 2000000
+            file "/tmp/harut-src/$key.png" | grep -qi 'PNG image data'
+          done
+
+      - name: Build four print-quality A4 WebP assets
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from PIL import Image, ImageOps
+          from pathlib import Path
+          src=Path('/tmp/harut-src')
+          out=Path('visual-assets')
+          W,H=1055,1491
+          def save(name, source):
+              im=Image.open(src/source).convert('RGB')
+              if im.size != (W,H):
+                  im=ImageOps.fit(im,(W,H),method=Image.Resampling.LANCZOS)
+              im.save(out/name,'WEBP',quality=90,method=6)
+          save('anis-basics.webp','anis.png')
+          save('cone-in-my-head.webp','head.png')
+          save('jerusalem-cone-vision.webp','jer.png')
+          canvas=Image.new('RGB',(W,H),'white')
+          margin,gap=24,16
+          cw=(W-2*margin-gap)//2
+          ch=(H-2*margin-gap)//2
+          for i,name in enumerate(['ym.png','bridge.png','ein.png','market.png']):
+              im=Image.open(src/name).convert('RGB')
+              tile=ImageOps.fit(im,(cw,ch),method=Image.Resampling.LANCZOS)
+              x=margin+(i%2)*(cw+gap)
+              y=margin+(i//2)*(ch+gap)
+              canvas.paste(tile,(x,y))
+          canvas.save(out/'world-of-cones.webp','WEBP',quality=90,method=6)
+          for name in ['anis-basics.webp','cone-in-my-head.webp','jerusalem-cone-vision.webp','world-of-cones.webp']:
+              p=out/name
+              im=Image.open(p)
+              assert im.size==(W,H), (name,im.size)
+              assert p.stat().st_size>180000, (name,p.stat().st_size)
+              print(name, im.size, p.stat().st_size)
+          PY
+
+      - name: Point visual pages at repo-hosted high-quality assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          mapping={
+            'visual-pages/anis-basics.html':('anis-basics.jpg','anis-basics.webp'),
+            'visual-pages/cone-in-my-head.html':('cone-in-my-head.jpg','cone-in-my-head.webp'),
+            'visual-pages/jerusalem-cone-vision.html':('jerusalem-cone-vision.jpg','jerusalem-cone-vision.webp'),
+            'visual-pages/world-of-cones.html':('world-of-cones.jpg','world-of-cones.webp'),
+          }
+          for path,(old,new) in mapping.items():
+              p=Path(path)
+              text=p.read_text(encoding='utf-8')
+              assert old in text, (path,old)
+              text=text.replace(old,new)
+              if path.endswith('world-of-cones.html'):
+                  text=text.replace('image-page-art image-page-contain','image-page-art')
+              p.write_text(text,encoding='utf-8')
+          PY
+          rm -f visual-assets/anis-basics.jpg \
+                visual-assets/cone-in-my-head.jpg \
+                visual-assets/jerusalem-cone-vision.jpg \
+                visual-assets/world-of-cones.jpg \
+                visual-assets/DO-NOT-MERGE-TINY-IMAGE-ASSETS.txt
+
+      - name: Full workbook QA and 46-page render
+        run: |
+          npm ci
+          npm run build
+          npm run build:print
+          npm run validate
+          python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
+          sleep 2
+          node tools/render-layout-pages.mjs
+          test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
+
+      - name: Commit verified assets to fix branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add visual-assets visual-pages qa/VISUAL_SOURCE_AUDIT_2026-08-13.md 2>/dev/null || true
+          git add -u visual-assets visual-pages
+          git diff --cached --check
+          git diff --cached --quiet && { echo 'No asset changes to commit'; exit 1; }
+          git commit -m 'Replace compressed visual pages with print-quality A4 assets'
+          git push origin HEAD:fix/final-visual-assets-20260813
