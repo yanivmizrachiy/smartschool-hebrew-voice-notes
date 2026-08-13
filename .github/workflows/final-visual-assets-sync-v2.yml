@@ -1,0 +1,80 @@
+name: Final visual assets sync v2
+on:
+  push:
+    branches: [fix/final-visual-assets-20260813]
+    paths: [.github/workflows/final-visual-assets-sync-v2.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/final-visual-assets-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download Drive images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/harut-src
+          while read -r key id; do
+            curl -L --fail --retry 2 "https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t" -o "/tmp/harut-src/$key.img"
+            test "$(stat -c%s "/tmp/harut-src/$key.img")" -gt 300000
+          done <<'EOF'
+          anis 1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1
+          head 1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm
+          jer 1sha_Sz6qyoz-biOnlZFT6Q1Jb6DMuyc4
+          ym 1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue
+          bridge 1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN
+          ein 1-CP3q-zkq_7bpmLDfRGuvXpSpfyp-atg
+          market 15BHe9AvZS0lcfm4-mnFxSdiPxBlQDHZz
+          EOF
+      - name: Create A4 assets and update pages
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from PIL import Image,ImageOps
+          from pathlib import Path
+          s=Path('/tmp/harut-src'); o=Path('visual-assets'); W,H=1055,1491
+          for n in ['anis','head','jer','ym','bridge','ein','market']:
+              im=Image.open(s/f'{n}.img'); print(n,im.format,im.size)
+              assert im.size==(W,H); im.verify()
+          def rgb(n): return Image.open(s/f'{n}.img').convert('RGB')
+          for dest,src in [('anis-basics.webp','anis'),('cone-in-my-head.webp','head'),('jerusalem-cone-vision.webp','jer')]:
+              rgb(src).save(o/dest,'WEBP',quality=90,method=6)
+          c=Image.new('RGB',(W,H),'white'); m,g=24,16; cw=(W-2*m-g)//2; ch=(H-2*m-g)//2
+          for i,n in enumerate(['ym','bridge','ein','market']):
+              tile=ImageOps.fit(rgb(n),(cw,ch),method=Image.Resampling.LANCZOS)
+              c.paste(tile,(m+(i%2)*(cw+g),m+(i//2)*(ch+g)))
+          c.save(o/'world-of-cones.webp','WEBP',quality=90,method=6)
+          for n in ['anis-basics.webp','cone-in-my-head.webp','jerusalem-cone-vision.webp','world-of-cones.webp']:
+              p=o/n; im=Image.open(p); assert im.size==(W,H); assert p.stat().st_size>180000
+          mp={'visual-pages/anis-basics.html':('anis-basics.jpg','anis-basics.webp'),'visual-pages/cone-in-my-head.html':('cone-in-my-head.jpg','cone-in-my-head.webp'),'visual-pages/jerusalem-cone-vision.html':('jerusalem-cone-vision.jpg','jerusalem-cone-vision.webp'),'visual-pages/world-of-cones.html':('world-of-cones.jpg','world-of-cones.webp')}
+          for path,(old,new) in mp.items():
+              p=Path(path); t=p.read_text(); assert old in t; t=t.replace(old,new).replace('image-page-art image-page-contain','image-page-art'); p.write_text(t)
+          PY
+          rm -f visual-assets/anis-basics.jpg visual-assets/cone-in-my-head.jpg visual-assets/jerusalem-cone-vision.jpg visual-assets/world-of-cones.jpg visual-assets/DO-NOT-MERGE-TINY-IMAGE-ASSETS.txt
+      - name: Validate and render all 46 pages
+        run: |
+          npm ci
+          npm run build
+          npm run build:print
+          npm run validate
+          python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
+          sleep 2
+          node tools/render-layout-pages.mjs
+          test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
+      - name: Commit final assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add visual-assets visual-pages
+          git diff --cached --check
+          git commit -m 'Replace compressed visual pages with print-quality A4 assets'
+          git push origin HEAD:fix/final-visual-assets-20260813
