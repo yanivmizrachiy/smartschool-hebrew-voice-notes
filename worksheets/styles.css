@@ -266,7 +266,7 @@ body {
   font-size:10.8px;
 }
 .compact-practice { font-size:11px; padding:4px 7px; border-radius:8px; background:var(--warm-soft); border:1px solid color-mix(in srgb,var(--warm) 25%,var(--line)); }
-.sheet-footer { position:absolute; right:10mm; left:10mm; bottom:14mm; display:flex; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:2mm; color:var(--muted); font-size:9.5px; }
+.sheet-footer { display:none !important; }
 .gz-footer { position:absolute; right:10mm; left:10mm; bottom:4mm; padding-top:3px; border-top:2px solid var(--brand); text-align:center; line-height:1.15; }
 .gz-footer .f1 { font-size:11.5px; font-weight:600; color:var(--ink); }
 .gz-footer .f2 { font-size:10.2px; color:var(--muted); margin-top:1px; }
