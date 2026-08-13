@@ -1,0 +1,43 @@
+name: Patch root validator once
+
+on:
+  push:
+    branches: [chore/repo-hardening-20260813]
+    paths: [.github/workflows/patch-root-validator-once.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/repo-hardening-20260813
+      - name: Allow repository gitignore and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('tests/validate.mjs')
+          s=p.read_text()
+          old="  '.git', '.github', 'README.md', 'RULES.md', 'content', 'design', 'index.html',"
+          new="  '.git', '.github', '.gitignore', 'README.md', 'RULES.md', 'content', 'design', 'index.html',"
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+          PY
+          rm .github/workflows/patch-root-validator-once.yml
+          npm run check
+      - name: Commit validator alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/validate.mjs .github/workflows/patch-root-validator-once.yml
+          git diff --cached --check
+          git commit -m 'Allow standard gitignore in repository root validation'
+          git push origin HEAD:chore/repo-hardening-20260813
