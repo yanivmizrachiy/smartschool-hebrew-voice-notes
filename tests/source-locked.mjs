@@ -27,9 +27,11 @@ const requiredSourceText = [
   'ב. התבוננו בחרוטים שבנו חברי הקבוצה',
   'כתבו אילו צורות הנדסיות בונות את החרוט?',
   'נכתוב בכתיב מתמטי',
-  'בסיס החרוט הוא - מעגל',
+  // Two student-facing mathematical corrections are deliberately locked:
+  // the cone base is a disk (עיגול), and a generator meets the base boundary (שפת הבסיס).
+  'בסיס החרוט הוא - עיגול',
   'הנקודה שבה נפגשים כל הקטעים (הקשיות) נקראת -קודקוד החרוט',
-  'קטע המחבר נקודה על המעגל אל קודקוד החרוט נקרא- הקו היוצר',
+  'קטע המחבר נקודה על שפת הבסיס אל קודקוד החרוט נקרא - הקו היוצר',
   'השלימו את הגדרת החרוט',
   'חרוט הוא גוף תלת מימדי שיש לו בסיס בצורת',
   'לחרוט קודקוד יחיד הנמצא',
@@ -63,4 +65,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: page-17 keeps the locked Google Doc content while allowing isolated visual styling.');
+console.log('OK: page-17 keeps the source activity while locking the two required mathematical corrections.');
