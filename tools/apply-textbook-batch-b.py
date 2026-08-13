@@ -68,3 +68,5 @@ rules = '''
 if marker not in c:
     c += rules
 css.write_text(c)
+
+# This comment intentionally triggers the guarded batch workflow after it has been installed.
