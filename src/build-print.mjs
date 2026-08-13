@@ -63,11 +63,13 @@ for (const [sequenceIndex, item] of sequence.entries()) {
 }
 
 const baseCss = fs.readFileSync(path.join(root, 'worksheets', 'styles.css'), 'utf8');
+const textbookCssPath = path.join(root, 'worksheets', 'textbook-layout.css');
+const textbookCss = fs.existsSync(textbookCssPath) ? fs.readFileSync(textbookCssPath, 'utf8') : '';
 const specialCssPath = path.join(root, 'worksheets', 'ayelet-special.css');
 const specialCss = fs.existsSync(specialCssPath) ? fs.readFileSync(specialCssPath, 'utf8') : '';
 const visualCssPath = path.join(root, 'visual-pages', 'visual.css');
 const visualCss = fs.existsSync(visualCssPath) ? fs.readFileSync(visualCssPath, 'utf8') : '';
-const printCss = `${baseCss}\n\n${specialCss}\n\n${visualCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n.sheet-footer { display:none !important; }\n`;
+const printCss = `${baseCss}\n\n${textbookCss}\n\n${specialCss}\n\n${visualCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n.sheet-footer { display:none !important; }\n`;
 fs.writeFileSync(path.join(outDir, 'styles.css'), printCss, 'utf8');
 
 const sheetCount = workbook.printSheetCount || pages.length;

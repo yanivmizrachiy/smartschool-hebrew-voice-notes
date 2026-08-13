@@ -18,6 +18,10 @@ for (const [index, item] of sequence.entries()) {
   }
 }
 
+// Pages identified by the 46-page visual audit as under-filled after pedagogic edits.
+// This class only distributes existing content through the safe A4 work area; it does not alter mathematics.
+const textbookFillLocalPages = new Set([17, 18, 20, 22, 23, 25, 26, 27, 29, 31, 34, 36, 39, 41]);
+
 function replaceOne(text, re, replacement, label, file) {
   if (!re.test(text)) throw new Error(`${file}: missing ${label}`);
   return text.replace(re, replacement);
@@ -40,6 +44,20 @@ for (const page of workbook.pages) {
     'local page number',
     file
   );
+
+  if (!html.includes('textbook-layout.css')) {
+    html = html.replace(
+      '<link rel="stylesheet" href="styles.css">',
+      '<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="textbook-layout.css">'
+    );
+  }
+
+  html = html.replace(/<main class="([^"]*)">/, (_, classes) => {
+    const classSet = new Set(classes.split(/\s+/).filter(Boolean));
+    classSet.delete('textbook-fill');
+    if (textbookFillLocalPages.has(localPage)) classSet.add('textbook-fill');
+    return `<main class="${[...classSet].join(' ')}">`;
+  });
 
   // Preview navigation is hidden in print and maintained as source markup.
   // Do not rewrite it during build: generated chrome must not dirty worksheet sources.
@@ -76,4 +94,4 @@ for (const page of workbook.visualPages || []) {
   fs.writeFileSync(file, html, 'utf8');
 }
 
-console.log(`Synced ${workbook.pages.length} worksheets + ${(workbook.visualPages || []).length} visual pages with topic-local numbering`);
+console.log(`Synced ${workbook.pages.length} worksheets + ${(workbook.visualPages || []).length} visual pages with topic-local numbering and textbook layout classes`);
