@@ -12,7 +12,8 @@ const sequence = workbook.printSequence || workbook.pages.map(page => ({ kind: '
 const pages = [];
 
 function applyLocalPageNumber(mainHtml, localPage) {
-  let html = mainHtml.replace(
+  let html = mainHtml.replace(/\sdata-local-page="\d+"/g, '');
+  html = html.replace(
     /<main\b([^>]*\bclass="[^"]*\ba4-page\b[^"]*"[^>]*)>/,
     `<main$1 data-local-page="${localPage}">`
   );
