@@ -1,0 +1,149 @@
+name: Apply staged final visual assets
+
+on:
+  push:
+    branches: [fix/final-visual-assets-20260813]
+    paths: [.github/workflows/apply-staged-final-assets.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/final-visual-assets-20260813
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Reconstruct production visual assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .asset-staging/anis.b64 > visual-assets/anis-basics.webp
+          base64 -d .asset-staging/head.b64 > visual-assets/cone-in-my-head.webp
+          cat .asset-staging/jer.*.b64 | base64 -d > visual-assets/jerusalem-cone-vision.webp
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          checks = {
+              'visual-assets/anis-basics.webp': 100_000,
+              'visual-assets/cone-in-my-head.webp': 140_000,
+              'visual-assets/jerusalem-cone-vision.webp': 280_000,
+          }
+          for name, minimum in checks.items():
+              p = Path(name)
+              if not p.exists() or p.stat().st_size < minimum:
+                  raise SystemExit(f'asset quality failure: {name} size={p.stat().st_size if p.exists() else 0}')
+              with Image.open(p) as im:
+                  if im.size != (1055, 1491):
+                      raise SystemExit(f'asset dimensions failure: {name} {im.size}')
+                  im.verify()
+          world = Path('visual-assets/world-of-cones.svg')
+          if world.stat().st_size < 5_000:
+              raise SystemExit('world-of-cones.svg is unexpectedly small')
+          print('Final visual assets verified')
+          PY
+
+      - name: Point visual pages at final repo-hosted assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          replacements = {
+              'visual-pages/anis-basics.html': ('anis-basics.jpg', 'anis-basics.webp'),
+              'visual-pages/cone-in-my-head.html': ('cone-in-my-head.jpg', 'cone-in-my-head.webp'),
+              'visual-pages/jerusalem-cone-vision.html': ('jerusalem-cone-vision.jpg', 'jerusalem-cone-vision.webp'),
+              'visual-pages/world-of-cones.html': ('world-of-cones.jpg', 'world-of-cones.svg'),
+          }
+          for file, (old, new) in replacements.items():
+              p = Path(file)
+              s = p.read_text(encoding='utf-8')
+              if old not in s:
+                  raise SystemExit(f'expected old reference missing: {file} -> {old}')
+              s = s.replace(old, new)
+              if file.endswith('world-of-cones.html'):
+                  s = s.replace('image-page-art image-page-contain', 'image-page-art')
+              p.write_text(s, encoding='utf-8')
+          PY
+          rm -f visual-assets/anis-basics.jpg \
+                visual-assets/cone-in-my-head.jpg \
+                visual-assets/jerusalem-cone-vision.jpg \
+                visual-assets/world-of-cones.jpg \
+                visual-assets/DO-NOT-MERGE-TINY-IMAGE-ASSETS.txt \
+                visual-assets/anis-basics.svg \
+                visual-assets/cone-in-my-head.svg
+          if grep -R -n -E 'anis-basics\.jpg|cone-in-my-head\.jpg|jerusalem-cone-vision\.jpg|world-of-cones\.jpg' visual-pages visual-assets; then
+            echo 'stale compressed visual reference remains' >&2
+            exit 1
+          fi
+
+      - name: Build and validate workbook
+        run: |
+          npm ci
+          npm run build
+          npm run build:print
+          npm run validate
+
+      - name: Render all 46 A4 pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
+          sleep 2
+          node tools/render-layout-pages.mjs
+          count=$(find qa/layout-pages -maxdepth 1 -type f -name '*.png' | wc -l | tr -d ' ')
+          test "$count" = "46"
+          echo "Rendered $count/46 pages"
+
+      - name: Protect workbook contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const wb = JSON.parse(fs.readFileSync('content/workbook.json','utf8'));
+          if (wb.pageCount !== 38 || wb.visualPageCount !== 8 || wb.printSequence.length !== 46) {
+            throw new Error('workbook 38+8=46 contract changed');
+          }
+          NODE
+          git diff e942077a4eb8b394f8020c5141642434826cea2b -- worksheets/page-17.html | grep -q . && { echo 'page-17 changed' >&2; exit 1; } || true
+
+      - name: Clean staging and temporary mutation workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .asset-staging
+          rm -f .github/workflows/final-visual-assets-sync.yml
+          rm -f .github/workflows/final-visual-assets-sync-v2.yml
+          rm -f .github/workflows/apply-staged-final-assets.yml
+          git diff --check
+
+      - name: Commit verified final assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          test ! -e .asset-staging
+          test ! -e visual-assets/DO-NOT-MERGE-TINY-IMAGE-ASSETS.txt
+          test ! -e visual-assets/anis-basics.jpg
+          test ! -e visual-assets/cone-in-my-head.jpg
+          test ! -e visual-assets/jerusalem-cone-vision.jpg
+          test ! -e visual-assets/world-of-cones.jpg
+          test -s visual-assets/anis-basics.webp
+          test -s visual-assets/cone-in-my-head.webp
+          test -s visual-assets/jerusalem-cone-vision.webp
+          test -s visual-assets/world-of-cones.svg
+          git commit -m 'Replace compressed visual pages with print-quality A4 assets'
+          git push origin HEAD:fix/final-visual-assets-20260813
