@@ -122,8 +122,8 @@ if (bwToggle) {
   bwToggle.textContent = bwMode ? 'תצוגה צבעונית' : 'תצוגת שחור־לבן';
 }`);
 replaceOne('viewer/print.js',
-`    status.textContent = \`${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–${sequence.length}\`;`,
-`    status.textContent = \`${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–${sequence.length}${bwMode ? ' · שחור־לבן' : ''}\`;`);
+`    status.textContent = \`\${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–\${sequence.length}\`;`,
+`    status.textContent = \`\${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–\${sequence.length}\${bwMode ? ' · שחור־לבן' : ''}\`;`);
 
 appendOnce('viewer/print.css','/* PRINT-MODE-TOGGLE */',`
 /* PRINT-MODE-TOGGLE */
