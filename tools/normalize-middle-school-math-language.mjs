@@ -25,6 +25,10 @@ function replaceLatinMathSymbols(text) {
     .replace(/רדיוס\s+ו-?גובה/g, 'רדיוס וגובה')
     .replace(/גובה\s+ו-?יוצר/g, 'גובה ויוצר')
     .replace(/רדיוס\s+ו-?יוצר/g, 'רדיוס ויוצר')
+    .replace(/רדיוס\s*=\s*(\d+(?:\.\d+)?)/g, 'רדיוס $1')
+    .replace(/גובה\s*=\s*(\d+(?:\.\d+)?)/g, 'גובה $1')
+    .replace(/יוצר\s*=\s*(\d+(?:\.\d+)?)/g, 'יוצר $1')
+    .replace(/קוטר\s*=\s*(\d+(?:\.\d+)?)/g, 'קוטר $1')
     .replace(/π\s*רדיוס/g, 'π × רדיוס')
     .replace(/רדיוס²\s*גובה/g, 'רדיוס² × גובה')
     .replace(/2\s*רדיוס/g, '2 × רדיוס')
@@ -51,7 +55,7 @@ for (const name of files) {
   let html = fs.readFileSync(file, 'utf8');
   html = transformHtml(html);
 
-  // Mathematical precision fixes found in the full audit.
+  // Mathematical precision and age-appropriate language fixes found in the full audit.
   if (name === 'page-17.html') {
     html = html
       .replace('בסיס החרוט הוא  - מעגל', 'בסיס החרוט הוא - עיגול')
@@ -61,8 +65,11 @@ for (const name of files) {
 
   if (name === 'page-18.html') {
     html = html
-      .replace(/<span class="math-ltr">רדיוס=3, גובה=8<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 3 ס״מ: הקוטר =')
-      .replace(/<span class="math-ltr">רדיוס=4, גובה=6<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 4 ס״מ: הקוטר =')
+      .replace(/<span class="term">2π × רדיוס<\/span>/, '<span class="term">היקף = 2 × π × רדיוס</span>')
+      .replace(/<span class="term">π × רדיוס²<\/span>/, '<span class="term">שטח = π × רדיוס²</span>')
+      .replace(/היקף מעגל שרדיוסו <span class="math-ltr">רדיוס<\/span>:/, 'היקף מעגל:')
+      .replace(/<span class="math-ltr">רדיוס 3, גובה 8<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 3 ס״מ: הקוטר =')
+      .replace(/<span class="math-ltr">רדיוס 4, גובה 6<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 4 ס״מ: הקוטר =')
       .replace('והיקף הבסיס בקירוב הוא', 'והיקף הבסיס בקירוב, גם כאן לפי π≈3, הוא');
   }
 
@@ -70,6 +77,22 @@ for (const name of files) {
     html = html
       .replace(/בסיס עגול/g, 'בסיס בצורת עיגול')
       .replace(/החלק העגול/g, 'בסיס החרוט');
+  }
+
+  if (name === 'page-20.html') {
+    html = html
+      .replace('קוראים סימונים ומבחינים בין המידות', 'מכירים שלוש מידות חשובות בחרוט ישר')
+      .replace('aria-label="חרוט ישר ובו מסומנים רדיוס רדיוס, גובה גובה ויוצר יוצר"', 'aria-label="חרוט ישר ובו מסומנים רדיוס, גובה ויוצר"')
+      .replace('<tr><th>סימון</th><th>מה הוא מודד?</th></tr>', '<tr><th>המידה</th><th>מה היא מתארת?</th></tr>')
+      .replace('מה קורה ל־<span class="math-ltr">רדיוס, גובה ויוצר</span>?', 'מה קורה למשמעות של הרדיוס, הגובה והיוצר?')
+      .replace('בחרוט ישר נתון <span class="math-ltr">רדיוס 6</span> ס״מ, <span class="math-ltr">גובה 8</span> ס״מ, <span class="math-ltr">יוצר 10</span> ס״מ. כתבו ליד כל נתון את שמו: רדיוס / גובה / יוצר.', 'בחרוט ישר נתונים: רדיוס 6 ס״מ, גובה 8 ס״מ ויוצר 10 ס״מ. כתבו במילים מה מתאר כל אחד משלושת הנתונים.');
+  }
+
+  if (name === 'page-21.html') {
+    html = html
+      .replace('מבינים כל סימון לפני שמחשבים', 'מבינים את מרכיבי נוסחת הנפח לפני שמחשבים')
+      .replace('<tr><th>סימון</th><th>משמעות</th></tr>', '<tr><th>הגודל</th><th>משמעות</th></tr>')
+      .replace('איזה מספר צריך להציב במקום <span class="math-ltr">רדיוס</span>?', 'איזה מספר הוא רדיוס הבסיס ולכן צריך להציב בנוסחה?');
   }
 
   if (name === 'page-31.html') {
