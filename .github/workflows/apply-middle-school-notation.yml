@@ -32,3 +32,5 @@ jobs:
           git add worksheets
           git commit -m "Normalize cone workbook to middle-school notation"
           git push origin HEAD:fix/full-math-correctness-20260813
+
+# Temporary workflow used only to apply the age-appropriate language normalization on this review branch.
