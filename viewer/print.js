@@ -34,6 +34,19 @@ async function loadEntry(entry, workbook) {
   return main;
 }
 
+function prepareBookPage(main, pageNumber, totalPages) {
+  main.querySelector('.sheet-footer')?.remove();
+  main.querySelector('.page-number')?.setAttribute('hidden', '');
+  main.dataset.bookPage = String(pageNumber);
+
+  const badge = document.createElement('div');
+  badge.className = 'book-page-number';
+  badge.setAttribute('aria-label', `עמוד ${pageNumber} מתוך ${totalPages}`);
+  badge.textContent = String(pageNumber);
+  main.append(badge);
+  return main;
+}
+
 async function build() {
   try {
     const workbookResponse = await fetch('content/workbook.json', { cache: 'no-store' });
@@ -42,9 +55,12 @@ async function build() {
     const sequence = workbook.printSequence || workbook.pages.map(page => ({ kind: 'worksheet', id: page.id }));
     status.textContent = `טוען ${sequence.length} דפי A4…`;
     const mains = [];
-    for (const entry of sequence) mains.push(await loadEntry(entry, workbook));
+    for (const [index, entry] of sequence.entries()) {
+      const main = await loadEntry(entry, workbook);
+      mains.push(prepareBookPage(main, index + 1, sequence.length));
+    }
     container.replaceChildren(...mains);
-    status.textContent = `${sequence.length} דפי A4 מוכנים להדפסה`;
+    status.textContent = `${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–${sequence.length}`;
     printButton.disabled = false;
   } catch (error) {
     container.innerHTML = `<div class="print-error"><strong>לא ניתן לבנות את החוברת.</strong><p>${String(error.message || error)}</p></div>`;
