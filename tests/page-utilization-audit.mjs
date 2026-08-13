@@ -24,31 +24,52 @@ addEventListener('load', () => {
   setTimeout(() => {
     const result = [...document.querySelectorAll('main.a4-page')].map((main, index) => {
       const pageRect = main.getBoundingClientRect();
-      const footer = main.querySelector('.gz-footer, .visual-credit');
+      const header = main.querySelector('.header-container,.visual-head');
+      const footer = main.querySelector('.gz-footer,.visual-credit');
+      const headerRect = header ? header.getBoundingClientRect() : null;
       const footerRect = footer ? footer.getBoundingClientRect() : null;
-      const bottomLimit = footerRect ? footerRect.top : pageRect.bottom - 8;
-      const excluded = [
-        'html','body','main','.a4-page','.sheet-content','.ayelet-sheet','.ay-bg',
-        '.page-number','.local-page-number','.gz-footer','.visual-credit','.sheet-footer'
-      ].join(',');
-      let contentBottom = pageRect.top;
-      for (const el of main.querySelectorAll('*')) {
-        if (el.matches(excluded) || el.closest('.gz-footer,.visual-credit,.sheet-footer,.ay-bg,[aria-hidden="true"]')) continue;
-        const style = getComputedStyle(el);
-        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.width < 2 || rect.height < 2) continue;
-        if (rect.top >= bottomLimit || rect.bottom > pageRect.bottom + 1) continue;
-        contentBottom = Math.max(contentBottom, rect.bottom);
+      const zoneTop = headerRect ? headerRect.bottom : pageRect.top;
+      const zoneBottom = footerRect ? footerRect.top : pageRect.bottom - 8;
+      const zoneHeight = Math.max(1, zoneBottom - zoneTop);
+
+      if (main.matches('[data-image-only="true"]')) {
+        return { index, unusedPct: 0, gapPx: 0, zonePx: +zoneHeight.toFixed(1), blocks: ['image-page'] };
       }
-      const usableHeight = Math.max(1, bottomLimit - pageRect.top);
-      const unusedPx = Math.max(0, bottomLimit - contentBottom);
+
+      const container = main.querySelector('.sheet-content,.ayelet-sheet');
+      let blocks = [];
+      if (container) {
+        blocks = [...container.children].filter(el => {
+          if (el.matches('.gz-footer,.sheet-footer,.visual-credit,.ay-bg')) return false;
+          const style = getComputedStyle(el);
+          const rect = el.getBoundingClientRect();
+          return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 2 && rect.height > 2;
+        });
+      } else {
+        blocks = [...main.children].filter(el => {
+          if (el === header || el === footer || el.matches('.page-number,.local-page-number,.gz-footer,.sheet-footer,.visual-credit')) return false;
+          const style = getComputedStyle(el);
+          const rect = el.getBoundingClientRect();
+          return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 2 && rect.height > 2;
+        });
+      }
+
+      let contentBottom = zoneTop;
+      const blockInfo = [];
+      for (const el of blocks) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= zoneBottom) continue;
+        contentBottom = Math.max(contentBottom, Math.min(rect.bottom, zoneBottom));
+        blockInfo.push(`${el.tagName.toLowerCase()}.${String(el.className || '').replace(/\\s+/g,'.').slice(0,60)}:${Math.round(rect.height)}`);
+      }
+
+      const gapPx = Math.max(0, zoneBottom - contentBottom);
       return {
         index,
-        unusedPct: +(unusedPx / usableHeight * 100).toFixed(1),
-        unusedPx: +unusedPx.toFixed(1),
-        usablePx: +usableHeight.toFixed(1),
-        contentBottomPx: +(contentBottom - pageRect.top).toFixed(1)
+        unusedPct: +(gapPx / zoneHeight * 100).toFixed(1),
+        gapPx: +gapPx.toFixed(1),
+        zonePx: +zoneHeight.toFixed(1),
+        blocks: blockInfo
       };
     });
     const pre = document.createElement('pre');
@@ -120,3 +141,6 @@ console.log(`UTILIZATION_SUMMARY total=${rows.length} underutilized15plus=${seve
 console.log('SEVERE_PAGES ' + severe.map(row => `${row.page}:${row.source}:${row.unusedPct}%`).join(' | '));
 console.log('MODERATE_PAGES ' + moderate.map(row => `${row.page}:${row.source}:${row.unusedPct}%`).join(' | '));
 console.log('ALL_PAGES ' + rows.map(row => `${row.page}:${row.unusedPct}%`).join(' | '));
+for (const row of rows.filter(row => row.unusedPct >= 15 || row.page === 2)) {
+  console.log(`DETAIL p${row.page} ${row.source} unused=${row.unusedPct}% gap=${row.gapPx}/${row.zonePx} blocks=${row.blocks.join(',')}`);
+}
