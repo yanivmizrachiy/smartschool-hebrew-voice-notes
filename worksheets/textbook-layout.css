@@ -1,3 +1,4 @@
+/* Shared layout layer for pages flagged by the 46-page A4 visual audit. */
 .textbook-fill .sheet-content{min-height:224mm;align-content:space-between;gap:10px}.textbook-fill .q-card{padding:10px 12px 11px}.textbook-fill .q-card h3{margin:-10px -12px 8px;padding:7px 11px 7px 31px}.textbook-fill .answer-line{height:1.65em}.textbook-fill .formula-space{min-height:52px}.textbook-fill .work-table th,.textbook-fill .work-table td{padding:7px 8px}.textbook-fill .work-table td:empty{height:38px}.textbook-fill .figure-medium{max-height:180px}.textbook-fill .draw-box{height:94px}.textbook-fill .cols-2{gap:10px}.textbook-fill .choice-list{gap:6px}
 
 .textbook-fill-visual .sheet-content{min-height:224mm;align-content:space-between}.textbook-fill-visual .figure-medium{max-height:205px}.textbook-fill-visual .figure-box{padding:8px}
