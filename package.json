@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node src/build.mjs",
     "build:print": "node src/build-print.mjs",
-    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/booklet-contract.mjs",
+    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs",
     "check": "npm run build && npm run build:print && npm run validate"
   }
 }

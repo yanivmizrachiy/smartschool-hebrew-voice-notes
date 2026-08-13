@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 118" role="img" aria-label="חרוט תלת־ממדי מונח על צדו">
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#79add7"/>
+      <stop offset="0.3" stop-color="#d3e8f8"/>
+      <stop offset="0.52" stop-color="#ffffff"/>
+      <stop offset="0.76" stop-color="#c2dff5"/>
+      <stop offset="1" stop-color="#7dadd4"/>
+    </linearGradient>
+    <radialGradient id="opening" cx="44%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.62" stop-color="#e9f5fd"/>
+      <stop offset="1" stop-color="#b7d7ef"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-40%" width="170%" height="190%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#17324d" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <ellipse cx="211" cy="103" rx="72" ry="8" fill="#17324d" opacity="0.09"/>
+  <g filter="url(#shadow)">
+    <path d="M82 17 L286 59 L82 101 Q110 59 82 17 Z" fill="url(#surface)" stroke="#17324d" stroke-width="2.3" stroke-linejoin="round"/>
+    <ellipse cx="82" cy="59" rx="24" ry="42" fill="url(#opening)" stroke="#0e6785" stroke-width="2.4"/>
+    <path d="M82 17 Q110 59 82 101" fill="none" stroke="#0e6785" stroke-width="1.4" stroke-dasharray="6 4" opacity="0.68"/>
+    <path d="M110 32 C159 41 207 49 253 57" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.34"/>
+  </g>
+</svg>
