@@ -1,1 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" role="img" aria-label="מה המצב הלימודי של אניס — קומיקס חרוט"></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1055 1491" role="img" aria-labelledby="title desc">
+  <title id="title">מה המצב הלימודי של אניס?</title>
+  <desc id="desc">דף חזותי על הצורך ללמוד את מושגי היסוד של החרוט לפני חישובים</desc>
+  <rect width="1055" height="1491" fill="#fffdf8"/>
+  <rect x="55" y="55" width="945" height="180" rx="38" fill="#eaf7fb" stroke="#1685a8" stroke-width="4"/>
+  <text x="527" y="132" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="54" font-weight="700" fill="#243044" direction="rtl">מה המצב הלימודי של אניס?</text>
+  <text x="527" y="188" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="28" fill="#667085" direction="rtl">לפני שמחשבים — בונים בסיס מושגי ברור</text>
+
+  <rect x="70" y="285" width="915" height="465" rx="42" fill="#ffffff" stroke="#d8dde5" stroke-width="4"/>
+  <g transform="translate(145 355)">
+    <ellipse cx="180" cy="285" rx="142" ry="38" fill="#dff3f8" stroke="#1685a8" stroke-width="5"/>
+    <path d="M180 35 L38 285 Q180 336 322 285 Z" fill="#eaf7fb" stroke="#1685a8" stroke-width="5"/>
+    <circle cx="180" cy="37" r="10" fill="#d89132"/>
+    <circle cx="145" cy="175" r="8" fill="#243044"/>
+    <circle cx="218" cy="175" r="8" fill="#243044"/>
+    <path d="M145 218 Q180 245 220 215" fill="none" stroke="#243044" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <path d="M500 380 H895 Q935 380 935 420 V575 Q935 615 895 615 H620 L565 665 L575 615 H500 Q460 615 460 575 V420 Q460 380 500 380Z" fill="#fff5e8" stroke="#d89132" stroke-width="4"/>
+  <text x="700" y="458" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="34" font-weight="700" fill="#243044" direction="rtl">אניס יודע לזהות חרוט,</text>
+  <text x="700" y="510" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="34" font-weight="700" fill="#243044" direction="rtl">אבל חסרים לו היסודות.</text>
+  <text x="700" y="565" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="25" fill="#667085" direction="rtl">קודם מבינים את המבנה — אחר כך מחשבים.</text>
+
+  <rect x="70" y="805" width="915" height="565" rx="42" fill="#ffffff" stroke="#d8dde5" stroke-width="4"/>
+  <text x="527" y="885" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="38" font-weight="700" fill="#243044" direction="rtl">מתחילים ממש מהיסודות</text>
+
+  <g font-family="Heebo,Arial,sans-serif" font-size="30" font-weight="600" fill="#243044" text-anchor="middle" direction="rtl">
+    <g transform="translate(130 940)"><rect width="240" height="90" rx="24" fill="#eaf7fb" stroke="#1685a8" stroke-width="3"/><text x="120" y="57">בסיס החרוט</text></g>
+    <g transform="translate(407 940)"><rect width="240" height="90" rx="24" fill="#fff5e8" stroke="#d89132" stroke-width="3"/><text x="120" y="57">קודקוד</text></g>
+    <g transform="translate(684 940)"><rect width="240" height="90" rx="24" fill="#eaf7fb" stroke="#1685a8" stroke-width="3"/><text x="120" y="57">מעטפת</text></g>
+    <g transform="translate(130 1060)"><rect width="240" height="90" rx="24" fill="#fff5e8" stroke="#d89132" stroke-width="3"/><text x="120" y="57">רדיוס</text></g>
+    <g transform="translate(407 1060)"><rect width="240" height="90" rx="24" fill="#eaf7fb" stroke="#1685a8" stroke-width="3"/><text x="120" y="57">גובה</text></g>
+    <g transform="translate(684 1060)"><rect width="240" height="90" rx="24" fill="#fff5e8" stroke="#d89132" stroke-width="3"/><text x="120" y="57">קו יוצר</text></g>
+  </g>
+
+  <text x="527" y="1240" text-anchor="middle" font-family="Heebo,Arial,sans-serif" font-size="30" fill="#243044" direction="rtl">מכירים → מזהים על שרטוט → מבחינים בין המושגים → משתמשים בחישוב</text>
+  <path d="M205 1290 H850" stroke="#1685a8" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="205" cy="1290" r="10" fill="#1685a8"/><circle cx="850" cy="1290" r="10" fill="#1685a8"/>
+</svg>
