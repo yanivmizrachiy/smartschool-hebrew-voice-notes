@@ -11,6 +11,33 @@ const visualBySlug = new Map((workbook.visualPages || []).map(page => [page.slug
 const sequence = workbook.printSequence || workbook.pages.map(page => ({ kind: 'worksheet', id: page.id }));
 const pages = [];
 
+function applyLocalPageNumber(mainHtml, localPage) {
+  let html = mainHtml.replace(/\sdata-local-page="\d+"/g, '');
+  html = html.replace(
+    /<main\b([^>]*\bclass="[^"]*\ba4-page\b[^"]*"[^>]*)>/,
+    `<main$1 data-local-page="${localPage}">`
+  );
+
+  const worksheetNumber = /<div class="page-number"[^>]*>[\s\S]*?<\/div>/;
+  const visualNumber = /<div class="local-page-number"[^>]*>[\s\S]*?<\/div>/;
+  const replacement = `<div class="page-number" data-local-page-number="true" aria-label="עמוד ${localPage}">${localPage}</div>`;
+
+  if (worksheetNumber.test(html)) {
+    return html.replace(worksheetNumber, replacement);
+  }
+  if (visualNumber.test(html)) {
+    return html.replace(
+      visualNumber,
+      `<div class="local-page-number" data-local-page-number="true" aria-label="עמוד ${localPage}">${localPage}</div>`
+    );
+  }
+
+  return html.replace(
+    /<main\b([^>]*)>/,
+    `<main$1><div class="local-page-number" data-local-page-number="true" aria-label="עמוד ${localPage}">${localPage}</div>`
+  );
+}
+
 for (const [sequenceIndex, item] of sequence.entries()) {
   let src;
   if (item.kind === 'worksheet') {
@@ -24,18 +51,15 @@ for (const [sequenceIndex, item] of sequence.entries()) {
   } else {
     throw new Error(`Unknown print sequence kind ${item.kind}`);
   }
+
   let pageHtml = fs.readFileSync(src, 'utf8');
   pageHtml = pageHtml.replace(/<nav class="preview-nav"[\s\S]*?<\/nav>/, '');
   pageHtml = pageHtml.replace(/<footer class="sheet-footer"[\s\S]*?<\/footer>/g, '');
   const match = pageHtml.match(/<main class="a4-page[^>]*>[\s\S]*?<\/main>/);
   if (!match) throw new Error(`Cannot extract A4 page from ${src}`);
 
-  const bookPage = sequenceIndex + 1;
-  const numbered = match[0].replace(
-    /<main\b([^>]*\bclass="[^"]*\ba4-page\b[^"]*"[^>]*)>/,
-    `<main$1 data-book-page="${bookPage}"><div class="book-page-number" aria-label="עמוד ${bookPage} מתוך ${sequence.length}">${bookPage}</div>`
-  );
-  pages.push(numbered);
+  const localPage = sequenceIndex + 1;
+  pages.push(applyLocalPageNumber(match[0], localPage));
 }
 
 const baseCss = fs.readFileSync(path.join(root, 'worksheets', 'styles.css'), 'utf8');
@@ -43,7 +67,7 @@ const specialCssPath = path.join(root, 'worksheets', 'ayelet-special.css');
 const specialCss = fs.existsSync(specialCssPath) ? fs.readFileSync(specialCssPath, 'utf8') : '';
 const visualCssPath = path.join(root, 'visual-pages', 'visual.css');
 const visualCss = fs.existsSync(visualCssPath) ? fs.readFileSync(visualCssPath, 'utf8') : '';
-const printCss = `${baseCss}\n\n${specialCss}\n\n${visualCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n.sheet-footer,.page-number { display:none !important; }\n.book-page-number { position:absolute; left:7mm; bottom:5mm; z-index:100; min-width:9mm; height:9mm; padding:0 2.2mm; display:flex; align-items:center; justify-content:center; border-radius:999px; background:rgba(255,255,255,.92); border:1px solid rgba(36,48,68,.22); color:#243044; font:700 11px/1 \"Rubik\",\"Heebo\",sans-serif; box-shadow:0 2px 8px rgba(20,35,55,.10); }\n`;
+const printCss = `${baseCss}\n\n${specialCss}\n\n${visualCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n.sheet-footer { display:none !important; }\n`;
 fs.writeFileSync(path.join(outDir, 'styles.css'), printCss, 'utf8');
 
 const sheetCount = workbook.printSheetCount || pages.length;
@@ -61,4 +85,4 @@ ${pages.join('\n')}
 </html>`;
 
 fs.writeFileSync(path.join(outDir, 'harut-a4.html'), book, 'utf8');
-console.log(`Built print/harut-a4.html with ${pages.length} sequentially numbered A4 pages.`);
+console.log(`Built print/harut-a4.html with ${pages.length} topic-locally numbered A4 pages.`);

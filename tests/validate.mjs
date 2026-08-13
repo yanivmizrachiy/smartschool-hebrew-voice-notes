@@ -41,6 +41,13 @@ const sequenceVisualSlugs = sequence.filter(item => item.kind === 'visual').map(
 if (sequenceVisualSlugs.length !== visualPages.length || new Set(sequenceVisualSlugs).size !== visualPages.length) fail('printSequence must contain each visual page exactly once');
 for (const slug of visualBySlug.keys()) if (!sequenceVisualSlugs.includes(slug)) fail(`printSequence missing visual page ${slug}`);
 
+const localWorksheetPage = new Map();
+const localVisualPage = new Map();
+for (const [index, item] of sequence.entries()) {
+  if (item.kind === 'worksheet') localWorksheetPage.set(item.id, index + 1);
+  if (item.kind === 'visual') localVisualPage.set(item.slug, index + 1);
+}
+
 if (!/@page\s*\{[^}]*size:\s*A4/i.test(css)) fail('styles.css: missing @page A4');
 if (!/width:\s*210mm/.test(css) || !/height:\s*297mm/.test(css)) fail('styles.css: missing 210mm × 297mm A4 geometry');
 if (!/\.gz-footer/.test(css)) fail('styles.css: missing .gz-footer');
@@ -56,10 +63,13 @@ for (const page of workbook.pages) {
   const file = path.join(root, rel);
   if (!fs.existsSync(file)) { fail(`${rel}: missing`); continue; }
   const html = fs.readFileSync(file, 'utf8');
+  const localPage = localWorksheetPage.get(page.id);
   if (!/<html[^>]*lang="he"[^>]*dir="rtl"/.test(html)) fail(`${rel}: missing Hebrew RTL root`);
   if (!html.includes('<link rel="stylesheet" href="styles.css">')) fail(`${rel}: missing shared stylesheet`);
   if (!html.includes('class="a4-page')) fail(`${rel}: missing .a4-page`);
-  if (!html.includes(`<div class="page-number">${page.id}</div>`)) fail(`${rel}: wrong page number`);
+  const pageNumber = html.match(/<div class="page-number"[^>]*>(\d+)<\/div>/);
+  if (!pageNumber || Number(pageNumber[1]) !== localPage) fail(`${rel}: wrong local page number; expected ${localPage}`);
+  if (!/data-local-page-number="true"/.test(html)) fail(`${rel}: local page number marker missing`);
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
   if (forbiddenOutputText.test(html)) fail(`${rel}: demo/placeholder content is forbidden`);
@@ -89,9 +99,12 @@ for (const page of visualPages) {
   const file = path.join(root, rel);
   if (!fs.existsSync(file)) { fail(`${rel}: missing`); continue; }
   const html = fs.readFileSync(file, 'utf8');
+  const localPage = localVisualPage.get(page.slug);
   if (!/<html[^>]*lang="he"[^>]*dir="rtl"/.test(html)) fail(`${rel}: missing Hebrew RTL root`);
   if (!html.includes('../worksheets/styles.css') || !html.includes('visual.css')) fail(`${rel}: missing visual/shared stylesheets`);
   if (!html.includes('class="a4-page visual-a4"')) fail(`${rel}: missing A4 visual page root`);
+  const visualNumber = html.match(/<div class="local-page-number"[^>]*>(\d+)<\/div>/);
+  if (!visualNumber || Number(visualNumber[1]) !== localPage) fail(`${rel}: wrong local page number; expected ${localPage}`);
   if (!html.includes(workbook.credit.line1) || !html.includes(workbook.credit.line2)) fail(`${rel}: credit mismatch`);
   if (/<style\b/i.test(html) || /\sstyle="/i.test(html)) fail(`${rel}: inline CSS is forbidden`);
   if (forbiddenOutputText.test(html) || forbiddenInternalStudentText.test(html) || oldProjectText.test(html)) fail(`${rel}: forbidden internal/legacy text`);
@@ -159,7 +172,9 @@ if (!fs.existsSync(printHtmlPath) || !fs.existsSync(printCssPath)) {
   if (forbiddenOutputText.test(printHtml) || forbiddenInternalStudentText.test(printHtml) || oldProjectText.test(printHtml)) fail('print/harut-a4.html: forbidden output text');
   if (!/@page\s*\{[^}]*size:\s*A4/i.test(printCss)) fail('print/styles.css: missing @page A4');
   if (visualPages.length && !/\.visual-a4/.test(printCss)) fail('print/styles.css: missing visual page styles');
-  for (const page of workbook.pages) if (!printHtml.includes(`<div class="page-number">${page.id}</div>`)) fail(`print/harut-a4.html: missing page number ${page.id}`);
+  const printLocalPages = [...printHtml.matchAll(/data-local-page="(\d+)"/g)].map(match => Number(match[1]));
+  if (printLocalPages.length !== expectedSheets) fail(`print/harut-a4.html: expected ${expectedSheets} local page markers, found ${printLocalPages.length}`);
+  for (let i = 0; i < expectedSheets; i += 1) if (printLocalPages[i] !== i + 1) fail(`print/harut-a4.html: local page at index ${i} must be ${i + 1}`);
   for (const page of visualPages) if (!printHtml.includes(page.title)) fail(`print/harut-a4.html: missing visual page ${page.slug}`);
   const credit1Count = printHtml.split(workbook.credit.line1).length - 1;
   const credit2Count = printHtml.split(workbook.credit.line2).length - 1;
@@ -171,4 +186,4 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`OK: ${workbook.pageCount} worksheets + ${visualPages.length} visual pages; ${(workbook.printSheetCount || workbook.pageCount)} A4 print sheets passed validation.`);
+console.log(`OK: ${workbook.pageCount} worksheets + ${visualPages.length} visual pages; ${(workbook.printSheetCount || workbook.pageCount)} A4 print sheets passed validation with topic-local numbering.`);

@@ -21,34 +21,35 @@ function buildEntries(data) {
   const sequence = data.printSequence || data.pages.map(page => ({ kind: 'worksheet', id: page.id }));
 
   return sequence.map((entry, sequenceIndex) => {
+    const localPage = sequenceIndex + 1;
     if (entry.kind === 'worksheet') {
       const page = data.pages.find(item => item.id === entry.id);
-      if (!page) throw new Error(`עמוד ${entry.id} חסר ב-workbook.json`);
+      if (!page) throw new Error('דף עבודה חסר ב-workbook.json');
       return {
-        sequence: sequenceIndex + 1,
+        sequence: localPage,
         key: `worksheet-${page.id}`,
         kind: 'worksheet',
-        kindLabel: `דף עבודה ${page.id}`,
+        kindLabel: 'דף עבודה',
         title: page.title,
         subtitle: page.subtitle || '',
         url: `worksheets/${page.slug}.html`,
-        fileName: `harut-${String(sequenceIndex + 1).padStart(2, '0')}-worksheet-${page.id}.html`,
+        fileName: `harut-page-${String(localPage).padStart(2, '0')}.html`,
         worksheetId: page.id
       };
     }
 
     if (entry.kind === 'visual') {
       const page = (data.visualPages || []).find(item => item.slug === entry.slug);
-      if (!page) throw new Error(`הדף החזותי ${entry.slug} חסר ב-workbook.json`);
+      if (!page) throw new Error('דף חזותי חסר ב-workbook.json');
       return {
-        sequence: sequenceIndex + 1,
+        sequence: localPage,
         key: `visual-${page.slug}`,
         kind: 'visual',
         kindLabel: 'דף חזותי',
         title: page.title,
         subtitle: page.type === 'puzzle-answer' ? 'דף תשובות חזותי' : 'המחשה חזותית A4',
         url: `visual-pages/${page.slug}.html`,
-        fileName: `harut-${String(sequenceIndex + 1).padStart(2, '0')}-${page.slug}.html`,
+        fileName: `harut-page-${String(localPage).padStart(2, '0')}.html`,
         visualSlug: page.slug
       };
     }
@@ -62,6 +63,7 @@ function requestedIndex() {
   const sheet = Number(params.get('sheet'));
   if (Number.isInteger(sheet) && sheet >= 1 && sheet <= entries.length) return sheet - 1;
 
+  // Backward compatibility only: the old ?page= parameter addressed an internal worksheet id.
   const legacyPage = Number(params.get('page'));
   if (Number.isInteger(legacyPage) && legacyPage > 0) {
     const found = entries.findIndex(entry => entry.worksheetId === legacyPage);
@@ -82,7 +84,7 @@ function renderPicker() {
   picker.replaceChildren(...entries.map((entry, index) => {
     const option = document.createElement('option');
     option.value = String(index);
-    option.textContent = `${entry.sequence}. ${entry.kindLabel} — ${entry.title}`;
+    option.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel} — ${entry.title}`;
     return option;
   }));
 }
@@ -95,7 +97,7 @@ function renderCatalog() {
 
     const meta = document.createElement('div');
     meta.className = 'page-card-meta';
-    meta.textContent = `${entry.sequence} · ${entry.kindLabel}`;
+    meta.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel}`;
 
     const heading = document.createElement('h3');
     heading.textContent = entry.title;
@@ -142,25 +144,27 @@ function decorateFrame() {
     if (!doc || !entry) return;
 
     doc.querySelector('.sheet-footer')?.remove();
-    doc.querySelector('.page-number')?.setAttribute('hidden', '');
-    doc.querySelector('.book-page-number')?.remove();
 
     const main = doc.querySelector('.a4-page');
     if (!main) return;
-    main.dataset.bookPage = String(entry.sequence);
+    main.dataset.localPage = String(entry.sequence);
 
-    const badge = doc.createElement('div');
-    badge.className = 'book-page-number';
-    badge.setAttribute('aria-label', `עמוד ${entry.sequence} מתוך ${entries.length}`);
-    badge.textContent = String(entry.sequence);
-    main.append(badge);
-
-    if (!doc.querySelector('#book-page-runtime-style')) {
-      const style = doc.createElement('style');
-      style.id = 'book-page-runtime-style';
-      style.textContent = '.page-number,.sheet-footer{display:none!important}.book-page-number{position:absolute;left:7mm;bottom:5mm;z-index:100;min-width:9mm;height:9mm;padding:0 2.2mm;display:flex;align-items:center;justify-content:center;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid rgba(36,48,68,.22);color:#243044;font:700 11px/1 "Rubik","Heebo",sans-serif;box-shadow:0 2px 8px rgba(20,35,55,.10)}';
-      doc.head.append(style);
+    let number = doc.querySelector('.page-number, .local-page-number');
+    if (!number) {
+      const header = doc.querySelector('.header-container');
+      number = doc.createElement('div');
+      if (header) {
+        number.className = 'page-number';
+        header.append(number);
+      } else {
+        number.className = 'local-page-number';
+        main.prepend(number);
+      }
     }
+    number.hidden = false;
+    number.dataset.localPageNumber = 'true';
+    number.setAttribute('aria-label', `עמוד ${entry.sequence}`);
+    number.textContent = String(entry.sequence);
   } finally {
     loading.classList.add('is-hidden');
   }
@@ -172,9 +176,9 @@ function show(index, updateUrl = true) {
 
   loading.classList.remove('is-hidden');
   frame.src = entry.url;
-  frame.title = `${entry.title} — דף ${entry.sequence} מתוך ${entries.length}`;
+  frame.title = `${entry.title} — עמוד ${entry.sequence}`;
   picker.value = String(currentIndex);
-  status.textContent = `${entry.sequence} מתוך ${entries.length}`;
+  status.textContent = `עמוד ${entry.sequence} / ${entries.length}`;
   prev.disabled = currentIndex === 0;
   next.disabled = currentIndex === entries.length - 1;
 
@@ -213,7 +217,7 @@ fetch('content/workbook.json', { cache: 'no-store' })
   .then(data => {
     workbook = data;
     entries = buildEntries(workbook);
-    summary.textContent = `${entries.length} דפי A4 · חוברת אחת ממוספרת · הורדה · הדפסה`;
+    summary.textContent = `${entries.length} דפי A4 · חוברת חרוט אחת · הורדה · הדפסה`;
     document.title = `חרוט — ${entries.length} דפי A4`;
     renderPicker();
     renderCatalog();
