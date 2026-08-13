@@ -24,7 +24,22 @@ assert(read(17).includes('נקודה על שפת הבסיס'), 'page 17: generat
 assert(read(18).includes('משפט פיתגורס במשולש ישר־זווית'), 'page 18: Pythagoras wording must be precise for grade 8');
 assert(read(19).includes('בסיס בצורת עיגול'), 'page 19: cone identification must use precise base terminology');
 assert(read(20).includes('רדיוס 6 ס״מ') && read(20).includes('גובה 8 ס״מ') && read(20).includes('יוצר 10 ס״מ'), 'page 20: corrected 6-8-10 triple missing');
-assert(read(21).includes('נפח') && read(21).includes('רדיוס²') && read(21).includes('גובה'), 'page 21: cone volume formula components missing');
+assert(read(21).includes('נפח') && read(21).includes('רדיוס') && read(21).includes('<sup>2</sup>') && read(21).includes('גובה'), 'page 21: cone volume formula components or squared radius markup missing');
+
+// The six concepts shown in the foundation reference must be explicitly taught before advanced calculation.
+const earlyFoundations = `${read(1)}\n${read(19)}\n${read(20)}`;
+for (const term of ['בסיס החרוט', 'קודקוד', 'מעטפת', 'רדיוס', 'גובה', 'קו יוצר']) {
+  assert(earlyFoundations.includes(term), `foundation sequence: missing explicit teaching of ${term}`);
+}
+assert(read(1).includes('מכירים את חלקי החרוט') && read(1).includes('בסיס החרוט') && read(1).includes('קודקוד') && read(1).includes('מעטפת'), 'page 1: base, vertex and envelope must be introduced explicitly before identification');
+assert(read(20).includes('קטע ממרכז בסיס החרוט אל שפת הבסיס') && read(20).includes('האנך מן הקודקוד אל מישור הבסיס') && read(20).includes('קטע ישר על המעטפת מן הקודקוד אל שפת הבסיס'), 'page 20: radius, height and generator line must have explicit foundation definitions');
+
+// Middle-school notation contract: multiplication is a centered dot, and Hebrew words are never glued directly to ².
+for (let id = 1; id <= 38; id += 1) {
+  const html = read(id);
+  assert(!html.includes('×'), `page ${id}: multiplication must use · rather than ×`);
+  assert(!/(?:רדיוס|גובה|יוצר|קו יוצר)²/.test(html), `page ${id}: Hebrew squared term must use bidi-safe <sup>2</sup> markup or words`);
+}
 
 // Page 6 — volume basics.
 assert(near(300 / 3, 100), 'page 6: cone/cylinder 1:3 volume relation');
@@ -163,4 +178,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: page-by-page cone mathematics regression checks passed for all numerical and key conceptual cases.');
+console.log('OK: page-by-page cone mathematics regression checks passed for all numerical, foundational, notation, and key conceptual cases.');
