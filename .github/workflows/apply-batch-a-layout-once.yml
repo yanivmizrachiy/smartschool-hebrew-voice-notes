@@ -1,0 +1,75 @@
+name: Apply textbook batch A once
+
+on:
+  push:
+    branches: [audit/textbook-layout-46-pages-20260813]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/textbook-layout-46-pages-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebalance sequence pages 2-4 and refine page 7
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def clean(path, old_class, new_class):
+              p=Path(path); s=p.read_text()
+              s=re.sub(r'<nav class="preview-nav"[\s\S]*?</nav>\s*','',s,1)
+              s=s.replace(old_class,new_class)
+              s=re.sub(r'<footer class="sheet-footer"[\s\S]*?</footer>','',s)
+              p.write_text(s)
+
+          # sequence page 3: existing reasoning is good; give it real writing space instead of adding filler.
+          clean('worksheets/page-3.html','class="a4-page dense"','class="a4-page page-3-layout"')
+
+          # sequence page 2 / source page 19: add an authentic mathematical-modelling action.
+          clean('worksheets/page-19.html','class="a4-page dense"','class="a4-page page-19-layout"')
+          p=Path('worksheets/page-19.html'); s=p.read_text()
+          anchor='</div>\n<footer class="gz-footer">'
+          block='''<section class="q-card modelling-card"><h3>מחפץ אמיתי למודל מתמטי</h3><p>בחרו חפץ אחד שסימנתם כמתאים בקירוב לחרוט. שרטטו אותו כמודל גאומטרי פשוט, סמנו <b>בסיס</b> ו<b>קודקוד</b>, וכתבו פרט אחד מן החפץ האמיתי שלא נכנס למודל.</p><div class="modelling-grid"><div class="draw-box"></div><div><p><b>החפץ שבחרתי:</b> <span class="blank bw-12"></span></p><p><b>פרט שהתעלמתי ממנו במודל:</b></p><div class="answer-lines"><div class="answer-line"></div><div class="answer-line"></div></div></div></div></section>'''
+          if 'modelling-card' not in s: s=s.replace(anchor,block+anchor,1)
+          p.write_text(s)
+
+          # sequence page 4 / source page 20: bridge the three measures to the half axial section without jumping ahead.
+          clean('worksheets/page-20.html','class="a4-page dense"','class="a4-page page-20-layout"')
+          p=Path('worksheets/page-20.html'); s=p.read_text()
+          anchor='</div>\n<footer class="gz-footer">'
+          block='''<section class="q-card axial-bridge"><h3>אותן שלוש מידות בתוך חצי חתך צירי</h3><div class="axial-bridge-grid"><svg viewBox="0 0 280 155" role="img" aria-label="משולש ישר זווית המייצג חצי חתך צירי של חרוט ישר"><path d="M55 125 L205 125 L55 25 Z" fill="#eaf7fb" stroke="#243044" stroke-width="2.2"/><rect x="55" y="113" width="12" height="12" fill="#fff" stroke="#667085"/><text x="121" y="146" font-size="14">רדיוס 6 ס״מ</text><text x="18" y="80" font-size="14">גובה 8 ס״מ</text><text x="145" y="68" font-size="14">יוצר 10 ס״מ</text></svg><div><p>חצי החתך הצירי יוצר משולש ישר־זווית. סמנו בציור את הזווית הישרה.</p><p>איזו מן המידות היא היתר?</p><div class="choice-row"><span class="choice">הרדיוס</span><span class="choice">הגובה</span><span class="choice">היוצר</span></div><p>הסבירו במשפט אחד מדוע היוצר ארוך מן הגובה.</p><div class="answer-line"></div></div></div></section>'''
+          if 'axial-bridge' not in s: s=s.replace(anchor,block+anchor,1)
+          p.write_text(s)
+
+          # page 2 first pass became too full; keep the new pedagogy but restore safe footer breathing room.
+          css=Path('worksheets/styles.css'); c=css.read_text()
+          c=c.replace('.page-2-layout .draw-box{height:86px}', '.page-2-layout .draw-box{height:58px}')
+          c=c.replace('.page-2-layout .net-transition svg{display:block;width:100%;height:84px}', '.page-2-layout .net-transition svg{display:block;width:100%;height:70px}')
+          marker='/* textbook layout batch A */'
+          rules='''\n/* textbook layout batch A */\n.page-3-layout{font-size:12.5px}.page-3-layout .error-grid{gap:10px}.page-3-layout .mist-card{padding:10px 12px}.page-3-layout .mist-head{margin:-10px -12px 8px;padding:7px 10px}.page-3-layout .mist-card p{margin:7px 0}.page-3-layout .sentence-frame{min-height:29px;padding:7px 9px}.page-3-layout .q-card{padding:10px 12px 11px}.page-3-layout .q-card h3{margin:-10px -12px 8px;padding:7px 11px 7px 31px}.page-3-layout .choice-list{gap:6px}\n.page-19-layout{font-size:12.6px}.page-19-layout .sheet-content{gap:9px}.page-19-layout .q-card{padding:10px 12px 11px}.page-19-layout .q-card h3{margin:-10px -12px 8px;padding:7px 11px 7px 31px}.page-19-layout .figure-medium{max-height:190px}.page-19-layout .modelling-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;align-items:stretch}.page-19-layout .modelling-grid .draw-box{height:122px}.page-19-layout .modelling-grid .answer-line{height:1.7em}\n.page-20-layout{font-size:12.6px}.page-20-layout .sheet-content{gap:9px}.page-20-layout .q-card{padding:10px 12px 11px}.page-20-layout .q-card h3{margin:-10px -12px 8px;padding:7px 11px 7px 31px}.page-20-layout .figure-medium{max-height:205px}.page-20-layout .answer-line{height:1.6em}.page-20-layout .axial-bridge-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:14px;align-items:center}.page-20-layout .axial-bridge-grid svg{width:100%;height:145px}\n'''
+          if marker not in c: c += rules
+          css.write_text(c)
+          PY
+      - name: Build and validate all workbook contracts
+        run: |
+          npm run build
+          npm run build:print
+          npm run validate
+      - name: Commit synchronized batch and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worksheets/page-2.html worksheets/page-3.html worksheets/page-19.html worksheets/page-20.html worksheets/styles.css print
+          git rm .github/workflows/apply-batch-a-layout-once.yml
+          git commit -m "Rebalance first textbook lessons by pedagogic purpose"
+          git push origin HEAD:audit/textbook-layout-46-pages-20260813
