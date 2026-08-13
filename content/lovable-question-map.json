@@ -1,0 +1,36 @@
+{
+  "source": {
+    "type": "user-owned-lovable-project",
+    "projectId": "64223be1-fcda-4fea-9e3f-545e2edf41f7",
+    "url": "https://hebrew-heritage-quest.lovable.app",
+    "title": "חרוט – חוברת עבודה להדפסה",
+    "questionCount": 15,
+    "pageCount": 3
+  },
+  "policy": {
+    "preserveExistingWorkbook": true,
+    "noBlindDuplication": true,
+    "adaptToGrade8ConeSequence": true,
+    "keepA4": true,
+    "keepRTL": true,
+    "keepPrintSequenceCount": 46,
+    "lockedPage17Untouched": true
+  },
+  "questions": [
+    {"id":"LQ-01","intent":"סימון חלקי החרוט: קודקוד, יוצר, גובה ובסיס","targets":[1,20],"integration":"existing-equivalent-plus-visual-theme"},
+    {"id":"LQ-02","intent":"זיהוי חרוט מבין גליל, פירמידה וכדור","targets":[1],"integration":"existing-equivalent-plus-visual-theme"},
+    {"id":"LQ-03","intent":"תכונות: מספר קודקודים, פאות שטוחות והתנהגות בגלגול","targets":[3,19],"integration":"merged-into-claims-and-identification"},
+    {"id":"LQ-04","intent":"פריסת חרוט: גזרת עיגול ועיגול בסיס","targets":[2],"integration":"existing-equivalent-plus-visual-theme"},
+    {"id":"LQ-05","intent":"חרוטים בחיי היום-יום: גביע, כובע, קונוס תנועה, משפך מול מסיחים","targets":[19,31],"integration":"merged-with-existing-real-life-sequence"},
+    {"id":"LQ-06","intent":"חתך מקביל לבסיס וחתך דרך הקודקוד/הציר","targets":[14,24],"integration":"existing-equivalent"},
+    {"id":"LQ-07","intent":"השוואת גובה ליוצר והסבר דרך חצי חתך ישר-זווית","targets":[20,24,26],"integration":"explicit-reinforcement-added"},
+    {"id":"LQ-08","intent":"r=3, h=8: קוטר והיקף בסיס עם pi≈3","targets":[18],"integration":"compact-foundation-practice-added"},
+    {"id":"LQ-09","intent":"בניית חרוט מנייר, זווית/רוחב גזרה והשלמת בסיס","targets":[2,15],"integration":"paper-build-and-sector-effect-merged"},
+    {"id":"LQ-10","intent":"יציבות קונוס תנועה, שימוש בגביע גלידה ומציאת חרוט נוסף בסביבה","targets":[31],"integration":"real-life-reasoning-added"},
+    {"id":"LQ-11","intent":"נכון/לא נכון על פאות, גובה מול יוצר, גלגול ופריסה","targets":[3,20],"integration":"merged-into-claim-checking"},
+    {"id":"LQ-12","intent":"השלמת מושגים: יוצר, גובה, חתך מקביל, פאות וקודקודים","targets":[3,14,18,20],"integration":"distributed-by-pedagogical-position"},
+    {"id":"LQ-13","intent":"השוואת חרוט רחב/נמוך מול צר/גבוה בהקשר יציבות וכובע מסיבה","targets":[31],"integration":"comparison-added"},
+    {"id":"LQ-14","intent":"מיון חפצים: חוד עיפרון, אוהל טיפי, עץ דמוי חרוט, פחית ופרוסת גבינה","targets":[19],"integration":"object-sorting-added-with-corrected-classification"},
+    {"id":"LQ-15","intent":"r=4, h=6: קוטר, היקף בסיס והסקה שהיוצר ארוך מהגובה","targets":[18,20],"integration":"compact-foundation-plus-slant-reasoning-added"}
+  ]
+}
