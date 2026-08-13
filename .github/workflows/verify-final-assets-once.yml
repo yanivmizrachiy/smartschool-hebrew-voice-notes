@@ -1,0 +1,98 @@
+name: Verify final visual assets once
+
+on:
+  push:
+    branches: [fix/final-visual-assets-20260813]
+    paths: [.github/workflows/verify-final-assets-once.yml]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/final-visual-assets-20260813
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify repository state is final
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s visual-assets/anis-basics.webp
+          test -s visual-assets/cone-in-my-head.webp
+          test -s visual-assets/jerusalem-cone-vision.webp
+          test -s visual-assets/world-of-cones.svg
+          test $(stat -c%s visual-assets/anis-basics.webp) -ge 100000
+          test $(stat -c%s visual-assets/cone-in-my-head.webp) -ge 140000
+          test $(stat -c%s visual-assets/jerusalem-cone-vision.webp) -ge 280000
+          test $(stat -c%s visual-assets/world-of-cones.svg) -ge 5000
+          test ! -e visual-assets/anis-basics.jpg
+          test ! -e visual-assets/cone-in-my-head.jpg
+          test ! -e visual-assets/jerusalem-cone-vision.jpg
+          test ! -e visual-assets/world-of-cones.jpg
+          test ! -e visual-assets/DO-NOT-MERGE-TINY-IMAGE-ASSETS.txt
+          test ! -d .asset-staging
+          ! grep -R -n -E 'anis-basics\.jpg|cone-in-my-head\.jpg|jerusalem-cone-vision\.jpg|world-of-cones\.jpg' visual-pages visual-assets
+          grep -q 'anis-basics.webp' visual-pages/anis-basics.html
+          grep -q 'cone-in-my-head.webp' visual-pages/cone-in-my-head.html
+          grep -q 'jerusalem-cone-vision.webp' visual-pages/jerusalem-cone-vision.html
+          grep -q 'world-of-cones.svg' visual-pages/world-of-cones.html
+
+      - name: Build and validate all contracts
+        run: |
+          npm ci
+          npm run build
+          npm run build:print
+          npm run validate
+
+      - name: Render all 46 pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
+          sleep 2
+          node tools/render-layout-pages.mjs
+          count=$(find qa/layout-pages -maxdepth 1 -type f -name '*.png' | wc -l | tr -d ' ')
+          test "$count" = "46"
+          echo "46/46 render PASS"
+
+      - name: Recheck protected source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('fs'); const w=JSON.parse(fs.readFileSync('content/workbook.json','utf8'));
+          if(w.pageCount!==38 || w.visualPageCount!==8 || w.printSequence.length!==46) throw new Error('46-page contract changed');
+          NODE
+          git diff e942077a4eb8b394f8020c5141642434826cea2b -- worksheets/page-17.html | grep -q . && exit 1 || true
+
+      - name: Remove verifier and any mutation leftovers
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/verify-final-assets-once.yml
+          rm -f .github/workflows/apply-staged-final-assets.yml
+          rm -f .github/workflows/final-visual-assets-sync.yml
+          rm -f .github/workflows/final-visual-assets-sync-v2.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if ! git diff --cached --quiet; then
+            git diff --cached --check
+            git commit -m 'Remove final asset mutation workflows after verification'
+            git push origin HEAD:fix/final-visual-assets-20260813
+          fi
+
+      - name: Mark PR 18 ready only after full PASS
+        run: gh pr ready 18 --repo yanivmizrachiy/smartschool-hebrew-voice-notes
