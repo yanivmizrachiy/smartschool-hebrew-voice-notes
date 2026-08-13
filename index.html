@@ -4,37 +4,53 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0f172a">
-  <meta name="description" content="חרוט — סדרת דפי עבודה A4 להדפסה, דפדוף והדפסת חוברת מלאה">
-  <title>חרוט — דפי עבודה להדפסה</title>
+  <meta name="description" content="חרוט — אפליקציית דפדוף, הורדה והדפסה לכל דפי ה-A4 של החוברת">
+  <title>חרוט — דפדוף, הורדה והדפסה</title>
   <link rel="stylesheet" href="viewer/viewer.css">
 </head>
 <body>
   <header class="app-header">
     <div class="brand">
-      <div id="workbook-summary" class="brand-kicker">דפי עבודה A4 להדפסה</div>
+      <div id="workbook-summary" class="brand-kicker">טוען את החוברת…</div>
       <h1>חרוט</h1>
     </div>
     <div class="header-actions">
-      <button id="print-current" class="btn btn-secondary" type="button">הדפס עמוד נוכחי</button>
+      <button id="print-current" class="btn btn-secondary" type="button">הדפס / שמור PDF</button>
+      <a id="download-current" class="btn btn-secondary" href="#" download>הורד דף</a>
+      <a id="open-current" class="btn btn-secondary" href="#" target="_blank" rel="noopener">פתח דף מלא</a>
       <a class="btn btn-primary" href="print.html" target="_blank" rel="noopener">הדפס את כל החוברת</a>
     </div>
   </header>
 
   <main class="app-shell">
-    <section class="toolbar" aria-label="ניווט בין דפי העבודה">
+    <section class="toolbar" aria-label="ניווט בין דפי החוברת">
       <button id="prev-page" class="nav-button" type="button" aria-label="העמוד הקודם">הקודם</button>
       <div class="page-picker-wrap">
-        <label for="page-picker">עמוד</label>
-        <select id="page-picker" aria-label="בחירת דף עבודה"></select>
+        <label for="page-picker">דף</label>
+        <select id="page-picker" aria-label="בחירת דף"></select>
         <span id="page-status" class="page-status"></span>
       </div>
       <button id="next-page" class="nav-button" type="button" aria-label="העמוד הבא">הבא</button>
     </section>
 
-    <section class="viewer-card">
-      <div id="loading" class="loading">טוען את דפי העבודה…</div>
-      <iframe id="worksheet-frame" title="דף עבודה להדפסה" loading="eager"></iframe>
+    <section class="current-sheet" aria-live="polite">
+      <div>
+        <div id="sheet-kind" class="sheet-kind"></div>
+        <h2 id="sheet-title">טוען…</h2>
+        <p id="sheet-subtitle"></p>
+      </div>
+      <div class="current-hint">חצים במקלדת: דפדוף מהיר</div>
     </section>
+
+    <section class="viewer-card" id="viewer-card">
+      <div id="loading" class="loading">טוען את הדף…</div>
+      <iframe id="worksheet-frame" title="דף A4" loading="eager"></iframe>
+    </section>
+
+    <details class="page-catalog">
+      <summary>כל 46 הדפים — מעבר מהיר והורדה</summary>
+      <div id="page-grid" class="page-grid"></div>
+    </details>
   </main>
 
   <footer class="app-footer">
