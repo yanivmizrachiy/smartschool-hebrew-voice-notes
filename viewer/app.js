@@ -135,6 +135,37 @@ function markActiveCard() {
   active?.classList.add('is-active');
 }
 
+function decorateFrame() {
+  try {
+    const doc = frame.contentDocument;
+    const entry = entries[currentIndex];
+    if (!doc || !entry) return;
+
+    doc.querySelector('.sheet-footer')?.remove();
+    doc.querySelector('.page-number')?.setAttribute('hidden', '');
+    doc.querySelector('.book-page-number')?.remove();
+
+    const main = doc.querySelector('.a4-page');
+    if (!main) return;
+    main.dataset.bookPage = String(entry.sequence);
+
+    const badge = doc.createElement('div');
+    badge.className = 'book-page-number';
+    badge.setAttribute('aria-label', `עמוד ${entry.sequence} מתוך ${entries.length}`);
+    badge.textContent = String(entry.sequence);
+    main.append(badge);
+
+    if (!doc.querySelector('#book-page-runtime-style')) {
+      const style = doc.createElement('style');
+      style.id = 'book-page-runtime-style';
+      style.textContent = '.page-number,.sheet-footer{display:none!important}.book-page-number{position:absolute;left:7mm;bottom:5mm;z-index:100;min-width:9mm;height:9mm;padding:0 2.2mm;display:flex;align-items:center;justify-content:center;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid rgba(36,48,68,.22);color:#243044;font:700 11px/1 "Rubik","Heebo",sans-serif;box-shadow:0 2px 8px rgba(20,35,55,.10)}';
+      doc.head.append(style);
+    }
+  } finally {
+    loading.classList.add('is-hidden');
+  }
+}
+
 function show(index, updateUrl = true) {
   currentIndex = Math.max(0, Math.min(index, entries.length - 1));
   const entry = entries[currentIndex];
@@ -159,7 +190,7 @@ function show(index, updateUrl = true) {
   if (updateUrl) syncUrl(currentIndex);
 }
 
-frame.addEventListener('load', () => loading.classList.add('is-hidden'));
+frame.addEventListener('load', decorateFrame);
 picker.addEventListener('change', () => show(Number(picker.value), true));
 prev.addEventListener('click', () => show(currentIndex - 1, true));
 next.addEventListener('click', () => show(currentIndex + 1, true));
@@ -182,7 +213,7 @@ fetch('content/workbook.json', { cache: 'no-store' })
   .then(data => {
     workbook = data;
     entries = buildEntries(workbook);
-    summary.textContent = `${entries.length} דפי A4 · דפדוף · הורדה · הדפסה`;
+    summary.textContent = `${entries.length} דפי A4 · חוברת אחת ממוספרת · הורדה · הדפסה`;
     document.title = `חרוט — ${entries.length} דפי A4`;
     renderPicker();
     renderCatalog();
