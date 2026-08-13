@@ -62,7 +62,19 @@ for (const name of fs.readdirSync(assetsDir).filter(name => name.endsWith('.svg'
   printPage(`VISUAL-ASSET ${name}`, path.join(assetsDir, name));
 }
 
-const tessVersion = spawnSync('tesseract', ['--version'], { encoding: 'utf8' });
+let tessVersion = spawnSync('tesseract', ['--version'], { encoding: 'utf8' });
+if (tessVersion.status !== 0 && process.env.CI) {
+  console.log('\n=== Installing temporary OCR packages for raster visual audit ===');
+  const update = spawnSync('sudo', ['apt-get', 'update', '-qq'], { encoding: 'utf8', stdio: 'pipe' });
+  if (update.status === 0) {
+    const install = spawnSync('sudo', ['apt-get', 'install', '-y', '-qq', 'tesseract-ocr', 'tesseract-ocr-heb'], { encoding: 'utf8', stdio: 'pipe' });
+    if (install.status !== 0) console.log(`[OCR install failed] ${install.stderr || install.stdout}`);
+  } else {
+    console.log(`[OCR apt update failed] ${update.stderr || update.stdout}`);
+  }
+  tessVersion = spawnSync('tesseract', ['--version'], { encoding: 'utf8' });
+}
+
 if (tessVersion.status === 0) {
   const langsOut = spawnSync('tesseract', ['--list-langs'], { encoding: 'utf8' });
   const langs = langsOut.stdout || '';
@@ -73,10 +85,10 @@ if (tessVersion.status === 0) {
     const ocr = spawnSync('tesseract', [file, 'stdout', '-l', lang, '--psm', '6'], { encoding: 'utf8', maxBuffer: 1024 * 1024 });
     console.log(`\n===== OCR ${name} =====`);
     console.log((ocr.stdout || '').trim() || '[no OCR text]');
-    if (ocr.stderr) console.log(`[tesseract-note] ${ocr.stderr.trim()}`);
+    if (ocr.status !== 0 && ocr.stderr) console.log(`[tesseract-error] ${ocr.stderr.trim()}`);
   }
 } else {
-  console.log('\n=== RASTER VISUAL OCR SKIPPED: tesseract unavailable on runner ===');
+  console.log('\n=== RASTER VISUAL OCR UNAVAILABLE ===');
 }
 
 console.log('\n=== END FULL MATHEMATICAL AUDIT SOURCE DUMP ===');
