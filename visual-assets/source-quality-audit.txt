@@ -1,1 +1,0 @@
-Drive A4 sources: 1055x1491 PNG, 2.38-3.23 MB. Existing image-only JPG assets: 5.6-15 KB. Final merge must use production-quality repo-hosted assets or replace image-only pages.
