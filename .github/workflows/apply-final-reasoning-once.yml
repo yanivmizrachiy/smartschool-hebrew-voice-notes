@@ -21,9 +21,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Apply focused pages
+      - name: Apply feasibility-page edit
         run: |
-          python3 tools/apply-page36-layout.py
           python3 tools/apply-page37-layout.py
           npm run build
           npm run build:print
@@ -34,5 +33,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add worksheets print
           git rm .github/workflows/apply-final-reasoning-once.yml
-          git commit -m "Expand final reasoning pages into full textbook workspaces"
+          git commit -m "Expand feasibility reasoning into a full textbook workspace"
           git push origin HEAD:audit/textbook-layout-46-pages-20260813
