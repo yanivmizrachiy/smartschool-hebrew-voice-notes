@@ -23,7 +23,14 @@ const awkward = [
   'רדיוס רדיוס',
   'גובה גובה',
   'יוצר יוצר',
-  'שרדיוסו רדיוס'
+  'נפח נפח',
+  'שטח שטח',
+  'שרדיוסו רדיוס',
+  'גובה (גובה)',
+  'רדיוס (רדיוס)',
+  'יוצר (יוצר)',
+  'היטל ניצב',
+  'משפט פיתגורס במישור ובמרחב'
 ];
 
 for (const name of files) {
@@ -37,7 +44,7 @@ for (const name of files) {
   if (ariaMatches.length) errors.push(`${name}: aria-label contains Latin math variable(s): ${[...new Set(ariaMatches)].join(', ')}`);
 
   for (const phrase of awkward) {
-    if (text.includes(phrase) || ariaText.includes(phrase)) errors.push(`${name}: awkward converted phrase: ${phrase}`);
+    if (text.includes(phrase) || ariaText.includes(phrase)) errors.push(`${name}: age-inappropriate or awkward phrase: ${phrase}`);
   }
 }
 
@@ -47,4 +54,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`OK: ${files.length} worksheets use Hebrew middle-school math language without Latin variable notation.`);
+console.log(`OK: ${files.length} worksheets use Hebrew elementary/middle-school math language without Latin variable notation or projection jargon.`);
