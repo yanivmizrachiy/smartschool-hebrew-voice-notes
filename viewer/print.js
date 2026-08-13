@@ -1,6 +1,13 @@
 const container = document.querySelector('#print-pages');
 const status = document.querySelector('#print-status');
 const printButton = document.querySelector('#print-all-button');
+const bwToggle = document.querySelector('#bw-toggle');
+const bwMode = new URLSearchParams(location.search).get('bw') === '1';
+document.body.classList.toggle('bw-mode', bwMode);
+if (bwToggle) {
+  bwToggle.href = bwMode ? 'print.html' : 'print.html?bw=1';
+  bwToggle.textContent = bwMode ? 'תצוגה צבעונית' : 'תצוגת שחור־לבן';
+}
 
 async function loadEntry(entry, workbook) {
   let url;
@@ -60,7 +67,7 @@ async function build() {
       mains.push(prepareBookPage(main, index + 1, sequence.length));
     }
     container.replaceChildren(...mains);
-    status.textContent = `${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–${sequence.length}`;
+    status.textContent = `${sequence.length} דפי A4 מוכנים להדפסה · ממוספרים 1–${sequence.length}${bwMode ? ' · שחור־לבן' : ''}`;
     printButton.disabled = false;
   } catch (error) {
     container.innerHTML = `<div class="print-error"><strong>לא ניתן לבנות את החוברת.</strong><p>${String(error.message || error)}</p></div>`;

@@ -267,9 +267,28 @@ body {
 }
 .compact-practice { font-size:11px; padding:4px 7px; border-radius:8px; background:var(--warm-soft); border:1px solid color-mix(in srgb,var(--warm) 25%,var(--line)); }
 .sheet-footer { display:none !important; }
-.gz-footer { position:absolute; right:10mm; left:10mm; bottom:4mm; padding-top:3px; border-top:2px solid var(--brand); text-align:center; line-height:1.15; }
-.gz-footer .f1 { font-size:11.5px; font-weight:600; color:var(--ink); }
-.gz-footer .f2 { font-size:10.2px; color:var(--muted); margin-top:1px; }
+.gz-footer {
+  position:absolute;
+  right:0;
+  left:0;
+  bottom:3.2mm;
+  min-height:10mm;
+  padding:2.1mm 21mm 0 10mm;
+  border-top:.65px solid color-mix(in srgb,var(--ink) 28%,transparent);
+  text-align:center;
+  line-height:1.15;
+}
+.gz-footer::before {
+  content:"";
+  position:absolute;
+  right:10mm;
+  top:1.1mm;
+  width:8.5mm;
+  height:8.5mm;
+  background:url("../assets/district-logo.png") center/contain no-repeat;
+}
+.gz-footer .f1 { font-size:11.2px; font-weight:600; color:var(--ink); }
+.gz-footer .f2 { font-size:10px; color:var(--muted); margin-top:1px; }
 .dense { font-size:11.8px; }
 .dense .q-card { padding:6px 8px 7px; }
 .dense .q-card h3 { margin:-6px -8px 5px; padding:5px 9px 5px 28px; font-size:13.1px; }
@@ -280,4 +299,58 @@ body {
   .preview-nav { display:none !important; }
   .a4-page { margin:0; box-shadow:none; width:210mm; height:297mm; page-break-after:always; -webkit-print-color-adjust:exact; print-color-adjust:exact; overflow:hidden; }
   .q-card,.mist-card,.figure-box,.part-card { box-shadow:none; }
+}
+
+
+/* BW-PRINT-MODE — מבוסס על מנגנון ?bw=1 מחוברת הזוויות. */
+.bw-mode .a4-page {
+  --paper:#fff;
+  --ink:#000;
+  --muted:#333;
+  --line:#aaa;
+  --soft:#f5f5f5;
+  --brand:#222;
+  --brand-dark:#111;
+  --brand-soft:#ededed;
+  --warm:#555;
+  --warm-soft:#f5f5f5;
+  --figure-fill:#fafafa;
+  --green-soft:#f2f2f2;
+  --red-soft:#f2f2f2;
+  --shadow:none;
+  background:#fff;
+  color:#000;
+}
+.bw-mode .header-container { border-bottom-color:#444; }
+.bw-mode .header-container::after { background:linear-gradient(90deg,#777,transparent); }
+.bw-mode .page-number { background:#222; color:#fff; box-shadow:none; }
+.bw-mode .q-card,
+.bw-mode .figure-box,
+.bw-mode .part-card,
+.bw-mode .calc-box,
+.bw-mode .mist-card,
+.bw-mode .word-bank,
+.bw-mode .premium-note { box-shadow:none; background:#fff; border-color:#aaa; }
+.bw-mode .q-card h3,
+.bw-mode .mist-head,
+.bw-mode .work-table th,
+.bw-mode .word-bank,
+.bw-mode .premium-note,
+.bw-mode .sentence-frame { background:#eee; color:#000; border-color:#aaa; }
+.bw-mode .choice,
+.bw-mode .activity-tag,
+.bw-mode .compact-practice { background:#f5f5f5; color:#111; border-color:#999; }
+.bw-mode .choice-dot,
+.bw-mode .mark-box { border-color:#222; background:#fff; }
+.bw-mode .answer-line,
+.bw-mode .blank { border-color:#444; }
+.bw-mode .draw-box { border-color:#777; background:#fff; }
+.bw-mode svg { filter:grayscale(1) contrast(1.12); }
+.bw-mode img { filter:grayscale(1) contrast(1.12); }
+.bw-mode .gz-footer { border-top-color:#777; }
+.bw-mode .gz-footer::before { filter:grayscale(1) contrast(1.15); }
+.bw-mode .gz-footer .f1 { color:#111; }
+.bw-mode .gz-footer .f2 { color:#333; }
+@media print {
+  .bw-mode .a4-page { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }

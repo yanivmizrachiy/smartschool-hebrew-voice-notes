@@ -4,6 +4,7 @@ const status = document.querySelector('#page-status');
 const prev = document.querySelector('#prev-page');
 const next = document.querySelector('#next-page');
 const printCurrent = document.querySelector('#print-current');
+const printCurrentBw = document.querySelector('#print-current-bw');
 const downloadCurrent = document.querySelector('#download-current');
 const openCurrent = document.querySelector('#open-current');
 const loading = document.querySelector('#loading');
@@ -194,10 +195,17 @@ frame.addEventListener('load', decorateFrame);
 picker.addEventListener('change', () => show(Number(picker.value), true));
 prev.addEventListener('click', () => show(currentIndex - 1, true));
 next.addEventListener('click', () => show(currentIndex + 1, true));
-printCurrent.addEventListener('click', () => {
-  frame.contentWindow?.focus();
-  frame.contentWindow?.print();
-});
+function printFrame(bw = false) {
+  const doc = frame.contentDocument;
+  const win = frame.contentWindow;
+  if (!win) return;
+  if (bw) doc?.body.classList.add('bw-mode');
+  win.focus();
+  win.print();
+  if (bw) doc?.body.classList.remove('bw-mode');
+}
+printCurrent.addEventListener('click', () => printFrame(false));
+printCurrentBw?.addEventListener('click', () => printFrame(true));
 
 document.addEventListener('keydown', event => {
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) return;
