@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const root = process.cwd();
 const workbook = JSON.parse(fs.readFileSync(path.join(root, 'content/workbook.json'), 'utf8'));
@@ -23,7 +24,7 @@ function extractText(html) {
     .replace(/<nav\b[\s\S]*?<\/nav>/gi, ' ')
     .replace(/<div class="sheet-footer"[\s\S]*?<\/div>/gi, ' ')
     .replace(/<footer\b[\s\S]*?<\/footer>/gi, ' ')
-    .replace(/<(?:br|\/p|\/h1|\/h2|\/h3|\/h4|\/li|\/tr|\/td|\/th|\/section|\/article|\/div)>/gi, '\n')
+    .replace(/<(?:br|\/p|\/h1|\/h2|\/h3|\/h4|\/li|\/tr|\/td|\/th|\/section|\/article|\/div|\/text)>/gi, '\n')
     .replace(/<[^>]+>/g, ' ');
   text = decodeEntities(text)
     .replace(/[\t\r ]+/g, ' ')
@@ -54,6 +55,28 @@ for (const page of workbook.pages) {
 
 for (const page of workbook.visualPages || []) {
   printPage(`VISUAL ${page.slug}: ${page.title}`, path.join(root, 'visual-pages', `${page.slug}.html`));
+}
+
+const assetsDir = path.join(root, 'visual-assets');
+for (const name of fs.readdirSync(assetsDir).filter(name => name.endsWith('.svg')).sort()) {
+  printPage(`VISUAL-ASSET ${name}`, path.join(assetsDir, name));
+}
+
+const tessVersion = spawnSync('tesseract', ['--version'], { encoding: 'utf8' });
+if (tessVersion.status === 0) {
+  const langsOut = spawnSync('tesseract', ['--list-langs'], { encoding: 'utf8' });
+  const langs = langsOut.stdout || '';
+  const lang = /(^|\n)heb(\n|$)/.test(langs) ? 'heb+eng' : 'eng';
+  console.log(`\n=== RASTER VISUAL OCR (${lang}) ===`);
+  for (const name of fs.readdirSync(assetsDir).filter(name => /\.jpe?g$/i.test(name)).sort()) {
+    const file = path.join(assetsDir, name);
+    const ocr = spawnSync('tesseract', [file, 'stdout', '-l', lang, '--psm', '6'], { encoding: 'utf8', maxBuffer: 1024 * 1024 });
+    console.log(`\n===== OCR ${name} =====`);
+    console.log((ocr.stdout || '').trim() || '[no OCR text]');
+    if (ocr.stderr) console.log(`[tesseract-note] ${ocr.stderr.trim()}`);
+  }
+} else {
+  console.log('\n=== RASTER VISUAL OCR SKIPPED: tesseract unavailable on runner ===');
 }
 
 console.log('\n=== END FULL MATHEMATICAL AUDIT SOURCE DUMP ===');
