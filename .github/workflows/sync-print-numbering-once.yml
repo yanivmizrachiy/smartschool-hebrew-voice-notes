@@ -1,0 +1,31 @@
+name: Sync corrected print numbering once
+
+on:
+  push:
+    branches: [fix/razpages-local-numbering-20260813]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/razpages-local-numbering-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate corrected print bundle
+        run: npm run build:print
+      - name: Commit print bundle and remove this one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add print
+          git rm .github/workflows/sync-print-numbering-once.yml
+          git commit -m "Regenerate print bundle with unique local page markers"
+          git push origin HEAD:fix/razpages-local-numbering-20260813
