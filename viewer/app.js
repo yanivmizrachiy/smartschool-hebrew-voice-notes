@@ -24,7 +24,7 @@ function buildEntries(data) {
     const localPage = sequenceIndex + 1;
     if (entry.kind === 'worksheet') {
       const page = data.pages.find(item => item.id === entry.id);
-      if (!page) throw new Error(`דף עבודה חסר ב-workbook.json`);
+      if (!page) throw new Error('דף עבודה חסר ב-workbook.json');
       return {
         sequence: localPage,
         key: `worksheet-${page.id}`,
@@ -40,7 +40,7 @@ function buildEntries(data) {
 
     if (entry.kind === 'visual') {
       const page = (data.visualPages || []).find(item => item.slug === entry.slug);
-      if (!page) throw new Error(`דף חזותי חסר ב-workbook.json`);
+      if (!page) throw new Error('דף חזותי חסר ב-workbook.json');
       return {
         sequence: localPage,
         key: `visual-${page.slug}`,
@@ -144,7 +144,6 @@ function decorateFrame() {
     if (!doc || !entry) return;
 
     doc.querySelector('.sheet-footer')?.remove();
-    doc.querySelector('.book-page-number')?.remove();
 
     const main = doc.querySelector('.a4-page');
     if (!main) return;
