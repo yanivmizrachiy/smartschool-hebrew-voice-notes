@@ -1,0 +1,29 @@
+name: Apply textbook batch B
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - tools/apply-textbook-batch-b.py
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/textbook-layout-46-pages-20260813
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: python3 tools/apply-textbook-batch-b.py
+      - run: npm run build
+      - run: npm run build:print
+      - run: npm run validate
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Expand volume sequence into full textbook workspaces
