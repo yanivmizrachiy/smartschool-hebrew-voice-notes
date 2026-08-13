@@ -1,1 +1,0 @@
-The four image-only visual pages are not merge-ready while they reference 5-15 KB JPEG assets. Replace with repo-hosted production-quality assets first.
