@@ -1,0 +1,34 @@
+name: Apply middle-school math language
+
+on:
+  push:
+    branches:
+      - fix/full-math-correctness-20260813
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/full-math-correctness-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Normalize student-facing math language
+        run: node tools/normalize-middle-school-math-language.mjs
+      - name: Commit normalized worksheets if needed
+        run: |
+          if git diff --quiet -- worksheets; then
+            echo "No worksheet changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worksheets
+          git commit -m "Normalize cone workbook to middle-school notation"
+          git push origin HEAD:fix/full-math-correctness-20260813
