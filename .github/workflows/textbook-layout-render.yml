@@ -2,32 +2,37 @@ name: Textbook layout render
 
 on:
   push:
-    branches: [audit/textbook-layout-46-pages-20260813]
+    branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build workbook
-        run: |
-          npm run build
-          npm run build:print
-          npm run validate
+      - name: Build and validate workbook
+        run: npm run check
       - name: Start local server
         run: |
           python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
           sleep 2
-      - name: Render 46 A4 pages
-        run: node tools/render-layout-pages.mjs
+      - name: Render all A4 pages
+        run: npm run render:pages
+      - name: Verify exact render count
+        run: test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
       - name: Upload page renders
         uses: actions/upload-artifact@v4
         with:
           name: textbook-layout-pages
           path: qa/layout-pages/*.png
+          if-no-files-found: error
+          retention-days: 7
