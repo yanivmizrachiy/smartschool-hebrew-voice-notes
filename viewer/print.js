@@ -36,7 +36,6 @@ async function loadEntry(entry, workbook) {
 
 function prepareLocalPage(main, pageNumber) {
   main.querySelector('.sheet-footer')?.remove();
-  main.querySelector('.book-page-number')?.remove();
   main.dataset.localPage = String(pageNumber);
 
   let number = main.querySelector('.page-number, .local-page-number');
