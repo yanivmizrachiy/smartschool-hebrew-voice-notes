@@ -68,6 +68,7 @@ for (const name of files) {
 
   if (name === 'page-18.html') {
     html = html
+      .replace('משפט פיתגורס במישור ובמרחב — כיתה ח׳', 'משפט פיתגורס במשולש ישר־זווית — כיתה ח׳')
       .replace(/<span class="term">2π × רדיוס<\/span>/, '<span class="term">היקף = 2 × π × רדיוס</span>')
       .replace(/<span class="term">π × רדיוס²<\/span>/, '<span class="term">שטח = π × רדיוס²</span>')
       .replace(/היקף מעגל שרדיוסו <span class="math-ltr">רדיוס<\/span>:/, 'היקף מעגל:')
