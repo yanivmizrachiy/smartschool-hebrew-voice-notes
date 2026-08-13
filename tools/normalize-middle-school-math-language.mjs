@@ -7,13 +7,7 @@ const worksheetsDir = path.join(root, 'worksheets');
 function replaceLatinMathSymbols(text) {
   let out = text;
   const replacements = [
-    ['V', 'נפח'],
-    ['A', 'שטח'],
-    ['r', 'רדיוס'],
-    ['h', 'גובה'],
-    ['l', 'יוצר'],
-    ['d', 'קוטר'],
-    ['b', 'בסיס']
+    ['V', 'נפח'], ['A', 'שטח'], ['r', 'רדיוס'], ['h', 'גובה'], ['l', 'יוצר'], ['d', 'קוטר'], ['b', 'בסיס']
   ];
   for (const [symbol, word] of replacements) {
     const re = new RegExp(`(?<![A-Za-z])${symbol}(?![A-Za-z])`, 'g');
@@ -33,7 +27,19 @@ function replaceLatinMathSymbols(text) {
     .replace(/רדיוס²\s*גובה/g, 'רדיוס² × גובה')
     .replace(/2\s*רדיוס/g, '2 × רדיוס')
     .replace(/1\/3/g, '⅓');
-  return out;
+
+  for (const word of ['רדיוס', 'גובה', 'יוצר', 'נפח', 'שטח', 'קוטר', 'בסיס']) {
+    out = out
+      .replace(new RegExp(`${word}\\s+${word}`, 'g'), word)
+      .replace(new RegExp(`${word}\\s*\\(\\s*${word}\\s*\\)`, 'g'), word);
+  }
+
+  return out
+    .replace(/בסיס עגול/g, 'בסיס בצורת עיגול')
+    .replace(/החלק העגול/g, 'בסיס החרוט')
+    .replace(/היטל ניצב מלמעלה/g, 'מבט מלמעלה')
+    .replace(/היטל ניצב מן הצד/g, 'מבט מהצד')
+    .replace(/ההיטל מלמעלה/g, 'המבט מלמעלה');
 }
 
 function transformHtml(html) {
@@ -42,8 +48,7 @@ function transformHtml(html) {
     if (!parts[i].startsWith('<')) parts[i] = replaceLatinMathSymbols(parts[i]);
   }
   let out = parts.join('');
-  out = out.replace(/aria-label="([^"]*)"/g, (_, value) => `aria-label="${replaceLatinMathSymbols(value)}"`);
-  return out;
+  return out.replace(/aria-label="([^"]*)"/g, (_, value) => `aria-label="${replaceLatinMathSymbols(value)}"`);
 }
 
 const files = fs.readdirSync(worksheetsDir)
@@ -52,10 +57,8 @@ const files = fs.readdirSync(worksheetsDir)
 
 for (const name of files) {
   const file = path.join(worksheetsDir, name);
-  let html = fs.readFileSync(file, 'utf8');
-  html = transformHtml(html);
+  let html = transformHtml(fs.readFileSync(file, 'utf8'));
 
-  // Mathematical precision and age-appropriate language fixes found in the full audit.
   if (name === 'page-17.html') {
     html = html
       .replace('בסיס החרוט הוא  - מעגל', 'בסיס החרוט הוא - עיגול')
@@ -71,12 +74,6 @@ for (const name of files) {
       .replace(/<span class="math-ltr">רדיוס 3, גובה 8<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 3 ס״מ: הקוטר =')
       .replace(/<span class="math-ltr">רדיוס 4, גובה 6<\/span>:\s*הקוטר =/, 'רדיוס הבסיס 4 ס״מ: הקוטר =')
       .replace('והיקף הבסיס בקירוב הוא', 'והיקף הבסיס בקירוב, גם כאן לפי π≈3, הוא');
-  }
-
-  if (name === 'page-19.html') {
-    html = html
-      .replace(/בסיס עגול/g, 'בסיס בצורת עיגול')
-      .replace(/החלק העגול/g, 'בסיס החרוט');
   }
 
   if (name === 'page-20.html') {
@@ -96,10 +93,17 @@ for (const name of files) {
   }
 
   if (name === 'page-31.html') {
-    html = html.replace(
-      'בהשוואה בין שני דגמים דומים, אחד רחב ונמוך ואחד צר וגבוה, לאיזה מהם בסיס תמיכה רחב יותר ולכן בדרך כלל יציבות טובה יותר?',
-      'בהשוואה בין שני דגמים דומים, אחד רחב ונמוך ואחד צר וגבוה, לאיזה מהם בסיס רחב יותר?'
-    ).replace('יציבות:', 'השוואת צורה:');
+    html = html
+      .replace('בהשוואה בין שני דגמים דומים, אחד רחב ונמוך ואחד צר וגבוה, לאיזה מהם בסיס תמיכה רחב יותר ולכן בדרך כלל יציבות טובה יותר?', 'בהשוואה בין שני דגמים דומים, אחד רחב ונמוך ואחד צר וגבוה, לאיזה מהם בסיס רחב יותר?')
+      .replace('יציבות:', 'השוואת צורה:');
+  }
+
+  if (name === 'page-33.html') {
+    html = html.replace(/גובה הגביע\s*\(\s*גובה\s*\)/g, 'גובה הגביע');
+  }
+
+  if (name === 'page-38.html') {
+    html = html.replace('כיפת אור חרוטית', 'אלומת אור חרוטית');
   }
 
   fs.writeFileSync(file, html, 'utf8');
