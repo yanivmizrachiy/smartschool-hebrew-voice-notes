@@ -1,0 +1,38 @@
+name: Apply final reasoning once
+
+on:
+  push:
+    branches: [audit/textbook-layout-46-pages-20260813]
+    paths:
+      - .github/workflows/apply-final-reasoning-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/textbook-layout-46-pages-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply focused pages
+        run: |
+          python3 tools/apply-page36-layout.py
+          python3 tools/apply-page37-layout.py
+          npm run build
+          npm run build:print
+          npm run validate
+      - name: Save and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worksheets print
+          git rm .github/workflows/apply-final-reasoning-once.yml
+          git commit -m "Expand final reasoning pages into full textbook workspaces"
+          git push origin HEAD:audit/textbook-layout-46-pages-20260813
