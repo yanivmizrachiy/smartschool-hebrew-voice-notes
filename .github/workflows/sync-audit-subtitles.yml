@@ -1,0 +1,46 @@
+name: Sync audited worksheet subtitles
+
+on:
+  push:
+    branches:
+      - fix/full-math-correctness-20260813
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/full-math-correctness-20260813
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Update workbook source of truth
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const path = 'content/workbook.json';
+          const workbook = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const p20 = workbook.pages.find(p => p.id === 20);
+          const p21 = workbook.pages.find(p => p.id === 21);
+          if (!p20 || !p21) throw new Error('Pages 20/21 not found in workbook.json');
+          p20.subtitle = 'מכירים שלוש מידות חשובות בחרוט ישר';
+          p21.subtitle = 'מבינים את מרכיבי נוסחת הנפח לפני שמחשבים';
+          fs.writeFileSync(path, JSON.stringify(workbook, null, 2) + '\n');
+          NODE
+          npm run build
+      - name: Commit synchronized source and generated pages
+        run: |
+          if git diff --quiet -- content/workbook.json worksheets/page-20.html worksheets/page-21.html; then
+            echo "Already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/workbook.json worksheets/page-20.html worksheets/page-21.html
+          git commit -m "Sync audited middle-school subtitles with workbook source"
+          git push origin HEAD:fix/full-math-correctness-20260813
