@@ -1,0 +1,20 @@
+name: Page utilization audit
+
+on:
+  push:
+    branches: [fix/page-2-space-utilization-20260813]
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build workbook
+        run: npm run build && npm run build:print
+      - name: Measure rendered A4 utilization
+        run: node tests/page-utilization-audit.mjs
