@@ -1,0 +1,1 @@
+Verified production source images are available locally from the user's private Drive. Current repo JPGs are placeholders/overcompressed and are blocked from final merge.
