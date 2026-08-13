@@ -14,7 +14,7 @@ const forbiddenInternalStudentText = /(?:RULES\.md|workbook\.json|source-registr
 const oldProjectText = /smartschool|voice[- ]?notes|סמרטקול|הכתבה בעברית/i;
 
 const allowedRootEntries = new Set([
-  '.git', '.github', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
+  '.git', '.github', '.gitignore', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
   'package.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
   'tests', 'tools', 'viewer', 'worksheets', 'visual-assets', 'visual-pages'
 ]);
