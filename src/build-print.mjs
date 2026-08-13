@@ -32,8 +32,8 @@ for (const [sequenceIndex, item] of sequence.entries()) {
 
   const bookPage = sequenceIndex + 1;
   const numbered = match[0].replace(
-    /<main class="([^"]*\ba4-page\b[^"]*)">/,
-    `<main class="$1" data-book-page="${bookPage}"><div class="book-page-number" aria-label="עמוד ${bookPage} מתוך ${sequence.length}">${bookPage}</div>`
+    /<main\b([^>]*\bclass="[^"]*\ba4-page\b[^"]*"[^>]*)>/,
+    `<main$1 data-book-page="${bookPage}"><div class="book-page-number" aria-label="עמוד ${bookPage} מתוך ${sequence.length}">${bookPage}</div>`
   );
   pages.push(numbered);
 }
