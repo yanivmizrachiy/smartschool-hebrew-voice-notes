@@ -19,8 +19,10 @@ assert(read(3).includes('אורך קשת הגזרה') && read(3).includes('הי�
 assert(!read(4).includes('היטל ניצב'), 'page 4: projection jargon should not remain in middle-school worksheet');
 assert(read(5).includes('משולש שווה־שוקיים'), 'page 5: axial section of a right cone must be isosceles triangle');
 assert(read(14).includes('קרוב לקודקוד') && read(14).includes('קרוב לבסיס'), 'page 14: parallel-section comparison missing');
-assert(read(17).includes('בסיס החרוט הוא - עיגול'), 'page 17: cone base must be עיגול, not מעגל');
-assert(read(17).includes('נקודה על שפת הבסיס'), 'page 17: generator endpoint must be on base boundary');
+// Page 17 is an externally supplied, source-locked document. Mathematical audit must not rewrite its terminology;
+// source fidelity is enforced separately by source-locked.mjs, while corrected terminology is used on project-authored pages.
+assert(read(17).includes('בסיס החרוט הוא  - מעגל'), 'page 17: locked source wording for the cone base must remain verbatim');
+assert(read(17).includes('נקודה על המעגל אל קודקוד החרוט'), 'page 17: locked source wording for the generator must remain verbatim');
 assert(read(18).includes('משפט פיתגורס במשולש ישר־זווית'), 'page 18: Pythagoras wording must be precise for grade 8');
 assert(read(19).includes('בסיס בצורת עיגול'), 'page 19: cone identification must use precise base terminology');
 assert(read(20).includes('רדיוס 6 ס״מ') && read(20).includes('גובה 8 ס״מ') && read(20).includes('יוצר 10 ס״מ'), 'page 20: corrected 6-8-10 triple missing');
