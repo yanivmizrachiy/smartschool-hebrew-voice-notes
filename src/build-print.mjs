@@ -72,6 +72,20 @@ const visualCss = fs.existsSync(visualCssPath) ? fs.readFileSync(visualCssPath, 
 const printCss = `${baseCss}\n\n${textbookCss}\n\n${specialCss}\n\n${visualCss}\n\n/* Generated print bundle overrides */\nbody { background:#fff; }\n.a4-page { margin:0; box-shadow:none; page-break-after:always; break-after:page; }\n.a4-page:last-child { page-break-after:auto; break-after:auto; }\n.sheet-footer { display:none !important; }\n`;
 fs.writeFileSync(path.join(outDir, 'styles.css'), printCss, 'utf8');
 
+// Preserve worksheet-local binary assets in the standalone print bundle.
+// `page-17.html` intentionally references the exact extracted Ayelet cone image at
+// `assets/ayelet-original-cone.png`; because `print/harut-a4.html` lives one directory
+// deeper, copy that source asset to `print/assets/` without decoding or re-encoding it.
+const sourceAssetsDir = path.join(root, 'worksheets', 'assets');
+const printAssetsDir = path.join(outDir, 'assets');
+if (fs.existsSync(sourceAssetsDir)) {
+  fs.mkdirSync(printAssetsDir, { recursive: true });
+  for (const entry of fs.readdirSync(sourceAssetsDir, { withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    fs.copyFileSync(path.join(sourceAssetsDir, entry.name), path.join(printAssetsDir, entry.name));
+  }
+}
+
 const sheetCount = workbook.printSheetCount || pages.length;
 const book = `<!doctype html>
 <html lang="he" dir="rtl">

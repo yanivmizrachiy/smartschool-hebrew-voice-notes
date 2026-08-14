@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 const root = process.cwd();
 const file = path.join(root, 'worksheets/page-17.html');
@@ -56,10 +57,20 @@ if (sourceMatch && normalize(sourceMatch[1]) !== normalize(expectedSource)) {
 const lockedRegion = sourceMatch?.[1] || '';
 const sourceVisuals = lockedRegion.match(/data-source-visual="ayelet-original-cone"/g) || [];
 const sourceSvgs = lockedRegion.match(/<svg\b/g) || [];
+const sourceImgs = lockedRegion.match(/<img\b/g) || [];
 if (sourceVisuals.length !== 1) errors.push(`page-17 must contain exactly one locked Ayelet cone visual, found ${sourceVisuals.length}`);
-if (sourceSvgs.length !== 1) errors.push(`page-17 must contain exactly one source SVG and no invented diagrams, found ${sourceSvgs.length}`);
-if (!lockedRegion.includes('M74 16 L8 181 Q74 158 147 181 Z')) errors.push('page-17 source cone geometry changed');
-if (!lockedRegion.includes('<ellipse cx="77.5" cy="181" rx="69.5" ry="24"')) errors.push('page-17 source cone base geometry changed');
+if (sourceSvgs.length !== 0) errors.push(`page-17 must not redraw the source cone as SVG, found ${sourceSvgs.length} source SVG(s)`);
+if (sourceImgs.length !== 1) errors.push(`page-17 must contain exactly one source image, found ${sourceImgs.length}`);
+if (!lockedRegion.includes('src="assets/ayelet-original-cone.png"')) errors.push('page-17 must use the exact extracted source cone asset');
+
+const coneFile = path.join(root, 'worksheets/assets/ayelet-original-cone.png');
+if (!fs.existsSync(coneFile)) {
+  errors.push('exact Ayelet source cone asset is missing');
+} else {
+  const digest = crypto.createHash('sha256').update(fs.readFileSync(coneFile)).digest('hex');
+  const expectedDigest = 'afedd3b4f2dd13c7a22eb06c4ab464d9c8cf8b3701c0a553305f15ffc2b3c07c';
+  if (digest !== expectedDigest) errors.push(`Ayelet source cone bytes changed: expected ${expectedDigest}, got ${digest}`);
+}
 
 const forbiddenChanges = [
   'בסיס החרוט הוא - עיגול',
@@ -98,4 +109,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: page-17 matches the supplied Ayelet text exactly and keeps only the single source cone visual with quality-only styling.');
+console.log('OK: page-17 matches the supplied Ayelet text exactly and uses the byte-locked original cone artwork with no redraw.');

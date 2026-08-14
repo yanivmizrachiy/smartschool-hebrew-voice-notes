@@ -19,12 +19,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install image fidelity tooling
+        run: python3 -m pip install --disable-pip-version-check pillow
       - name: Build and validate workbook
         run: npm run check
       - name: Start local server
         run: |
           python3 -m http.server 4173 >/tmp/harut-http.log 2>&1 &
           sleep 2
+      - name: Fast render Ayelet source page
+        run: RENDER_ONLY_INDEX=1 npm run render:pages
+      - name: Verify Ayelet source render fidelity
+        run: python3 tests/ayelet-render-fidelity.py
       - name: Render all A4 pages
         run: npm run render:pages
       - name: Verify exact render count
