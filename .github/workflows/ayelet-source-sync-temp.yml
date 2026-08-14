@@ -20,19 +20,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Restore byte-exact Ayelet source cone
+      - name: Restore byte-exact Ayelet source cone and remove transport files
         run: |
           set -euo pipefail
           mkdir -p worksheets/assets
           cat tools/ayelet-source-b64.part0 tools/ayelet-source-b64.part1 tools/ayelet-source-b64.part2 tools/ayelet-source-b64.part3 | base64 -d > worksheets/assets/ayelet-original-cone.png
           echo "afedd3b4f2dd13c7a22eb06c4ab464d9c8cf8b3701c0a553305f15ffc2b3c07c  worksheets/assets/ayelet-original-cone.png" | sha256sum -c -
+          rm .github/workflows/ayelet-source-sync-temp.yml
+          rm tools/ayelet-source-b64.part0 tools/ayelet-source-b64.part1 tools/ayelet-source-b64.part2 tools/ayelet-source-b64.part3
       - name: Validate and regenerate print bundle
         run: npm run check
-      - name: Commit generated bundle and clean temporary transport
+      - name: Commit exact asset, generated bundle and cleanup
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add worksheets/assets/ayelet-original-cone.png print/harut-a4.html print/styles.css print/assets/ayelet-original-cone.png
-          git rm .github/workflows/ayelet-source-sync-temp.yml tools/ayelet-source-b64.part0 tools/ayelet-source-b64.part1 tools/ayelet-source-b64.part2 tools/ayelet-source-b64.part3
+          git add -A
           git commit -m "Regenerate print bundle with byte-exact Ayelet source asset"
           git push origin HEAD:gpt/ayelet-source-render-lock-v2
