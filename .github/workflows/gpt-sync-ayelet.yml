@@ -1,0 +1,40 @@
+name: Temporary Ayelet source sync
+
+on:
+  push:
+    branches:
+      - gpt/ayelet-source-fidelity-v1
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build sources
+        run: npm run build
+      - name: Build print bundle
+        run: npm run build:print
+      - name: Validate workbook before temporary workflow removal
+        run: node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs
+      - name: Check generated diff
+        run: git diff --check
+      - name: Commit generated synchronization
+        shell: bash
+        run: |
+          if git diff --quiet -- worksheets visual-pages print content src tests; then
+            echo "No generated changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worksheets visual-pages print content src tests
+          git commit -m "Sync print bundle after final Ayelet alignment"
+          git push
