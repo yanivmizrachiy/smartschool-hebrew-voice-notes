@@ -18,9 +18,10 @@ for (const [index, item] of sequence.entries()) {
   }
 }
 
-// Pages identified by the 46-page visual audit as under-filled after pedagogic edits.
-// This class only distributes existing content through the safe A4 work area; it does not alter mathematics.
-const textbookFillLocalPages = new Set([17, 18, 20, 22, 23, 25, 26, 27, 29, 31, 34, 36, 39, 41]);
+// Worksheets identified by the 46-page visual audit as under-filled after pedagogic edits.
+// Keep this keyed by stable worksheet id, never by physical print position, so reordering the booklet cannot move layout treatment between worksheets.
+// Stable worksheet ids are intentional here: print order may change independently of layout treatment.
+const textbookFillWorksheetIds = new Set([24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38]);
 
 function replaceOne(text, re, replacement, label, file) {
   if (!re.test(text)) throw new Error(`${file}: missing ${label}`);
@@ -55,7 +56,7 @@ for (const page of workbook.pages) {
   html = html.replace(/<main class="([^"]*)">/, (_, classes) => {
     const classSet = new Set(classes.split(/\s+/).filter(Boolean));
     classSet.delete('textbook-fill');
-    if (textbookFillLocalPages.has(localPage)) classSet.add('textbook-fill');
+    if (textbookFillWorksheetIds.has(page.id)) classSet.add('textbook-fill');
     return `<main class="${[...classSet].join(' ')}">`;
   });
 
