@@ -16,6 +16,11 @@ const pageGrid = document.querySelector('#page-grid');
 let workbook = null;
 let entries = [];
 let currentIndex = 0;
+let printAfterLoad = false;
+
+function visibleKind(entry) {
+  return entry.sequence === 1 && entry.kind === 'worksheet' ? 'דף המחשה לתלמיד' : entry.kindLabel;
+}
 
 function buildEntries(data) {
   const sequence = data.printSequence || data.pages.map(page => ({ kind: 'worksheet', id: page.id }));
@@ -63,7 +68,6 @@ function requestedIndex() {
   const sheet = Number(params.get('sheet'));
   if (Number.isInteger(sheet) && sheet >= 1 && sheet <= entries.length) return sheet - 1;
 
-  // Backward compatibility only: the old ?page= parameter addressed an internal worksheet id.
   const legacyPage = Number(params.get('page'));
   if (Number.isInteger(legacyPage) && legacyPage > 0) {
     const found = entries.findIndex(entry => entry.worksheetId === legacyPage);
@@ -84,9 +88,15 @@ function renderPicker() {
   picker.replaceChildren(...entries.map((entry, index) => {
     const option = document.createElement('option');
     option.value = String(index);
-    option.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel} — ${entry.title}`;
+    option.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)} — ${entry.title}`;
     return option;
   }));
+}
+
+function printEntry(index) {
+  printAfterLoad = true;
+  show(index, true);
+  document.querySelector('#workbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderCatalog() {
@@ -97,7 +107,7 @@ function renderCatalog() {
 
     const meta = document.createElement('div');
     meta.className = 'page-card-meta';
-    meta.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel}`;
+    meta.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)}`;
 
     const heading = document.createElement('h3');
     heading.textContent = entry.title;
@@ -114,8 +124,14 @@ function renderCatalog() {
     openButton.textContent = 'הצג';
     openButton.addEventListener('click', () => {
       show(index, true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.querySelector('#workbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
+    const printButton = document.createElement('button');
+    printButton.type = 'button';
+    printButton.className = 'mini-button';
+    printButton.textContent = index === 0 ? 'הדפס דף המחשה' : 'הדפסה';
+    printButton.addEventListener('click', () => printEntry(index));
 
     const download = document.createElement('a');
     download.className = 'mini-button mini-link';
@@ -123,7 +139,7 @@ function renderCatalog() {
     download.download = entry.fileName;
     download.textContent = 'הורד';
 
-    actions.append(openButton, download);
+    actions.append(openButton, printButton, download);
     card.append(meta, heading, sub, actions);
     return card;
   });
@@ -167,6 +183,13 @@ function decorateFrame() {
     number.textContent = String(entry.sequence);
   } finally {
     loading.classList.add('is-hidden');
+    if (printAfterLoad) {
+      printAfterLoad = false;
+      setTimeout(() => {
+        frame.contentWindow?.focus();
+        frame.contentWindow?.print();
+      }, 180);
+    }
   }
 }
 
@@ -182,7 +205,7 @@ function show(index, updateUrl = true) {
   prev.disabled = currentIndex === 0;
   next.disabled = currentIndex === entries.length - 1;
 
-  kind.textContent = entry.kindLabel;
+  kind.textContent = visibleKind(entry);
   title.textContent = entry.title;
   subtitle.textContent = entry.subtitle;
 
@@ -217,7 +240,7 @@ fetch('content/workbook.json', { cache: 'no-store' })
   .then(data => {
     workbook = data;
     entries = buildEntries(workbook);
-    summary.textContent = `${entries.length} דפי A4 · חוברת חרוט אחת · הורדה · הדפסה`;
+    summary.textContent = `${entries.length} דפי A4 · צפייה אחד־אחד · הורדה · הדפסה`;
     document.title = `חרוט — ${entries.length} דפי A4`;
     renderPicker();
     renderCatalog();
