@@ -128,8 +128,9 @@ for (const file of [indexPath, appJsPath, printPagePath, printJsPath]) if (!fs.e
 if (fs.existsSync(indexPath)) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
   if (!/<h1>חרוט<\/h1>/.test(indexHtml)) fail('index.html: app title must be חרוט');
-  if (!indexHtml.includes('id="worksheet-frame"')) fail('index.html: missing worksheet frame');
-  if (!indexHtml.includes('id="print-current"')) fail('index.html: missing print-current action');
+  if (!indexHtml.includes('id="booklet-sheets"')) fail('index.html: missing continuous booklet sheets container');
+  if (!indexHtml.includes('id="print-booklet"')) fail('index.html: missing whole-booklet print action');
+  if (!indexHtml.includes('id="bw-toggle"')) fail('index.html: missing booklet black-and-white toggle');
   if (!indexHtml.includes('href="print.html"')) fail('index.html: missing print-all link');
   if (oldProjectText.test(indexHtml)) fail('index.html: old project branding/content is forbidden');
 }
@@ -137,7 +138,8 @@ if (fs.existsSync(appJsPath)) {
   const appJs = fs.readFileSync(appJsPath, 'utf8');
   if (!appJs.includes("fetch('content/workbook.json'")) fail('viewer/app.js: must load workbook.json dynamically');
   if (!appJs.includes('worksheets/${page.slug}.html')) fail('viewer/app.js: must load worksheet pages from slugs');
-  if (!appJs.includes('frame.contentWindow?.print()')) fail('viewer/app.js: current-page print action missing');
+  if (!appJs.includes("frameWrap.className = 'ws-wsframe'")) fail('viewer/app.js: continuous booklet frame rendering missing');
+  if (!appJs.includes("printBooklet.addEventListener('click', () => window.print())")) fail('viewer/app.js: whole-booklet print action missing');
   if (oldProjectText.test(appJs)) fail('viewer/app.js: old project branding/content is forbidden');
 }
 if (fs.existsSync(printPagePath)) {

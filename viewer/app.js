@@ -1,22 +1,10 @@
-const frame = document.querySelector('#worksheet-frame');
-const picker = document.querySelector('#page-picker');
-const status = document.querySelector('#page-status');
-const prev = document.querySelector('#prev-page');
-const next = document.querySelector('#next-page');
-const printCurrent = document.querySelector('#print-current');
-const downloadCurrent = document.querySelector('#download-current');
-const openCurrent = document.querySelector('#open-current');
-const loading = document.querySelector('#loading');
-const summary = document.querySelector('#workbook-summary');
-const title = document.querySelector('#sheet-title');
-const subtitle = document.querySelector('#sheet-subtitle');
-const kind = document.querySelector('#sheet-kind');
-const pageGrid = document.querySelector('#page-grid');
+const sheets = document.querySelector('#booklet-sheets');
+const loading = document.querySelector('#booklet-loading');
+const status = document.querySelector('#booklet-status');
+const bwToggle = document.querySelector('#bw-toggle');
+const printBooklet = document.querySelector('#print-booklet');
 
-let workbook = null;
 let entries = [];
-let currentIndex = 0;
-let printAfterLoad = false;
 
 function visibleKind(entry) {
   return entry.sequence === 1 && entry.kind === 'worksheet' ? 'דף המחשה לתלמיד' : entry.kindLabel;
@@ -27,6 +15,7 @@ function buildEntries(data) {
 
   return sequence.map((entry, sequenceIndex) => {
     const localPage = sequenceIndex + 1;
+
     if (entry.kind === 'worksheet') {
       const page = data.pages.find(item => item.id === entry.id);
       if (!page) throw new Error('דף עבודה חסר ב-workbook.json');
@@ -38,7 +27,6 @@ function buildEntries(data) {
         title: page.title,
         subtitle: page.subtitle || '',
         url: `worksheets/${page.slug}.html`,
-        fileName: `harut-page-${String(localPage).padStart(2, '0')}.html`,
         worksheetId: page.id
       };
     }
@@ -54,7 +42,6 @@ function buildEntries(data) {
         title: page.title,
         subtitle: page.type === 'puzzle-answer' ? 'דף תשובות חזותי' : 'המחשה חזותית A4',
         url: `visual-pages/${page.slug}.html`,
-        fileName: `harut-page-${String(localPage).padStart(2, '0')}.html`,
         visualSlug: page.slug
       };
     }
@@ -63,108 +50,16 @@ function buildEntries(data) {
   });
 }
 
-function requestedIndex() {
-  const params = new URLSearchParams(location.search);
-  const sheet = Number(params.get('sheet'));
-  if (Number.isInteger(sheet) && sheet >= 1 && sheet <= entries.length) return sheet - 1;
-
-  const legacyPage = Number(params.get('page'));
-  if (Number.isInteger(legacyPage) && legacyPage > 0) {
-    const found = entries.findIndex(entry => entry.worksheetId === legacyPage);
-    if (found >= 0) return found;
-  }
-
-  return 0;
-}
-
-function syncUrl(index) {
-  const url = new URL(location.href);
-  url.searchParams.delete('page');
-  url.searchParams.set('sheet', String(index + 1));
-  history.replaceState(null, '', url);
-}
-
-function renderPicker() {
-  picker.replaceChildren(...entries.map((entry, index) => {
-    const option = document.createElement('option');
-    option.value = String(index);
-    option.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)} — ${entry.title}`;
-    return option;
-  }));
-}
-
-function printEntry(index) {
-  printAfterLoad = true;
-  show(index, true);
-  document.querySelector('#workbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function renderCatalog() {
-  const cards = entries.map((entry, index) => {
-    const card = document.createElement('article');
-    card.className = 'page-card';
-    card.dataset.index = String(index);
-
-    const meta = document.createElement('div');
-    meta.className = 'page-card-meta';
-    meta.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)}`;
-
-    const heading = document.createElement('h3');
-    heading.textContent = entry.title;
-
-    const sub = document.createElement('p');
-    sub.textContent = entry.subtitle;
-
-    const actions = document.createElement('div');
-    actions.className = 'page-card-actions';
-
-    const openButton = document.createElement('button');
-    openButton.type = 'button';
-    openButton.className = 'mini-button';
-    openButton.textContent = 'הצג';
-    openButton.addEventListener('click', () => {
-      show(index, true);
-      document.querySelector('#workbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    const printButton = document.createElement('button');
-    printButton.type = 'button';
-    printButton.className = 'mini-button';
-    printButton.textContent = index === 0 ? 'הדפס דף המחשה' : 'הדפסה';
-    printButton.addEventListener('click', () => printEntry(index));
-
-    const download = document.createElement('a');
-    download.className = 'mini-button mini-link';
-    download.href = entry.url;
-    download.download = entry.fileName;
-    download.textContent = 'הורד';
-
-    actions.append(openButton, printButton, download);
-    card.append(meta, heading, sub, actions);
-    return card;
-  });
-
-  pageGrid.replaceChildren(...cards);
-}
-
-function markActiveCard() {
-  document.querySelectorAll('.page-card.is-active').forEach(card => card.classList.remove('is-active'));
-  const active = pageGrid.querySelector(`[data-index="${currentIndex}"]`);
-  active?.classList.add('is-active');
-}
-
-function decorateFrame() {
+function decorateFrame(frame, entry) {
   try {
     const doc = frame.contentDocument;
-    const entry = entries[currentIndex];
-    if (!doc || !entry) return;
+    if (!doc) return;
 
     doc.querySelector('.sheet-footer')?.remove();
-
     const main = doc.querySelector('.a4-page');
     if (!main) return;
-    main.dataset.localPage = String(entry.sequence);
 
+    main.dataset.localPage = String(entry.sequence);
     let number = doc.querySelector('.page-number, .local-page-number');
     if (!number) {
       const header = doc.querySelector('.header-container');
@@ -177,60 +72,87 @@ function decorateFrame() {
         main.prepend(number);
       }
     }
+
     number.hidden = false;
     number.dataset.localPageNumber = 'true';
     number.setAttribute('aria-label', `עמוד ${entry.sequence}`);
     number.textContent = String(entry.sequence);
-  } finally {
-    loading.classList.add('is-hidden');
-    if (printAfterLoad) {
-      printAfterLoad = false;
-      setTimeout(() => {
-        frame.contentWindow?.focus();
-        frame.contentWindow?.print();
-      }, 180);
-    }
+  } catch {
+    // Same-origin pages should be accessible; the booklet remains readable even if decoration fails.
   }
 }
 
-function show(index, updateUrl = true) {
-  currentIndex = Math.max(0, Math.min(index, entries.length - 1));
-  const entry = entries[currentIndex];
+function renderBooklet() {
+  const fragment = document.createDocumentFragment();
 
-  loading.classList.remove('is-hidden');
-  frame.src = entry.url;
-  frame.title = `${entry.title} — עמוד ${entry.sequence}`;
-  picker.value = String(currentIndex);
-  status.textContent = `עמוד ${entry.sequence} / ${entries.length}`;
-  prev.disabled = currentIndex === 0;
-  next.disabled = currentIndex === entries.length - 1;
+  for (const entry of entries) {
+    const frameWrap = document.createElement('article');
+    frameWrap.className = 'ws-wsframe';
+    frameWrap.id = `sheet-${entry.sequence}`;
+    frameWrap.dataset.sequence = String(entry.sequence);
 
-  kind.textContent = visibleKind(entry);
-  title.textContent = entry.title;
-  subtitle.textContent = entry.subtitle;
+    const frame = document.createElement('iframe');
+    frame.className = 'ws-sheet-frame';
+    frame.src = entry.url;
+    frame.title = `עמוד ${entry.sequence} · ${visibleKind(entry)} — ${entry.title}`;
+    frame.loading = entry.sequence <= 3 ? 'eager' : 'lazy';
+    frame.setAttribute('scrolling', 'no');
+    frame.addEventListener('load', () => decorateFrame(frame, entry));
 
-  downloadCurrent.href = entry.url;
-  downloadCurrent.download = entry.fileName;
-  openCurrent.href = entry.url;
+    const pageNumber = document.createElement('span');
+    pageNumber.className = 'ws-wsnum';
+    pageNumber.textContent = entry.sequence === 1
+      ? 'דף המחשה לתלמיד · עמוד 1'
+      : `${visibleKind(entry)} · עמוד ${entry.sequence}`;
 
-  markActiveCard();
-  if (updateUrl) syncUrl(currentIndex);
+    frameWrap.append(frame, pageNumber);
+    fragment.append(frameWrap);
+  }
+
+  sheets.replaceChildren(fragment);
+  loading.hidden = true;
 }
 
-frame.addEventListener('load', decorateFrame);
-picker.addEventListener('change', () => show(Number(picker.value), true));
-prev.addEventListener('click', () => show(currentIndex - 1, true));
-next.addEventListener('click', () => show(currentIndex + 1, true));
-printCurrent.addEventListener('click', () => {
-  frame.contentWindow?.focus();
-  frame.contentWindow?.print();
-});
+function applyViewMode() {
+  const params = new URLSearchParams(location.search);
+  const bw = params.get('bw') === '1';
+  sheets.classList.toggle('ws-bw', bw);
 
-document.addEventListener('keydown', event => {
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) return;
-  if (event.key === 'ArrowRight') show(currentIndex - 1, true);
-  if (event.key === 'ArrowLeft') show(currentIndex + 1, true);
-});
+  const url = new URL(location.href);
+  if (bw) {
+    url.searchParams.delete('bw');
+    bwToggle.textContent = 'תצוגה צבעונית';
+  } else {
+    url.searchParams.set('bw', '1');
+    bwToggle.textContent = 'תצוגת שחור-לבן';
+  }
+  url.hash = 'workbook';
+  bwToggle.href = `${url.pathname}${url.search}${url.hash}`;
+}
+
+function requestedSequence() {
+  const params = new URLSearchParams(location.search);
+  const sheet = Number(params.get('sheet'));
+  if (Number.isInteger(sheet) && sheet >= 1 && sheet <= entries.length) return sheet;
+
+  const legacyPage = Number(params.get('page'));
+  if (Number.isInteger(legacyPage) && legacyPage > 0) {
+    const found = entries.find(entry => entry.worksheetId === legacyPage);
+    if (found) return found.sequence;
+  }
+
+  return null;
+}
+
+function scrollToRequestedSheet() {
+  const sequence = requestedSequence();
+  if (!sequence) return;
+  requestAnimationFrame(() => {
+    document.querySelector(`#sheet-${sequence}`)?.scrollIntoView({ block: 'start' });
+  });
+}
+
+printBooklet.addEventListener('click', () => window.print());
 
 fetch('content/workbook.json', { cache: 'no-store' })
   .then(response => {
@@ -238,16 +160,18 @@ fetch('content/workbook.json', { cache: 'no-store' })
     return response.json();
   })
   .then(data => {
-    workbook = data;
-    entries = buildEntries(workbook);
-    summary.textContent = `${entries.length} דפי A4 · צפייה אחד־אחד · הורדה · הדפסה`;
+    entries = buildEntries(data);
+    status.textContent = `חוברת דפי העבודה · ${entries.length} דפים ממוספרים`;
     document.title = `חרוט — ${entries.length} דפי A4`;
-    renderPicker();
-    renderCatalog();
-    show(requestedIndex(), false);
+    renderBooklet();
+    applyViewMode();
+    scrollToRequestedSheet();
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('print') === '1') setTimeout(() => window.print(), 700);
   })
   .catch(error => {
+    loading.hidden = false;
     loading.textContent = `לא ניתן לטעון את החוברת: ${error.message || error}`;
-    title.textContent = 'שגיאה בטעינת החוברת';
-    subtitle.textContent = '';
+    status.textContent = 'שגיאה בטעינת החוברת';
   });
