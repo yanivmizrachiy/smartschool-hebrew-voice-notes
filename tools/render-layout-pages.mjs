@@ -6,6 +6,11 @@ const wb = JSON.parse(fs.readFileSync('content/workbook.json', 'utf8'));
 const worksheets = new Map(wb.pages.map(page => [page.id, page]));
 const visuals = new Map((wb.visualPages || []).map(page => [page.slug, page]));
 const outDir = path.join('qa', 'layout-pages');
+const onlyIndex = process.env.RENDER_ONLY_INDEX ? Number(process.env.RENDER_ONLY_INDEX) : null;
+
+if (onlyIndex !== null && (!Number.isInteger(onlyIndex) || onlyIndex < 1 || onlyIndex > wb.printSequence.length)) {
+  throw new Error(`RENDER_ONLY_INDEX must be an integer from 1 to ${wb.printSequence.length}`);
+}
 
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
@@ -18,7 +23,11 @@ function commandExists(command) {
 const chrome = process.env.CHROME_BIN || ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser'].find(commandExists);
 if (!chrome) throw new Error('No supported Chrome/Chromium executable found. Set CHROME_BIN explicitly.');
 
-for (let index = 0; index < wb.printSequence.length; index += 1) {
+const indexes = onlyIndex === null
+  ? Array.from({ length: wb.printSequence.length }, (_, index) => index)
+  : [onlyIndex - 1];
+
+for (const index of indexes) {
   const item = wb.printSequence[index];
   const page = item.kind === 'worksheet' ? worksheets.get(item.id) : visuals.get(item.slug);
   if (!page) throw new Error(`printSequence item ${index + 1} does not resolve to a page`);
@@ -46,8 +55,8 @@ for (let index = 0; index < wb.printSequence.length; index += 1) {
 }
 
 const rendered = fs.readdirSync(outDir).filter(name => name.endsWith('.png'));
-if (rendered.length !== wb.printSequence.length) {
-  throw new Error(`Expected ${wb.printSequence.length} page renders, found ${rendered.length}`);
+if (rendered.length !== indexes.length) {
+  throw new Error(`Expected ${indexes.length} page render(s), found ${rendered.length}`);
 }
 
-console.log(`OK: rendered ${rendered.length}/${wb.printSequence.length} A4 pages with ${chrome}.`);
+console.log(`OK: rendered ${rendered.length} requested A4 page(s) with ${chrome}.`);
