@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#64143f">
-  <meta name="description" content="חרוט — חוברת דיגיטלית בעברית לצפייה, דפדוף והדפסה של 46 דפי A4">
+  <meta name="description" content="חרוט — חוברת דיגיטלית בעברית לצפייה רציפה ולהדפסה של 46 דפי A4">
   <title>חרוט — חוברת דיגיטלית</title>
   <link rel="stylesheet" href="viewer/viewer.css">
   <link rel="stylesheet" href="viewer/logo-motion.css">
@@ -30,8 +30,8 @@
         עמוד הבית
       </a>
       <a class="sitenav__link" href="#workbook">החוברת הדיגיטלית</a>
-      <a class="sitenav__link" id="student-sheet-link" href="?sheet=1#workbook">דף המחשה לתלמיד</a>
-      <a class="sitenav__link" href="#all-pages">דפי עבודה</a>
+      <a class="sitenav__link" id="student-sheet-link" href="#sheet-1">דף המחשה לתלמיד</a>
+      <a class="sitenav__link" href="#sheet-2">דפי עבודה</a>
     </div>
   </nav>
 
@@ -41,7 +41,7 @@
         <div class="section-head">
           <span class="section-head__eyebrow">יחידת לימוד מתוקשבת</span>
           <h1>חרוט</h1>
-          <p>חוברת דיגיטלית אחת, מדורגת ומוכנה לצפייה ולהדפסה. הדפים מוצגים אחד־אחד לפי סדר החוברת.</p>
+          <p>חוברת דיגיטלית אחת, מדורגת ומוכנה לצפייה ולהדפסה. כל 46 דפי ה־A4 מוצגים ברצף אחד, בדיוק במבנה החוברת של אתר זוויות.</p>
         </div>
         <div class="hero-actions">
           <a class="btn btn--gold" href="#workbook">פתיחת החוברת</a>
@@ -50,59 +50,21 @@
       </div>
     </section>
 
-    <section class="section section--soft" id="workbook">
-      <div class="container container--book">
-        <div class="section-head section-head--compact">
-          <span class="section-head__eyebrow">חוברת חרוט</span>
-          <h2>דף אחר דף</h2>
-          <p id="workbook-summary">טוען את החוברת…</p>
-        </div>
-
+    <section class="booklet-section" id="workbook" aria-label="חוברת חרוט">
+      <div class="ws-page">
         <div class="wsbar" data-noprint>
           <span class="wsbar__side">
-            <button id="prev-page" class="btn btn--ghost btn--sm" type="button">‹ הקודם</button>
+            <a class="btn btn--ghost btn--sm" href="#main">‹ עמוד הבית</a>
           </span>
-          <span class="wsbar__title" id="page-status">טוען…</span>
+          <span class="wsbar__title" id="booklet-status">חוברת חרוט · טוען…</span>
           <span class="wsbar__side wsbar__side--acts">
-            <button id="print-current" class="btn btn--gold btn--sm" type="button">הורדה / הדפסה</button>
-            <a id="open-current" class="btn btn--ghost btn--sm" href="#" target="_blank" rel="noopener">פתיחת דף מלא</a>
-            <a id="download-current" class="btn btn--ghost btn--sm" href="#" download>הורדת הדף</a>
-            <button id="next-page" class="btn btn--ghost btn--sm" type="button">הבא ›</button>
+            <a id="bw-toggle" class="btn btn--ghost btn--sm" href="?bw=1#workbook">תצוגת שחור-לבן</a>
+            <button id="print-booklet" type="button" class="btn btn--gold btn--sm">הורדה / הדפסה</button>
           </span>
         </div>
 
-        <div class="page-picker-wrap" data-noprint>
-          <label for="page-picker">בחירת דף</label>
-          <select id="page-picker" aria-label="בחירת דף"></select>
-        </div>
-
-        <div class="current-sheet">
-          <div>
-            <div id="sheet-kind" class="sheet-kind"></div>
-            <h3 id="sheet-title">טוען…</h3>
-            <p id="sheet-subtitle"></p>
-          </div>
-          <div class="current-hint">הדף הראשון הוא דף ההמחשה לתלמיד</div>
-        </div>
-
-        <div class="viewer-card" id="viewer-card">
-          <div id="loading" class="loading">טוען את הדף…</div>
-          <iframe id="worksheet-frame" title="דף A4" loading="eager"></iframe>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="all-pages">
-      <div class="container">
-        <div class="section-head section-head--compact">
-          <span class="section-head__eyebrow">כל החוברת</span>
-          <h2>כל 46 הדפים</h2>
-          <p>לחיצה על דף מציגה אותו מיד בחוברת. מכל דף אפשר לפתוח, להוריד או להדפיס.</p>
-        </div>
-        <details class="page-catalog" open>
-          <summary>רשימת הדפים</summary>
-          <div id="page-grid" class="page-grid"></div>
-        </details>
+        <div id="booklet-loading" class="booklet-loading">טוען את 46 דפי החוברת…</div>
+        <div id="booklet-sheets" class="ws-page__sheets" aria-live="polite"></div>
       </div>
     </section>
   </main>
