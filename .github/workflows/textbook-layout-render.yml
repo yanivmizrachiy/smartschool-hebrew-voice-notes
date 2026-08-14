@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install image fidelity tooling
+        run: python3 -m pip install --disable-pip-version-check pillow
       - name: Build and validate workbook
         run: npm run check
       - name: Start local server
@@ -27,6 +29,8 @@ jobs:
           sleep 2
       - name: Render all A4 pages
         run: npm run render:pages
+      - name: Verify Ayelet source render fidelity
+        run: python3 tests/ayelet-render-fidelity.py
       - name: Verify exact render count
         run: test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
       - name: Upload page renders
