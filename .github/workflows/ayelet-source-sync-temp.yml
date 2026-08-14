@@ -20,45 +20,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Re-extract exact cone artwork from the declared Ayelet source
+      - name: Restore byte-exact Ayelet source cone
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils
-          curl -fL --retry 3 --retry-delay 2 \
-            "https://docs.google.com/document/d/1sKUJVj3fGdie_pC7wLVIS6RadwBmd0oXzmnmowjL9-k/export?format=pdf" \
-            -o /tmp/ayelet-source.pdf
-          rm -rf /tmp/ayelet-images
-          mkdir -p /tmp/ayelet-images worksheets/assets
-          pdfimages -png /tmp/ayelet-source.pdf /tmp/ayelet-images/img
-          python3 - <<'PY'
-          from pathlib import Path
-          from PIL import Image
-          import hashlib, shutil
-
-          candidates = []
-          for p in Path('/tmp/ayelet-images').glob('*.png'):
-              with Image.open(p) as im:
-                  size = im.size
-              if size == (148, 215):
-                  candidates.append(p)
-          if len(candidates) != 1:
-              raise SystemExit(f'Expected exactly one 148x215 source cone image, found {len(candidates)}: {candidates}')
-          src = candidates[0]
-          digest = hashlib.sha256(src.read_bytes()).hexdigest()
-          expected = 'afedd3b4f2dd13c7a22eb06c4ab464d9c8cf8b3701c0a553305f15ffc2b3c07c'
-          if digest != expected:
-              raise SystemExit(f'Source cone extraction hash mismatch: expected {expected}, got {digest}')
-          shutil.copyfile(src, 'worksheets/assets/ayelet-original-cone.png')
-          print(f'Exact Ayelet source cone restored: {src.name} sha256={digest}')
-          PY
+          mkdir -p worksheets/assets
+          cat tools/ayelet-source-b64.part0 tools/ayelet-source-b64.part1 tools/ayelet-source-b64.part2 tools/ayelet-source-b64.part3 | base64 -d > worksheets/assets/ayelet-original-cone.png
+          echo "afedd3b4f2dd13c7a22eb06c4ab464d9c8cf8b3701c0a553305f15ffc2b3c07c  worksheets/assets/ayelet-original-cone.png" | sha256sum -c -
       - name: Validate and regenerate print bundle
         run: npm run check
-      - name: Commit generated print bundle and remove temporary workflow
+      - name: Commit generated bundle and clean temporary transport
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add worksheets/assets/ayelet-original-cone.png print/harut-a4.html print/styles.css print/assets/ayelet-original-cone.png
-          git rm .github/workflows/ayelet-source-sync-temp.yml
-          git commit -m "Regenerate print bundle with exact Ayelet source asset"
+          git rm .github/workflows/ayelet-source-sync-temp.yml tools/ayelet-source-b64.part0 tools/ayelet-source-b64.part1 tools/ayelet-source-b64.part2 tools/ayelet-source-b64.part3
+          git commit -m "Regenerate print bundle with byte-exact Ayelet source asset"
           git push origin HEAD:gpt/ayelet-source-render-lock-v2
