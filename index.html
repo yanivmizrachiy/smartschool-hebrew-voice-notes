@@ -3,59 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0f172a">
-  <meta name="description" content="חרוט — אפליקציית דפדוף, הורדה והדפסה לכל דפי ה-A4 של החוברת">
-  <title>חרוט — דפדוף, הורדה והדפסה</title>
+  <meta name="theme-color" content="#64143f">
+  <meta name="description" content="חרוט — חוברת דיגיטלית בעברית לצפייה, דפדוף והדפסה של 46 דפי A4">
+  <title>חרוט — חוברת דיגיטלית</title>
   <link rel="stylesheet" href="viewer/viewer.css">
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand">
-      <div id="workbook-summary" class="brand-kicker">טוען את החוברת…</div>
-      <h1>חרוט</h1>
-    </div>
-    <div class="header-actions">
-      <button id="print-current" class="btn btn-secondary" type="button">הדפס / שמור PDF</button>
-      <a id="download-current" class="btn btn-secondary" href="#" download>הורד דף</a>
-      <a id="open-current" class="btn btn-secondary" href="#" target="_blank" rel="noopener">פתח דף מלא</a>
-      <a class="btn btn-primary" href="print.html" target="_blank" rel="noopener">הדפס את כל החוברת</a>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <span class="topbar__logobox" aria-hidden="true">
+        <img class="topbar__logo" src="https://raw.githubusercontent.com/yanivmizrachiy/zaviyot-digital-workbook/main/public/logo.png" alt="">
+      </span>
+      <div class="topbar__text">
+        <span class="topbar__lead">הדרכה במחוז ירושלים והעיר ירושלים - מנח״י, בהובלת איילת קריספין</span>
+        <span class="topbar__year">שנה״ל התשפ״ז</span>
+        <span class="topbar__credit">האתר מנוהל ע״י יניב רז · מדריך מחוזי חט״ב בעיר ירושלים</span>
+      </div>
     </div>
   </header>
 
-  <main class="app-shell">
-    <section class="toolbar" aria-label="ניווט בין דפי החוברת">
-      <button id="prev-page" class="nav-button" type="button" aria-label="העמוד הקודם">הקודם</button>
-      <div class="page-picker-wrap">
-        <label for="page-picker">דף</label>
-        <select id="page-picker" aria-label="בחירת דף"></select>
-        <span id="page-status" class="page-status"></span>
+  <nav class="sitenav" aria-label="ניווט בעמוד">
+    <div class="container sitenav__inner">
+      <a class="sitenav__home" href="#main" aria-current="page">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+        עמוד הבית
+      </a>
+      <a class="sitenav__link" href="#workbook">החוברת הדיגיטלית</a>
+      <a class="sitenav__link" id="student-sheet-link" href="?sheet=1#workbook">דף המחשה לתלמיד</a>
+      <a class="sitenav__link" href="#all-pages">דפי עבודה</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <section class="section hero-section">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-head__eyebrow">יחידת לימוד מתוקשבת</span>
+          <h1>חרוט</h1>
+          <p>חוברת דיגיטלית אחת, מדורגת ומוכנה לצפייה ולהדפסה. הדפים מוצגים אחד־אחד לפי סדר החוברת.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn--gold" href="#workbook">פתיחת החוברת</a>
+          <a class="btn btn--ghost" href="print.html">הורדה / הדפסה של כל החוברת</a>
+        </div>
       </div>
-      <button id="next-page" class="nav-button" type="button" aria-label="העמוד הבא">הבא</button>
     </section>
 
-    <section class="current-sheet" aria-live="polite">
-      <div>
-        <div id="sheet-kind" class="sheet-kind"></div>
-        <h2 id="sheet-title">טוען…</h2>
-        <p id="sheet-subtitle"></p>
+    <section class="section section--soft" id="workbook">
+      <div class="container container--book">
+        <div class="section-head section-head--compact">
+          <span class="section-head__eyebrow">חוברת חרוט</span>
+          <h2>דף אחר דף</h2>
+          <p id="workbook-summary">טוען את החוברת…</p>
+        </div>
+
+        <div class="wsbar" data-noprint>
+          <span class="wsbar__side">
+            <button id="prev-page" class="btn btn--ghost btn--sm" type="button">‹ הקודם</button>
+          </span>
+          <span class="wsbar__title" id="page-status">טוען…</span>
+          <span class="wsbar__side wsbar__side--acts">
+            <button id="print-current" class="btn btn--gold btn--sm" type="button">הורדה / הדפסה</button>
+            <a id="open-current" class="btn btn--ghost btn--sm" href="#" target="_blank" rel="noopener">פתיחת דף מלא</a>
+            <a id="download-current" class="btn btn--ghost btn--sm" href="#" download>הורדת הדף</a>
+            <button id="next-page" class="btn btn--ghost btn--sm" type="button">הבא ›</button>
+          </span>
+        </div>
+
+        <div class="page-picker-wrap" data-noprint>
+          <label for="page-picker">בחירת דף</label>
+          <select id="page-picker" aria-label="בחירת דף"></select>
+        </div>
+
+        <div class="current-sheet">
+          <div>
+            <div id="sheet-kind" class="sheet-kind"></div>
+            <h3 id="sheet-title">טוען…</h3>
+            <p id="sheet-subtitle"></p>
+          </div>
+          <div class="current-hint">הדף הראשון הוא דף ההמחשה לתלמיד</div>
+        </div>
+
+        <div class="viewer-card" id="viewer-card">
+          <div id="loading" class="loading">טוען את הדף…</div>
+          <iframe id="worksheet-frame" title="דף A4" loading="eager"></iframe>
+        </div>
       </div>
-      <div class="current-hint">חצים במקלדת: דפדוף מהיר</div>
     </section>
 
-    <section class="viewer-card" id="viewer-card">
-      <div id="loading" class="loading">טוען את הדף…</div>
-      <iframe id="worksheet-frame" title="דף A4" loading="eager"></iframe>
+    <section class="section" id="all-pages">
+      <div class="container">
+        <div class="section-head section-head--compact">
+          <span class="section-head__eyebrow">כל החוברת</span>
+          <h2>כל 46 הדפים</h2>
+          <p>לחיצה על דף מציגה אותו מיד בחוברת. מכל דף אפשר לפתוח, להוריד או להדפיס.</p>
+        </div>
+        <details class="page-catalog" open>
+          <summary>רשימת הדפים</summary>
+          <div id="page-grid" class="page-grid"></div>
+        </details>
+      </div>
     </section>
-
-    <details class="page-catalog">
-      <summary>כל 46 הדפים — מעבר מהיר והורדה</summary>
-      <div id="page-grid" class="page-grid"></div>
-    </details>
   </main>
 
-  <footer class="app-footer">
-    <span>יניב רז - מדריך מחוזי חט"ב בעיר ירושלים</span>
-    <span>הדרכה במחוז ירושלים והעיר ירושלים - מנח"י, בהובלת איילת קריספין</span>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <span>יניב רז - מדריך מחוזי חט״ב בעיר ירושלים</span>
+      <span>הדרכה במחוז ירושלים והעיר ירושלים - מנח״י, בהובלת איילת קריספין</span>
+    </div>
   </footer>
 
   <script type="module" src="viewer/app.js"></script>
