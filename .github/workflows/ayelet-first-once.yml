@@ -54,17 +54,18 @@ jobs:
           if (physical !== 46) throw new Error(`Expected 46 documented rows, got ${physical}`);
           fs.writeFileSync(seqPath, lines.join('\n'));
           NODE
+      - name: Remove one-time workflow before repository-hygiene validation
+        run: rm .github/workflows/ayelet-first-once.yml
       - name: Rebuild generated workbook
         run: |
           npm run build
           npm run build:print
           npm run validate
-      - name: Commit reordered workbook and remove one-time workflow
+      - name: Commit reordered workbook
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/ayelet-first-once.yml
-          git add content/workbook.json research/BOOK-SEQUENCE-46.md worksheets print index.html viewer print.html
+          git add -A
           git commit -m "Put Ayelet source page first in cone workbook"
           git push origin HEAD:fix/math-notation-and-page5-20260814
