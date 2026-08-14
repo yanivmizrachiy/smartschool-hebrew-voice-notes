@@ -24,7 +24,14 @@ assert(read(17).includes('נקודה על שפת הבסיס'), 'page 17: generat
 assert(read(18).includes('משפט פיתגורס במשולש ישר־זווית'), 'page 18: Pythagoras wording must be precise for grade 8');
 assert(read(19).includes('בסיס בצורת עיגול'), 'page 19: cone identification must use precise base terminology');
 assert(read(20).includes('רדיוס 6 ס״מ') && read(20).includes('גובה 8 ס״מ') && read(20).includes('יוצר 10 ס״מ'), 'page 20: corrected 6-8-10 triple missing');
-assert(read(21).includes('נפח') && read(21).includes('רדיוס²') && read(21).includes('גובה'), 'page 21: cone volume formula components missing');
+assert(read(21).includes('נפח') && read(21).includes('רדיוס') && read(21).includes('<sup>2</sup>') && read(21).includes('גובה'), 'page 21: cone volume formula components or squared radius markup missing');
+
+// Middle-school notation contract: multiplication is a centered dot, and Hebrew words are never glued directly to ².
+for (let id = 1; id <= 38; id += 1) {
+  const html = read(id);
+  assert(!html.includes('×'), `page ${id}: multiplication must use · rather than ×`);
+  assert(!/(?:רדיוס|גובה|יוצר|קו יוצר)²/.test(html), `page ${id}: Hebrew squared term must use bidi-safe <sup>2</sup> markup or words`);
+}
 
 // Page 6 — volume basics.
 assert(near(300 / 3, 100), 'page 6: cone/cylinder 1:3 volume relation');
@@ -163,4 +170,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: page-by-page cone mathematics regression checks passed for all numerical and key conceptual cases.');
+console.log('OK: page-by-page cone mathematics regression checks passed for all numerical, foundational, notation, and key conceptual cases.');
