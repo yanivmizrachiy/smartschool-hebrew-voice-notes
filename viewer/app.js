@@ -18,6 +18,10 @@ let entries = [];
 let currentIndex = 0;
 let printAfterLoad = false;
 
+function visibleKind(entry) {
+  return entry.sequence === 1 && entry.kind === 'worksheet' ? 'דף המחשה לתלמיד' : entry.kindLabel;
+}
+
 function buildEntries(data) {
   const sequence = data.printSequence || data.pages.map(page => ({ kind: 'worksheet', id: page.id }));
 
@@ -30,7 +34,7 @@ function buildEntries(data) {
         sequence: localPage,
         key: `worksheet-${page.id}`,
         kind: 'worksheet',
-        kindLabel: localPage === 1 ? 'דף המחשה לתלמיד' : 'דף עבודה',
+        kindLabel: 'דף עבודה',
         title: page.title,
         subtitle: page.subtitle || '',
         url: `worksheets/${page.slug}.html`,
@@ -84,7 +88,7 @@ function renderPicker() {
   picker.replaceChildren(...entries.map((entry, index) => {
     const option = document.createElement('option');
     option.value = String(index);
-    option.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel} — ${entry.title}`;
+    option.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)} — ${entry.title}`;
     return option;
   }));
 }
@@ -103,7 +107,7 @@ function renderCatalog() {
 
     const meta = document.createElement('div');
     meta.className = 'page-card-meta';
-    meta.textContent = `עמוד ${entry.sequence} · ${entry.kindLabel}`;
+    meta.textContent = `עמוד ${entry.sequence} · ${visibleKind(entry)}`;
 
     const heading = document.createElement('h3');
     heading.textContent = entry.title;
@@ -201,7 +205,7 @@ function show(index, updateUrl = true) {
   prev.disabled = currentIndex === 0;
   next.disabled = currentIndex === entries.length - 1;
 
-  kind.textContent = entry.kindLabel;
+  kind.textContent = visibleKind(entry);
   title.textContent = entry.title;
   subtitle.textContent = entry.subtitle;
 
