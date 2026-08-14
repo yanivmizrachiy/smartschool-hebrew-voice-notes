@@ -22,8 +22,8 @@ jobs:
         run: npm run build
       - name: Build print bundle
         run: npm run build:print
-      - name: Validate exact source and workbook
-        run: npm run validate
+      - name: Validate workbook before temporary workflow removal
+        run: node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs
       - name: Check generated diff
         run: git diff --check
       - name: Commit generated synchronization
