@@ -34,15 +34,23 @@ for actual, target, tol, label in zip(bbox, expected, tolerance, ('left', 'top',
 # A source-faithful A4 page is black/white plus the original red cone. Reject new
 # colored diagrams/cards inside the paper. Ignore an 8px viewport rim because Chrome
 # can expose the site's decorative body background on the final fractional A4 pixel.
-colored_outside = 0
+colored = []
 for y in range(8, img.height - 8):
     for x in range(8, img.width - 8):
         if 88 <= x <= 185 and 555 <= y <= 690:
             continue
-        r, g, b = img.getpixel((x, y))
-        if max(r, g, b) - min(r, g, b) > 35 and min(r, g, b) < 220:
-            colored_outside += 1
-            if colored_outside > 40:
-                raise SystemExit('Ayelet render fidelity: detected invented colored visual content inside the A4 paper outside the original cone')
+        rgb = img.getpixel((x, y))
+        if max(rgb) - min(rgb) > 35 and min(rgb) < 220:
+            colored.append((x, y, rgb))
+
+if len(colored) > 40:
+    cxs = [p[0] for p in colored]
+    cys = [p[1] for p in colored]
+    cbbox = (min(cxs), min(cys), max(cxs) + 1, max(cys) + 1)
+    sample = colored[:12]
+    raise SystemExit(
+        f'Ayelet render fidelity: detected {len(colored)} colored pixels outside the original cone; '
+        f'bbox={cbbox}; first={sample}'
+    )
 
 print(f'OK: Ayelet rendered source cone bbox={bbox}; no extra colored visuals detected in the A4 paper.')
