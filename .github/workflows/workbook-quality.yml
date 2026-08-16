@@ -66,10 +66,21 @@ jobs:
           path: qa/mobile-viewer/*.png
           if-no-files-found: warn
           retention-days: 7
-      - name: Run real PDF print QA
-        run: node tools/qa-print-viewer.mjs
+      - name: Run canonical real PDF print QA
+        run: node tools/qa-print-booklets.mjs
       - name: Verify generated print PDFs
-        run: test -s qa/print-viewer/cone.pdf && test -s qa/print-viewer/circle.pdf && test -s qa/print-viewer/cylinder.pdf
+        run: |
+          test -s qa/print-booklets/cone-46-pages.pdf
+          test -s qa/print-booklets/circle-88-pages.pdf
+          test -s qa/print-booklets/cylinder-38-pages.pdf
+      - name: Upload real PDF QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: print-booklets-qa
+          path: qa/print-booklets/*.pdf
+          if-no-files-found: warn
+          retention-days: 7
       - name: Ensure generated cone booklet sources stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
       - name: Verify cone print bundle exists
