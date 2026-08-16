@@ -13,6 +13,7 @@ const TOPICS = {
   cylinder: { label: 'גליל', count: 38, folder: 'cylinder' }
 };
 const STORAGE_PREFIX = 'math-workbook:last-sheet:';
+const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
 
 const params = new URLSearchParams(location.search);
 const topicKey = TOPICS[params.get('topic')] ? params.get('topic') : 'cone';
@@ -254,9 +255,14 @@ function requestedSequence() {
   return storedSequence();
 }
 
-function goToSequence(sequence, behavior = 'smooth') {
+function navigationBehavior(requested) {
+  if (requested) return requested;
+  return reducedMotion?.matches ? 'auto' : 'smooth';
+}
+
+function goToSequence(sequence, behavior) {
   const safe = Math.max(1, Math.min(entries.length, sequence));
-  document.querySelector(`#sheet-${safe}`)?.scrollIntoView({ block: 'start', behavior });
+  document.querySelector(`#sheet-${safe}`)?.scrollIntoView({ block: 'start', behavior: navigationBehavior(behavior) });
   currentSequence = safe;
   rememberSequence(safe);
   updateJumpStatus();
