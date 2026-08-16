@@ -1,0 +1,36 @@
+/* Final residual A4 utilization polish from the post-merge Chrome summary.
+   Only measured Circle outliers are touched; no pedagogic content is added. */
+
+/* Page 78 — the coordinate diagram and six reasoning cards are the learning surface. */
+.a4-page:has(.page-number[aria-label="עמוד 78"]){font-size:15.8px!important;line-height:1.38!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"])>.coord-card{padding:4mm!important;margin-block:5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"])>.coord-card svg{height:80mm!important;max-height:80mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-grid{gap:4.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-box{padding:4.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .instruction{margin-bottom:2.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .axis-choice{gap:2.5mm!important}
+
+/* Page 74 — enlarge the three tangency constructions and the answer cards. */
+.a4-page:has(.page-number[aria-label="עמוד 74"]){font-size:15.8px!important;line-height:1.36!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip{gap:4.5mm!important;margin-block:5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip .coord-card{min-height:70mm!important;padding:3.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip svg{height:56mm!important;max-height:56mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-caption{font-size:13.5px!important;margin-top:2mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .choice-grid{gap:4.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .choice-box{padding:5.2mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .task{margin-block:4.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .instruction{margin-bottom:2.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .thinking{padding:4mm!important}
+
+/* Page 73 — use the remaining area for a larger coordinate construction and working cards. */
+.a4-page:has(.page-number[aria-label="עמוד 73"]){font-size:15.4px!important;line-height:1.34!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"])>.coord-card{padding:4mm!important;margin-block:5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"])>.coord-card svg{height:78mm!important;max-height:78mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .choice-grid{gap:4.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .choice-box{padding:4.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .instruction{margin-bottom:2.4mm!important}
+
+/* Page 36 — spend the last small blank reserve on the actual sector-rearrangement diagrams. */
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .visual-card{min-height:75mm!important;padding:3.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .visual-card svg{height:47mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .coord-caption{font-size:13px!important;margin-top:2mm!important}
