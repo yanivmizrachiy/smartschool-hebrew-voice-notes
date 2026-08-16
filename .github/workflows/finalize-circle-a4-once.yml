@@ -1,0 +1,78 @@
+name: Finalize Circle A4 once
+
+on:
+  push:
+    branches:
+      - fix/circle-no-name-date-a4-utilization
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-no-name-date-a4-utilization
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Normalize page labels and residual layout
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          # Pages 71-79 predated the accessible page-number label used by 80-88.
+          for n in range(71, 80):
+              p = Path(f'circle/page-{n}.html')
+              text = p.read_text()
+              old = f'<div class="page-number">{n}</div>'
+              new = f'<div class="page-number" aria-label="עמוד {n}">{n}</div>'
+              if old not in text:
+                  if new in text:
+                      continue
+                  raise SystemExit(f'{p}: expected page-number form not found')
+              p.write_text(text.replace(old, new, 1))
+
+          css = Path('circle/a4-utilization.css')
+          text = css.read_text()
+          text += r'''
+
+/* Final measured residual tuning after the full-scan pass. */
+/* Page 47 exceeded A4 by 25px after the general profile; retain the improved readability with a smaller expansion. */
+.a4-page:has(.page-number[aria-label="עמוד 47"]){font-size:16.5px!important;line-height:1.42!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .task{margin-block:4.6mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .instruction{margin-bottom:2.5mm!important}
+
+/* Page 84 exceeded A4 by only 12px; trim spacing rather than shrinking the mathematics. */
+.a4-page:has(.page-number[aria-label="עמוד 84"]){font-size:16.7px!important;line-height:1.43!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .task{margin-block:5.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .thinking{padding:4.2mm!important;line-height:1.48!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .choice-row{padding-block:3mm!important}
+'''
+          css.write_text(text)
+
+          # Accessibility/source contract: all page numbers must identify their local page.
+          qa = Path('circle/qa.mjs')
+          q = qa.read_text()
+          anchor = '  assert(new RegExp(`class="page-number"[^>]*>${page}<\\\\/div>`).test(html), `page ${page}: visible page number mismatch`);'
+          if anchor not in q:
+              raise SystemExit('circle QA page-number anchor not found')
+          addition = anchor + '\n  assert(new RegExp(`class="page-number"[^>]*aria-label="עמוד ${page}"[^>]*>${page}<\\\\/div>`).test(html), `page ${page}: accessible local page label is required`);'
+          q = q.replace(anchor, addition, 1)
+          qa.write_text(q)
+          PY
+          node circle/qa.mjs
+          git diff --check
+      - name: Commit final residual changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/page-7*.html circle/a4-utilization.css circle/qa.mjs
+          git commit -m 'Finalize Circle A4 utilization and page labels'
+          git push origin HEAD:fix/circle-no-name-date-a4-utilization
