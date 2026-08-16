@@ -1,0 +1,37 @@
+name: Apply circle A4 utilization once
+
+on:
+  push:
+    branches:
+      - fix/circle-no-name-date-a4-utilization
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-no-name-date-a4-utilization
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply measured utilization
+        run: node tools/apply-circle-utilization.mjs
+      - name: Verify static contracts
+        run: |
+          node circle/qa.mjs
+          node tools/qa-math-writing.mjs
+          git diff --check
+      - name: Commit utilization pass
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/styles.css tools/qa-a4-pages.mjs
+          git commit -m 'Use measured blank space across circle A4 pages'
+          git push origin HEAD:fix/circle-no-name-date-a4-utilization
