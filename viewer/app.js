@@ -12,6 +12,7 @@ const TOPICS = {
   circle: { label: 'מעגל', count: 88, folder: 'circle' },
   cylinder: { label: 'גליל', count: 38, folder: 'cylinder' }
 };
+const STORAGE_PREFIX = 'math-workbook:last-sheet:';
 
 const params = new URLSearchParams(location.search);
 const topicKey = TOPICS[params.get('topic')] ? params.get('topic') : 'cone';
@@ -86,6 +87,24 @@ async function loadEntries() {
   const response = await fetch('content/workbook.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return buildConeEntries(await response.json());
+}
+
+function rememberSequence(sequence) {
+  try {
+    sessionStorage.setItem(`${STORAGE_PREFIX}${topicKey}`, String(sequence));
+  } catch {
+    // Private browsing or storage restrictions must not break navigation.
+  }
+}
+
+function storedSequence() {
+  try {
+    const value = Number(sessionStorage.getItem(`${STORAGE_PREFIX}${topicKey}`));
+    if (Number.isInteger(value) && value >= 1 && value <= entries.length) return value;
+  } catch {
+    // Storage is optional; direct navigation continues to work.
+  }
+  return null;
 }
 
 function fitFrameToViewport(frame) {
@@ -202,6 +221,7 @@ function applyViewMode() {
   sheets.classList.toggle('ws-bw', bw);
 
   const url = new URL(location.href);
+  url.searchParams.delete('sheet');
   if (bw) {
     url.searchParams.delete('bw');
     bwToggle.textContent = 'צבעוני';
@@ -219,6 +239,7 @@ function applyTopicLinks() {
     const key = link.dataset.topic;
     const url = new URL(location.href);
     url.searchParams.set('topic', key);
+    url.searchParams.delete('sheet');
     url.hash = 'workbook';
     link.href = `${url.pathname}${url.search}${url.hash}`;
     link.classList.toggle('is-active', key === topicKey);
@@ -230,19 +251,22 @@ function applyTopicLinks() {
 function requestedSequence() {
   const sheet = Number(params.get('sheet'));
   if (Number.isInteger(sheet) && sheet >= 1 && sheet <= entries.length) return sheet;
-  return null;
+  return storedSequence();
 }
 
 function goToSequence(sequence, behavior = 'smooth') {
   const safe = Math.max(1, Math.min(entries.length, sequence));
   document.querySelector(`#sheet-${safe}`)?.scrollIntoView({ block: 'start', behavior });
   currentSequence = safe;
+  rememberSequence(safe);
   updateJumpStatus();
 }
 
 function scrollToRequestedSheet() {
   const sequence = requestedSequence();
   if (!sequence) return;
+  currentSequence = sequence;
+  updateJumpStatus();
   requestAnimationFrame(() => goToSequence(sequence, 'auto'));
 }
 
@@ -272,6 +296,7 @@ function detectCurrentSheet() {
   const next = Number(frameWrap.dataset.sequence) || 1;
   if (next !== currentSequence) {
     currentSequence = next;
+    rememberSequence(next);
     updateJumpStatus();
   }
 }
