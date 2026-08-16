@@ -38,10 +38,16 @@ if (changed.length !== 88) {
 {
   const file = 'circle/qa.mjs';
   let qa = fs.readFileSync(file, 'utf8');
-  const anchor = "    assert(!/answers\\.json/i.test(html), `${file}: answer-key reference forbidden`);";
-  if (!qa.includes(anchor)) throw new Error('circle QA anchor not found');
-  const addition = `${anchor}\n    assert(!/<(?:footer|div)\\s+class=[\"']footer[\"']/i.test(html), \`${'${file}'}: student footer is forbidden\`);\n    assert(!/שם\\s*(?:התלמיד)?\\s*[:：]|תאריך\\s*[:：]/u.test(html), \`${'${file}'}: student name/date fields are forbidden\`);`;
-  qa = qa.replace(anchor, addition);
+  const oldRule = '  assert(/<(?:footer|div) class="footer">/.test(html), `page ${page}: name/date footer is required`);';
+  if (!qa.includes(oldRule)) throw new Error('legacy circle name/date QA rule not found');
+  qa = qa.replace(oldRule,
+    '  assert(!/<(?:footer|div)\\s+class=["\\\']footer["\\\']/i.test(html), `page ${page}: student footer is forbidden`);\n' +
+    '  assert(!/שם\\s*(?:התלמיד)?\\s*[:：]|תאריך\\s*[:：]/u.test(html), `page ${page}: student name/date fields are forbidden`);'
+  );
+  qa = qa.replace(
+    'canonical A4/footer/coordinate rules locked',
+    'canonical A4/no-name-date/coordinate rules locked'
+  );
   fs.writeFileSync(file, qa);
 }
 
