@@ -6,6 +6,7 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const css = fs.readFileSync(path.join(dir, 'styles.css'), 'utf8');
 const assert = (condition, message) => { if (!condition) throw new Error(`Circle QA failed: ${message}`); };
 const count = (text, pattern) => (text.match(pattern) || []).length;
+const visibleText = html => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
 
 assert(/width:210mm/.test(css) && /height:297mm/.test(css), 'A4 dimensions must be exactly 210×297mm');
 assert(/overflow:hidden/.test(css), 'A4 page must guard against overflow');
@@ -28,6 +29,7 @@ pages.forEach((page, index) => assert(page === index + 1, `complete workbook mus
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
+  const text = visibleText(html);
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(html), `page ${page}: Hebrew RTL root is required`);
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
@@ -68,7 +70,8 @@ for (const page of pages) {
   if (page === 60) {
     assert(/<h1[^>]*>בעיות מעגל מחיי היום־יום<\/h1>/.test(html), 'page 60: real-life capstone title is required');
     assert(/בריכה|רחבה|שולחן|ערוגה|גלגל/.test(html), 'page 60: varied real-life contexts are required');
-    assert(/C=16π/.test(html) && /A=36π/.test(html), 'page 60: both reverse circumference and reverse area problems are required');
+    assert(/היקף 16π מ׳.*r=____ מ׳.*A=____π מ׳²/.test(text), 'page 60: circumference → radius → area real-life problem is required');
+    assert(/שטח רחבה עגולה הוא 36π מ׳².*r=____ מ׳.*C=____π מ׳/.test(text), 'page 60: area → radius → circumference real-life problem is required');
   }
 
   if ([52, 53, 54, 56, 60].includes(page)) {
