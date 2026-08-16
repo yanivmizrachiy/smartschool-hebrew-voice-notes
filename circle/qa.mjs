@@ -34,7 +34,8 @@ for (const page of pages) {
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
   assert(new RegExp(`class="page-number"[^>]*>${page}<\\/div>`).test(html), `page ${page}: visible page number mismatch`);
-  assert(/<(?:footer|div) class="footer">/.test(html), `page ${page}: name/date footer is required`);
+  assert(!/<(?:footer|div)\s+class=["\']footer["\']/i.test(html), `page ${page}: student footer is forbidden`);
+  assert(!/שם\s*(?:התלמיד)?\s*[:：]|תאריך\s*[:：]/u.test(html), `page ${page}: student name/date fields are forbidden`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/demo|placeholder/i.test(html), `page ${page}: demo/placeholder text is forbidden`);
   assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
@@ -88,4 +89,4 @@ for (const page of pages) {
   }
 }
 
-console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; reverse real-life circumference/area problems locked; no separate answer keys; canonical A4/footer/coordinate rules locked)`);
+console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; reverse real-life circumference/area problems locked; no separate answer keys; canonical A4/no-name-date/coordinate rules locked)`);
