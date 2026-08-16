@@ -69,13 +69,8 @@ function setJaccard(A, B) {
 function similarityScore(a, b) {
   const unigram = setJaccard(new Set(tokens(a)), new Set(tokens(b)));
   const bigram = setJaccard(ngramSet(a, 2), ngramSet(b, 2));
+  // Word order carries most of the score so inverse operations are not mistaken for clones.
   return 0.30 * unigram + 0.70 * bigram;
-}
-
-function isIntentionalRepeatedDrill(book, page, a, b) {
-  if (book !== 'circle' || page !== 7) return false;
-  const compassDrill = /שרטטו מעגל ברדיוס\s+\d+(?:[.,]\d+)?\s+ס״מ\.\s*סמנו O ורדיוס אחד/;
-  return compassDrill.test(a) && compassDrill.test(b);
 }
 
 function loadBook(name, spec) {
@@ -102,7 +97,6 @@ for (const [name, spec] of Object.entries(BOOKS)) {
 
     for (let i = 0; i < item.tasks.length; i += 1) {
       for (let j = i + 1; j < item.tasks.length; j += 1) {
-        if (isIntentionalRepeatedDrill(name, item.page, item.tasks[i], item.tasks[j])) continue;
         const normalizedA = normalizeTask(item.tasks[i]);
         const normalizedB = normalizeTask(item.tasks[j]);
         if (normalizedA.length >= 20 && normalizedB.length >= 20) {
@@ -125,9 +119,12 @@ for (const [name, spec] of Object.entries(BOOKS)) {
 
 const circle = loadBook('circle', BOOKS.circle);
 const circlePage7 = circle.find(page => page.page === 7);
-const compassRadii = [...circlePage7.html.matchAll(/שרטטו מעגל ברדיוס\s+(2|3|4)\s+ס״מ/g)].map(match => Number(match[1]));
-assert(compassRadii.length === 3 && [...new Set(compassRadii)].sort((a,b) => a-b).join(',') === '2,3,4',
-  'circle page 7: the only allowed repeated drill must remain exactly the explicit 2/3/4 cm compass-radius sequence');
+assert(/שרטטו מעגל ברדיוס\s*2\s*ס״מ/.test(circlePage7.text), 'circle page 7: direct radius→construction task is required');
+assert(/קוטר\s*6\s*ס״מ[\s\S]*r\s*=\s*____\s*ס״מ/.test(circlePage7.text), 'circle page 7: diameter→radius→construction task is required');
+assert(/AB[\s\S]*8\s*ס״מ[\s\S]*אמצע[\s\S]*O/.test(circlePage7.text), 'circle page 7: diameter-segment→midpoint→center construction task is required');
+assert(/r\s*=\s*2[\s\S]*d\s*=\s*8[\s\S]*פתיחת המחוגה/.test(circlePage7.text), 'circle page 7: closed comparison of radius vs diameter compass openings is required');
+assert(!/שרטטו מעגל ברדיוס\s*3\s*ס״מ/.test(circlePage7.text) && !/שרטטו מעגל ברדיוס\s*4\s*ס״מ/.test(circlePage7.text),
+  'circle page 7: legacy 2/3/4 number-only repeated compass drill must not return');
 
 const circleBlock = circle.filter(page => page.page >= 52 && page.page <= 60).map(page => page.text).join(' ');
 assert(/היקף/.test(circleBlock) && /שטח/.test(circleBlock) && /רדיוס/.test(circleBlock), 'circle 52–60: reverse-problem block must cover circumference, area and radius');
@@ -138,4 +135,4 @@ assert(/A\s*=\s*\d+(?:[.,]\d+)?π[\s\S]*r/.test(circleBlock), 'circle 52–60: a
 const topPairs = reports.sort((a, b) => b.similarity - a.similarity).slice(0, 10);
 console.log('Highest consecutive-page similarities (informational):');
 for (const row of topPairs) console.log(`${row.book} ${row.a}/${row.b}: ${row.similarity.toFixed(3)}`);
-console.log('Workbook content QA: PASS (order-aware duplication checks; only the locked circle page-7 compass drill is exempt; notation, units and reverse-problem coverage checked)');
+console.log('Workbook content QA: PASS (order-aware duplication, diversified circle page-7 construction, notation, units and reverse-problem coverage checked)');
