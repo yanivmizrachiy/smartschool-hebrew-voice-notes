@@ -1,0 +1,27 @@
+{
+  "project": "מעגל",
+  "page": 8,
+  "title": "קריאת רדיוס משרטוט",
+  "task1": [
+    {"r": 3, "unit": "ס״מ"},
+    {"r": 5, "unit": "ס״מ"},
+    {"r": 7, "unit": "ס״מ"}
+  ],
+  "task2": [
+    {"r": 3, "d": 6},
+    {"r": 5, "d": 10},
+    {"r": 7, "d": 14}
+  ],
+  "task3": {
+    "correct": "המספר שעל קטע מהמרכז אל המעגל"
+  },
+  "qa": {
+    "independentPageNumber": 8,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "distractorMustNotLieOnRadiusLikeSegment": true,
+    "unitsRequired": true
+  }
+}
