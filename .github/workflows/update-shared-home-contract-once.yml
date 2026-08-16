@@ -1,0 +1,48 @@
+name: Update shared home contract once
+
+on:
+  push:
+    branches: [agent/shared-home-redesign]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/shared-home-redesign
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Replace obsolete index contract with shared-home contract
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const file = 'tests/validate.mjs';
+          let text = fs.readFileSync(file, 'utf8');
+          const old = `  if (!/<h1[^>]*id="hero-title"[^>]*>חוברת מתמטיקה<\\/h1>/.test(indexHtml)) fail('index.html: shared workbook viewer title is missing');`;
+          const replacement = `  if (!/<h1[^>]*id="hero-title"[^>]*>מעגל · גליל · חרוט<\\/h1>/.test(indexHtml)) fail('index.html: shared project title must name circle, cylinder and cone');\n  if (!indexHtml.includes('172 דפי A4')) fail('index.html: verified 172-page shared total is missing');\n  if (!indexHtml.includes('viewer/bootstrap.js') || indexHtml.includes('src="viewer/app.js"')) fail('index.html: root must use lazy shared-home bootstrap instead of eager workbook app');\n  if (!indexHtml.includes('id="library"')) fail('index.html: shared three-workbook library is missing');`;
+          if (!text.includes(old)) throw new Error('Obsolete home-title contract not found exactly; refusing broad edit');
+          text = text.replace(old, replacement);
+          fs.writeFileSync(file, text);
+          NODE
+      - name: Verify only intended contract changed
+        run: |
+          git diff --check
+          test "$(git diff --name-only)" = "tests/validate.mjs"
+          grep -F 'מעגל · גליל · חרוט' tests/validate.mjs
+          grep -F '172 דפי A4' tests/validate.mjs
+          grep -F 'viewer/bootstrap.js' tests/validate.mjs
+      - name: Commit canonical shared-home validation contract
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/validate.mjs
+          git commit -m 'Update validation contract for shared workbook home'
+          git push origin HEAD:agent/shared-home-redesign
