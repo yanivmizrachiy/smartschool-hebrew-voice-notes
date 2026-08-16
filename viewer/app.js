@@ -19,6 +19,7 @@ const topic = TOPICS[topicKey];
 let entries = [];
 let currentSequence = 1;
 let scrollTicking = false;
+let resizeTicking = false;
 
 function visibleKind(entry) {
   return entry.sequence === 1 && entry.kind === 'worksheet' ? 'דף עבודה' : entry.kindLabel;
@@ -87,6 +88,38 @@ async function loadEntries() {
   return buildConeEntries(await response.json());
 }
 
+function fitFrameToViewport(frame) {
+  try {
+    const doc = frame.contentDocument;
+    const main = doc?.querySelector('.a4-page');
+    if (!doc || !main || !frame.clientWidth) return;
+
+    main.style.transform = '';
+    main.style.transformOrigin = '';
+    const naturalWidth = main.offsetWidth;
+    if (!naturalWidth) return;
+
+    const scale = Math.min(1, frame.clientWidth / naturalWidth);
+    doc.documentElement.style.margin = '0';
+    doc.documentElement.style.padding = '0';
+    doc.documentElement.style.overflow = 'hidden';
+    doc.body.style.margin = '0';
+    doc.body.style.padding = '0';
+    doc.body.style.overflow = 'hidden';
+
+    if (scale < 0.999) {
+      main.style.transformOrigin = 'top left';
+      main.style.transform = `scale(${scale})`;
+    }
+  } catch {
+    // Viewer remains usable if a frame cannot be decorated.
+  }
+}
+
+function fitAllFrames() {
+  document.querySelectorAll('.ws-sheet-frame').forEach(fitFrameToViewport);
+}
+
 function decorateFrame(frame, entry) {
   try {
     const doc = frame.contentDocument;
@@ -106,6 +139,7 @@ function decorateFrame(frame, entry) {
     number.dataset.localPageNumber = 'true';
     number.setAttribute('aria-label', `עמוד ${entry.sequence}`);
     number.textContent = String(entry.sequence);
+    fitFrameToViewport(frame);
   } catch {
     // Same-origin pages remain readable even if optional decoration is unavailable.
   }
@@ -227,6 +261,16 @@ function handleScroll() {
   });
 }
 
+function handleResize() {
+  if (resizeTicking) return;
+  resizeTicking = true;
+  requestAnimationFrame(() => {
+    fitAllFrames();
+    detectCurrentSheet();
+    resizeTicking = false;
+  });
+}
+
 pageJump.addEventListener('click', event => {
   const button = event.target.closest('[data-jump]');
   if (!button || button.disabled) return;
@@ -238,7 +282,8 @@ pageJump.addEventListener('click', event => {
 });
 
 window.addEventListener('scroll', handleScroll, { passive: true });
-window.addEventListener('resize', handleScroll, { passive: true });
+window.addEventListener('resize', handleResize, { passive: true });
+window.addEventListener('orientationchange', handleResize, { passive: true });
 printBooklet.addEventListener('click', () => window.print());
 
 loadEntries()
@@ -252,7 +297,10 @@ loadEntries()
     applyTopicLinks();
     updateJumpStatus();
     scrollToRequestedSheet();
-    requestAnimationFrame(detectCurrentSheet);
+    requestAnimationFrame(() => {
+      fitAllFrames();
+      detectCurrentSheet();
+    });
 
     if (params.get('print') === '1') setTimeout(() => window.print(), 700);
   })
