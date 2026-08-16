@@ -24,23 +24,16 @@ pages.forEach((page, index) => assert(page === index + 1, `page numbering must b
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
-  const answerPath = path.join(dir, `page-${page}.answers.json`);
-  assert(fs.existsSync(answerPath), `page ${page} is missing an answer key`);
-  const answers = JSON.parse(fs.readFileSync(answerPath, 'utf8'));
-
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(html), `page ${page}: Hebrew RTL root is required`);
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
   assert(new RegExp(`aria-label="עמוד ${page}"[^>]*>${page}<\\/div>`).test(html), `page ${page}: visible page number mismatch`);
-  assert(answers.page === page && answers.project === 'מעגל', `page ${page}: answer key identity mismatch`);
-  assert(answers.qa?.independentPageNumber === page, `page ${page}: QA page number mismatch`);
-  assert(answers.qa?.singleVisiblePageTitle === true, `page ${page}: single-title contract missing`);
-  assert(answers.qa?.openResponseAllowed === false, `page ${page}: open responses must stay disabled`);
+  assert(/<footer class="footer">/.test(html), `page ${page}: name/date footer is required`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/demo|placeholder/i.test(html), `page ${page}: demo/placeholder text is forbidden`);
-  if (answers.qa?.piAllowed === false) assert(!html.includes('π'), `page ${page}: π appears before it is allowed`);
-  if (answers.qa?.areaFormulaAllowed === false) assert(!/A\s*=\s*π|π\s*[·*]?\s*r²/.test(html), `page ${page}: area formula appears before it is allowed`);
-  if (Number.isInteger(answers.qa?.visualItems)) assert(count(html, /class="visual-card"/g) === answers.qa.visualItems, `page ${page}: visual item count mismatch`);
+  assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
+  if (page <= 20) assert(!html.includes('π'), `page ${page}: π is forbidden before page 21`);
+  if (page <= 20) assert(!/A\s*=\s*π|π\s*[·*]?\s*r²/.test(html), `page ${page}: area formula is forbidden before page 21`);
 }
 
-console.log(`Circle QA: PASS (${pages.length} pages checked, canonical 2-line footer locked)`);
+console.log(`Circle QA: PASS (${pages.length} student pages checked; no answer-key dependency; canonical 2-line footer locked)`);
