@@ -142,6 +142,12 @@ function pdfPageCount(file) {
   return counts.length ? Math.max(...counts) : 0;
 }
 
+function pdfMediaBoxes(file) {
+  const ascii = fs.readFileSync(file).toString('latin1');
+  return [...ascii.matchAll(/\/MediaBox\s*\[\s*0(?:\.0+)?\s+0(?:\.0+)?\s+([0-9.]+)\s+([0-9.]+)\s*\]/g)]
+    .map(match => ({ width: Number(match[1]), height: Number(match[2]) }));
+}
+
 async function runTopic(topic, expected) {
   const target = await createTarget();
   const cdp = new Cdp(target.webSocketDebuggerUrl);
@@ -158,7 +164,7 @@ async function runTopic(topic, expected) {
       `${topic} viewer render`
     );
 
-    await evaluate(cdp, `window.__viewerEnsureAllFramesLoaded?.()`);
+    await evaluate(cdp, `window.__viewerEnsureAllFramesLoaded?.(45000)`);
     await waitFor(
       cdp,
       `[...document.querySelectorAll('.ws-sheet-frame')].every(frame => { try { return frame.contentDocument?.readyState === 'complete' && !!frame.contentDocument?.querySelector('.a4-page'); } catch { return false; } })`,
@@ -185,12 +191,16 @@ async function runTopic(topic, expected) {
         wsbar: getComputedStyle(document.querySelector('.wsbar')).display,
         jump: getComputedStyle(document.querySelector('#page-jump')).display,
         pageNumberOverlay: getComputedStyle(document.querySelector('.ws-wsnum')).display,
-        visibleContentCount: pages.filter(page => getComputedStyle(page).contentVisibility !== 'hidden').length,
-        badTransforms: transforms.filter(value => value !== 'none').length
+        badTransforms: transforms.filter(value => value !== 'none').length,
+        readyFrames: [...document.querySelectorAll('.ws-sheet-frame')].filter(frame => {
+          try { return frame.contentDocument?.readyState === 'complete' && !!frame.contentDocument?.querySelector('.a4-page'); }
+          catch { return false; }
+        }).length
       };
     })()`);
 
     assert(metrics.count === expected, `${topic}: expected ${expected} print wrappers, got ${metrics.count}`);
+    assert(metrics.readyFrames === expected, `${topic}: only ${metrics.readyFrames}/${expected} iframe pages are print-ready`);
     assert(Math.abs(metrics.ratio - A4_RATIO) < 0.01, `${topic}: print A4 ratio drifted to ${metrics.ratio}`);
     assert(metrics.topbar === 'none' && metrics.wsbar === 'none' && metrics.jump === 'none', `${topic}: viewer chrome leaked into print`);
     assert(metrics.pageNumberOverlay === 'none', `${topic}: floating viewer page number leaked into print`);
@@ -214,7 +224,17 @@ async function runTopic(topic, expected) {
 
     const pages = pdfPageCount(output);
     assert(pages === expected, `${topic}: PDF has ${pages} pages, expected ${expected}`);
-    console.log(`PASS ${topic}: ${pages} A4 PDF pages, ${metrics.firstWidth.toFixed(1)}×${metrics.firstHeight.toFixed(1)} CSS px`);
+
+    const mediaBoxes = pdfMediaBoxes(output);
+    assert(mediaBoxes.length >= 1, `${topic}: PDF has no readable MediaBox`);
+    for (const [index, box] of mediaBoxes.entries()) {
+      const ratio = box.height / box.width;
+      assert(box.width > 590 && box.width < 601, `${topic}: MediaBox ${index + 1} width ${box.width}pt is not A4`);
+      assert(box.height > 838 && box.height < 846, `${topic}: MediaBox ${index + 1} height ${box.height}pt is not A4`);
+      assert(Math.abs(ratio - A4_RATIO) < 0.012, `${topic}: MediaBox ${index + 1} ratio ${ratio} is not A4`);
+    }
+
+    console.log(`PASS ${topic}: ${pages} A4 PDF pages, ${metrics.firstWidth.toFixed(1)}×${metrics.firstHeight.toFixed(1)} CSS px, ${mediaBoxes.length} MediaBox record(s)`);
   } finally {
     cdp.close();
     await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`).catch(() => {});
@@ -227,7 +247,7 @@ try {
   for (const [topic, expected] of Object.entries(EXPECTED)) {
     await runTopic(topic, expected);
   }
-  console.log('Print viewer browser QA: PASS (cone/circle/cylinder real PDFs checked)');
+  console.log('Print viewer browser QA: PASS (cone/circle/cylinder real PDFs, exact page counts and A4 MediaBox checked)');
 } catch (error) {
   exitCode = 1;
   console.error(error.stack || error.message || error);
