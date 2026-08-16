@@ -56,8 +56,8 @@
 }
 
 @media(max-width:760px){
-  html{scroll-padding-top:0}
-  body{background:var(--viewer-teal-dark)}
+  html{scroll-padding-top:0;touch-action:pan-y}
+  body{background:var(--viewer-teal-dark);touch-action:pan-y}
 
   /* בנייד החוברת היא המסך: בלי דף בית/כותרות גדולות מסביב. */
   .topbar,.sitenav,.hero-section,.site-footer{display:none!important}
@@ -113,6 +113,7 @@
     gap:12px!important;
     align-items:stretch!important;
     background:var(--viewer-teal-dark)!important;
+    touch-action:pan-y;
   }
   .ws-wsframe{
     width:100vw!important;
@@ -123,11 +124,14 @@
     box-shadow:none!important;
     overflow:hidden!important;
     background:#fff!important;
+    touch-action:pan-y;
+    contain:layout paint;
   }
   .ws-sheet-frame{
     width:100%!important;
     height:100%!important;
     background:#fff!important;
+    pointer-events:none!important;
   }
 
   /* הפס הטורקיז הכהה שבין דף לדף נוצר מהרווח על רקע זה. */
@@ -151,6 +155,7 @@
     bottom:calc(8px + env(safe-area-inset-bottom,0px));
     gap:4px;
     padding:5px;
+    touch-action:manipulation;
   }
   .page-jump__btn{width:34px;height:34px;font-size:18px}
   .page-jump__btn--main{width:40px;height:40px;font-size:22px}
