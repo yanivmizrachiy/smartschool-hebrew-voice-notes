@@ -1,4 +1,4 @@
-name: Cone workbook quality
+name: Workbook quality
 
 on:
   push:
@@ -17,13 +17,19 @@ jobs:
         with:
           node-version: 22
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
-      - name: Sync generated worksheet and visual chrome
+      - name: Sync generated cone worksheet and visual chrome
         run: npm run build
-      - name: Build A4 print bundle
+      - name: Build cone A4 print bundle
         run: npm run build:print
-      - name: Validate workbook contracts
+      - name: Validate cone workbook contracts
         run: npm run validate
-      - name: Ensure generated booklet sources stayed synchronized
+      - name: Validate circle workbook contracts
+        run: node circle/qa.mjs
+      - name: Validate cylinder workbook contracts
+        run: node cylinder/qa.mjs
+      - name: Validate shared mobile viewer contract
+        run: node viewer/qa.mjs
+      - name: Ensure generated cone booklet sources stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
-      - name: Verify print bundle exists
+      - name: Verify cone print bundle exists
         run: test -s print/harut-a4.html && test -s print/styles.css
