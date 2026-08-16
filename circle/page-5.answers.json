@@ -1,0 +1,34 @@
+{
+  "project": "מעגל",
+  "page": 5,
+  "title": "רדיוס וקוטר",
+  "task1": {
+    "r": 6,
+    "d": 12,
+    "unit": "ס״מ"
+  },
+  "task2": [
+    {"r": 2, "d": 4},
+    {"r": 4, "d": 8},
+    {"r": 6, "d": 12},
+    {"r": 9, "d": 18}
+  ],
+  "task3": [
+    {"d": 10, "r": 5},
+    {"d": 14, "r": 7},
+    {"d": 18, "r": 9},
+    {"d": 24, "r": 12}
+  ],
+  "task4": {
+    "correct": "d = 2·7 = 14"
+  },
+  "qa": {
+    "independentPageNumber": 5,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "multiplicationSymbol": "·",
+    "unitsRequired": true
+  }
+}
