@@ -7,10 +7,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -63,6 +66,10 @@ jobs:
           path: qa/mobile-viewer/*.png
           if-no-files-found: warn
           retention-days: 7
+      - name: Run real PDF print QA
+        run: node tools/qa-print-viewer.mjs
+      - name: Verify generated print PDFs
+        run: test -s qa/print-viewer/cone.pdf && test -s qa/print-viewer/circle.pdf && test -s qa/print-viewer/cylinder.pdf
       - name: Ensure generated cone booklet sources stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
       - name: Verify cone print bundle exists
