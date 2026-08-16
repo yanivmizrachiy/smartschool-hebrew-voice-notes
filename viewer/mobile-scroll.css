@@ -1,0 +1,168 @@
+:root{
+  --viewer-teal:#075f63;
+  --viewer-teal-dark:#06494c;
+  --viewer-teal-soft:#dff3f2;
+}
+
+.topic-link.is-active{
+  background:var(--viewer-teal-soft)!important;
+  border-color:var(--viewer-teal)!important;
+  color:var(--viewer-teal-dark)!important;
+}
+
+.page-jump{
+  position:fixed;
+  z-index:90;
+  left:12px;
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:6px;
+  border-radius:999px;
+  background:rgba(6,73,76,.94);
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.page-jump[hidden]{display:none}
+.page-jump__btn{
+  width:36px;
+  height:36px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font:700 20px/1 system-ui,sans-serif;
+  cursor:pointer;
+}
+.page-jump__btn--main{
+  width:42px;
+  height:42px;
+  background:#fff;
+  color:var(--viewer-teal-dark);
+  font-size:23px;
+}
+.page-jump__btn:disabled{opacity:.32;cursor:default}
+.page-jump__status{
+  min-width:52px;
+  color:#fff;
+  text-align:center;
+  font:700 13px/1 "Rubik","Assistant",system-ui,sans-serif;
+  direction:ltr;
+}
+
+@media(max-width:760px){
+  html{scroll-padding-top:0}
+  body{background:var(--viewer-teal-dark)}
+
+  /* בנייד החוברת היא המסך: בלי דף בית/כותרות גדולות מסביב. */
+  .topbar,.sitenav,.hero-section,.site-footer{display:none!important}
+  #main{display:block}
+  .booklet-section{padding:0!important;background:var(--viewer-teal-dark)!important}
+  .ws-page{padding:0!important;margin:0!important;background:var(--viewer-teal-dark)!important}
+
+  /* סרגל נושא קומפקטי בלבד. */
+  .wsbar{
+    position:sticky;
+    top:0!important;
+    z-index:70;
+    min-height:48px;
+    margin:0!important;
+    padding:5px 8px!important;
+    display:grid!important;
+    grid-template-columns:auto 1fr;
+    gap:6px 8px!important;
+    background:rgba(6,73,76,.96)!important;
+    box-shadow:0 2px 10px rgba(0,0,0,.18);
+  }
+  .wsbar__title{
+    order:0!important;
+    grid-column:2;
+    grid-row:1;
+    align-self:center;
+    flex-basis:auto!important;
+    font-size:.78rem!important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .wsbar__topics{
+    grid-column:1;
+    grid-row:1;
+    min-width:0!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:3px!important;
+  }
+  .wsbar__topics .btn{
+    min-height:34px!important;
+    padding:5px 8px!important;
+    border-radius:999px!important;
+    font-size:.72rem!important;
+  }
+  .wsbar__side--acts{display:none!important}
+
+  /* דף A4 על כל רוחב המסך, ללא קלפים/צללים. */
+  .ws-page__sheets{
+    width:100%;
+    padding:0!important;
+    gap:12px!important;
+    align-items:stretch!important;
+    background:var(--viewer-teal-dark)!important;
+  }
+  .ws-wsframe{
+    width:100vw!important;
+    max-width:none!important;
+    aspect-ratio:210/297!important;
+    margin:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:hidden!important;
+    background:#fff!important;
+  }
+  .ws-sheet-frame{
+    width:100%!important;
+    height:100%!important;
+    background:#fff!important;
+  }
+
+  /* הפס הטורקיז הכהה שבין דף לדף נוצר מהרווח על רקע זה. */
+  .ws-wsnum{
+    bottom:6px!important;
+    left:6px!important;
+    font-size:10px!important;
+    padding:3px 7px!important;
+    opacity:.82;
+  }
+  [id^="sheet-"]{scroll-margin-top:48px!important}
+
+  .booklet-loading{
+    min-height:100dvh;
+    background:#fff;
+  }
+
+  .page-jump{
+    left:50%;
+    transform:translateX(-50%);
+    bottom:calc(8px + env(safe-area-inset-bottom,0px));
+    gap:4px;
+    padding:5px;
+  }
+  .page-jump__btn{width:34px;height:34px;font-size:18px}
+  .page-jump__btn--main{width:40px;height:40px;font-size:22px}
+  .page-jump__status{min-width:46px;font-size:12px}
+}
+
+@media(max-width:380px){
+  .wsbar__topics .btn{padding-inline:6px!important;font-size:.68rem!important}
+  .wsbar__title{font-size:.72rem!important}
+  .page-jump__status{min-width:42px}
+}
+
+@media print{
+  .page-jump{display:none!important}
+}
