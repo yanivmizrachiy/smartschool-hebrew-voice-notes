@@ -67,7 +67,7 @@ function fitFrameToViewport(frame) {
   const availableWidth = wrap.clientWidth;
   if (!naturalWidth || !availableWidth) return;
   const scale = availableWidth / naturalWidth;
-  frame.style.transform = `scale(${scale})`;
+  frame.style.transform = 'scale(' + scale + ')';
 }
 
 function fitAllFrames`,
