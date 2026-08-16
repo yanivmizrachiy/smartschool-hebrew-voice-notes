@@ -55,7 +55,8 @@
   direction:ltr;
 }
 
-@media(max-width:760px){
+/* Phone portrait OR touch-device landscape/tablet. */
+@media (max-width:760px), (max-width:1024px) and (hover:none) and (pointer:coarse){
   html{scroll-padding-top:0;touch-action:pan-y}
   body{background:var(--viewer-teal-dark);touch-action:pan-y}
 
