@@ -34,6 +34,7 @@ for (const page of pages) {
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
   assert(new RegExp(`class="page-number"[^>]*>${page}<\\/div>`).test(html), `page ${page}: visible page number mismatch`);
+  assert(new RegExp(`class="page-number"[^>]*aria-label="עמוד ${page}"[^>]*>${page}<\\/div>`).test(html), `page ${page}: accessible local page label is required`);
   assert(!/<(?:footer|div)\s+class=["\']footer["\']/i.test(html), `page ${page}: student footer is forbidden`);
   assert(!/שם\s*(?:התלמיד)?\s*[:：]|תאריך\s*[:：]/u.test(html), `page ${page}: student name/date fields are forbidden`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);

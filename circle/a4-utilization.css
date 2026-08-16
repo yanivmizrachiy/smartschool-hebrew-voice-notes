@@ -380,3 +380,16 @@
 .a4-page:has(.page-number[aria-label="עמוד 87"]) .task{margin-block:6.5mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 87"]) .thinking{padding:4.5mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 87"]) .choice-row{padding-block:3.5mm!important}
+
+
+/* Final measured residual tuning after the full-scan pass. */
+/* Page 47: remove the measured 25px overflow while preserving the larger work surfaces. */
+.a4-page:has(.page-number[aria-label="עמוד 47"]){font-size:16.5px!important;line-height:1.42!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .task{margin-block:4.6mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .instruction{margin-bottom:2.5mm!important}
+
+/* Page 84: remove the measured 12px overflow by trimming spacing only. */
+.a4-page:has(.page-number[aria-label="עמוד 84"]){font-size:16.7px!important;line-height:1.43!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .task{margin-block:5.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .thinking{padding:4.2mm!important;line-height:1.48!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .choice-row{padding-block:3mm!important}
