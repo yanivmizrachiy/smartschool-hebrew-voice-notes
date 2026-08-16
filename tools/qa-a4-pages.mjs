@@ -11,7 +11,6 @@ const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;
 const EXTREME_UNUSED_GAP_PX = 260;
 const WARN_UNUSED_GAP_PX = 150;
-const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
 function commandExists(command) {
   return spawnSync('bash', ['-lc', `command -v ${command}`], { encoding: 'utf8' }).status === 0;
@@ -197,6 +196,7 @@ async function inspectPage(cdp, book, page) {
 
 let exitCode = 0;
 const summary = [];
+const pageFailures = [];
 let cdp;
 let target;
 try {
@@ -209,20 +209,28 @@ try {
   await cdp.send('Emulation.setDeviceMetricsOverride', { width: 794, height: 1123, deviceScaleFactor: 1, mobile: false });
 
   for (const [book, count] of Object.entries(BOOKS)) {
+    let passed = 0;
     for (let page = 1; page <= count; page += 1) {
-      const metrics = await inspectPage(cdp, book, page);
-      summary.push({
-        book,
-        page,
-        width: metrics.width,
-        height: metrics.height,
-        svgs: metrics.svgCount,
-        unusedGapBeforeFooter: Math.round(metrics.unusedGapBeforeFooter),
-        usedVerticalRatio: Number(metrics.usedVerticalRatio.toFixed(3)),
-        utilizationWarning: metrics.unusedGapBeforeFooter > WARN_UNUSED_GAP_PX
-      });
+      try {
+        const metrics = await inspectPage(cdp, book, page);
+        passed += 1;
+        summary.push({
+          book,
+          page,
+          width: metrics.width,
+          height: metrics.height,
+          svgs: metrics.svgCount,
+          unusedGapBeforeFooter: Math.round(metrics.unusedGapBeforeFooter),
+          usedVerticalRatio: Number(metrics.usedVerticalRatio.toFixed(3)),
+          utilizationWarning: metrics.unusedGapBeforeFooter > WARN_UNUSED_GAP_PX
+        });
+      } catch (error) {
+        const message = error?.message || String(error);
+        pageFailures.push({ book, page, message });
+        console.error(`FAIL ${book} page ${page}: ${message}`);
+      }
     }
-    console.log(`PASS ${book}: ${count}/${count} A4 pages`);
+    console.log(`${book}: ${passed}/${count} A4 pages passed in full-scan mode`);
   }
 
   const warnings = summary
@@ -230,10 +238,19 @@ try {
     .sort((a, b) => b.unusedGapBeforeFooter - a.unusedGapBeforeFooter);
   if (warnings.length) {
     console.log('A4 utilization review list (non-failing unless extreme):');
-    warnings.slice(0, 20).forEach(row => console.log(`${row.book} page ${row.page}: ${row.unusedGapBeforeFooter}px blank before footer; usedVerticalRatio=${row.usedVerticalRatio}`));
+    warnings.slice(0, 30).forEach(row => console.log(`${row.book} page ${row.page}: ${row.unusedGapBeforeFooter}px blank before footer; usedVerticalRatio=${row.usedVerticalRatio}`));
   }
 
-  fs.writeFileSync(path.join(OUT_DIR, 'summary.json'), JSON.stringify({ pages: summary, utilizationWarnings: warnings }, null, 2));
+  fs.writeFileSync(path.join(OUT_DIR, 'summary.json'), JSON.stringify({
+    pages: summary,
+    utilizationWarnings: warnings,
+    failures: pageFailures
+  }, null, 2));
+
+  if (pageFailures.length) {
+    throw new Error(`A4 browser QA: ${pageFailures.length} page(s) failed. Full list:\n${pageFailures.map(item => `- ${item.book} page ${item.page}: ${item.message}`).join('\n')}`);
+  }
+
   console.log('A4 browser QA: PASS (126 pages checked for physical size, overflow, page numbers, SVG integrity and extreme blank zones)');
 } catch (error) {
   exitCode = 1;
