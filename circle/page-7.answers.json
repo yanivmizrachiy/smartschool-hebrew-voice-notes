@@ -1,0 +1,19 @@
+{
+  "project": "מעגל",
+  "page": 7,
+  "title": "שרטוט מעגל במחוגה",
+  "task1": {"radiusCm": 2, "requiredMarks": ["O", "רדיוס אחד"]},
+  "task2": {"radiusCm": 3, "requiredMarks": ["O", "רדיוס אחד"]},
+  "task3": {"radiusCm": 4, "requiredMarks": ["O", "רדיוס אחד"]},
+  "task4": {"correct": "שניהם מוכפלים פי 2"},
+  "qa": {
+    "independentPageNumber": 7,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "drawingTasksAreObjectivelyCheckable": true,
+    "drawingToleranceMm": 1,
+    "printAtActualSize": true
+  }
+}
