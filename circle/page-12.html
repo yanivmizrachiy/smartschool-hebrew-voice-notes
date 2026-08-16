@@ -7,61 +7,52 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<main class="a4-page">
+<main class="a4-page tight">
   <header class="page-header">
     <h1 class="page-title">מדידת קוטר</h1>
     <div class="page-number" aria-label="עמוד 12">12</div>
   </header>
 
-  <div class="anchor">הדפיסו בקנה מידה 100%. קוטר עובר דרך מרכז המעגל ושני קצותיו על המעגל. מדדו ישירות, ואז בדקו בעזרת <span class="math-ltr">d = 2·r</span>.</div>
+  <div class="anchor" style="margin:3mm 0 2.5mm;padding:2mm 3mm">הדפיסו בקנה מידה 100%. קוטר עובר דרך מרכז המעגל ושני קצותיו על המעגל. מדדו ישירות, ואז בדקו בעזרת <span class="math-ltr">d = 2·r</span>.</div>
 
   <section class="task">
     <div class="task-row"><div class="task-num">1</div><div class="task-body">
       <p class="instruction">בדקו שקו הכיול הוא 50 מ״מ.</p>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8mm;border:1px solid #e2e8f0;border-radius:3mm;padding:3mm 5mm">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:5mm;border:1px solid #e2e8f0;border-radius:3mm;padding:1.5mm 3mm">
         <svg width="60mm" height="12mm" viewBox="0 0 60 12" role="img" aria-label="קו כיול באורך 50 מילימטר">
           <line x1="5" y1="6" x2="55" y2="6" stroke="#111827" stroke-width="0.7"/>
           <line x1="5" y1="2" x2="5" y2="10" stroke="#111827" stroke-width="0.7"/>
           <line x1="55" y1="2" x2="55" y2="10" stroke="#111827" stroke-width="0.7"/>
         </svg>
-        <span>מדדתי: <span class="blank"></span> מ״מ &nbsp; תקין? <b>כן / לא</b></span>
+        <span>מדדתי: <span class="blank"></span> מ״מ &nbsp; <b>תקין / לא תקין</b></span>
       </div>
     </div></div>
   </section>
 
   <section class="task">
     <div class="task-row"><div class="task-num">2</div><div class="task-body">
-      <p class="instruction">רק אם קו הכיול תקין: מדדו את הקוטר בכל מעגל. אחר כך חשבו את הרדיוס ובדקו את הקשר.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;align-items:start">
-        <div class="visual-card" style="min-height:66mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
-          <svg width="48mm" height="48mm" viewBox="0 0 48 48" role="img" aria-label="מעגל בקוטר 40 מילימטר">
-            <circle cx="24" cy="24" r="20" fill="none" stroke="#111827" stroke-width="0.6"/>
-            <circle cx="24" cy="24" r="1" fill="#111827"/><text x="26" y="22" font-size="3.5">O</text>
-          </svg>
-          <div>קוטר: ______ מ״מ &nbsp; רדיוס: ______ מ״מ</div>
+      <p class="instruction">רק אם קו הכיול תקין: מדדו קוטר, חשבו רדיוס ובדקו <span class="math-ltr">d = 2·r</span>.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;align-items:center">
+        <div class="visual-card" style="min-height:57mm;padding:1mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1mm">
+          <svg width="48mm" height="48mm" viewBox="0 0 48 48" role="img" aria-label="מעגל בקוטר 40 מילימטר"><circle cx="24" cy="24" r="20" fill="none" stroke="#111827" stroke-width="0.6"/><circle cx="24" cy="24" r="1" fill="#111827"/><text x="26" y="22" font-size="3.5">O</text></svg>
+          <div>א: d=____ מ״מ · r=____ מ״מ</div>
         </div>
-        <div class="visual-card" style="min-height:82mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
-          <svg width="68mm" height="68mm" viewBox="0 0 68 68" role="img" aria-label="מעגל בקוטר 60 מילימטר">
-            <circle cx="34" cy="34" r="30" fill="none" stroke="#111827" stroke-width="0.6"/>
-            <circle cx="34" cy="34" r="1" fill="#111827"/><text x="36" y="32" font-size="3.5">O</text>
-          </svg>
-          <div>קוטר: ______ מ״מ &nbsp; רדיוס: ______ מ״מ</div>
+        <div class="visual-card" style="min-height:77mm;padding:1mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1mm">
+          <svg width="68mm" height="68mm" viewBox="0 0 68 68" role="img" aria-label="מעגל בקוטר 60 מילימטר"><circle cx="34" cy="34" r="30" fill="none" stroke="#111827" stroke-width="0.6"/><circle cx="34" cy="34" r="1" fill="#111827"/><text x="36" y="32" font-size="3.5">O</text></svg>
+          <div>ב: d=____ מ״מ · r=____ מ״מ</div>
         </div>
-        <div class="visual-card" style="grid-column:1/-1;justify-self:center;width:100mm;min-height:101mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
-          <svg width="88mm" height="88mm" viewBox="0 0 88 88" role="img" aria-label="מעגל בקוטר 80 מילימטר">
-            <circle cx="44" cy="44" r="40" fill="none" stroke="#111827" stroke-width="0.6"/>
-            <circle cx="44" cy="44" r="1" fill="#111827"/><text x="46" y="42" font-size="3.5">O</text>
-          </svg>
-          <div>קוטר: ______ מ״מ &nbsp; רדיוס: ______ מ״מ</div>
+        <div class="visual-card" style="grid-column:1/-1;justify-self:center;width:126mm;min-height:91mm;padding:1mm;display:flex;align-items:center;justify-content:center;gap:5mm">
+          <svg width="88mm" height="88mm" viewBox="0 0 88 88" role="img" aria-label="מעגל בקוטר 80 מילימטר"><circle cx="44" cy="44" r="40" fill="none" stroke="#111827" stroke-width="0.6"/><circle cx="44" cy="44" r="1" fill="#111827"/><text x="46" y="42" font-size="3.5">O</text></svg>
+          <div>ג:<br>d=____ מ״מ<br>r=____ מ״מ</div>
         </div>
       </div>
     </div></div>
   </section>
 
-  <section class="task thinking" style="margin-top:2mm">
+  <section class="task thinking" style="margin-top:1mm">
     <div class="task-row"><div class="task-num">3</div><div class="task-body">
       <p class="instruction">סמנו את המשפט הנכון.</p>
-      <div class="choice-row"><span class="choice-pill">קטע דרך המרכז משפה לשפה הוא קוטר</span><span>או</span><span class="choice-pill">כל קטע משפה לשפה הוא קוטר</span></div>
+      <div class="choice-grid"><div class="choice-box">קטע דרך המרכז משפה לשפה הוא קוטר</div><div class="choice-box">כל קטע משפה לשפה הוא קוטר</div></div>
     </div></div>
   </section>
 
