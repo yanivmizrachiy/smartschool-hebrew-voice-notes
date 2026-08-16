@@ -1,0 +1,19 @@
+{
+  "project": "מעגל",
+  "page": 11,
+  "title": "מדידת רדיוס בסרגל",
+  "task1": {"calibrationLineMm": 50, "toleranceMm": 1},
+  "task2": [
+    {"radiusMm": 20, "acceptedRangeMm": [19, 21]},
+    {"radiusMm": 30, "acceptedRangeMm": [29, 31]},
+    {"radiusMm": 40, "acceptedRangeMm": [39, 41]}
+  ],
+  "task3": "הפרש של 1 מ״מ יכול לנבוע מדיוק המדידה",
+  "qa": {
+    "independentPageNumber": 11,
+    "singleVisiblePageTitle": true,
+    "printScalePercent": 100,
+    "calibrationRequiredBeforeMeasurement": true,
+    "objectiveAnswers": true
+  }
+}
