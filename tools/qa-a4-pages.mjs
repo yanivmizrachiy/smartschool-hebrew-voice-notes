@@ -33,6 +33,22 @@ const browser = spawn(chrome, [
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+async function removeProfileSafely(profilePath) {
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    try {
+      fs.rmSync(profilePath, { recursive: true, force: true, maxRetries: 2, retryDelay: 80 });
+      return;
+    } catch (error) {
+      if (!['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(error?.code)) throw error;
+      if (attempt === 6) {
+        console.warn(`A4 browser QA cleanup warning: could not remove temporary Chrome profile after ${attempt} attempts: ${error.message}`);
+        return;
+      }
+      await delay(attempt * 120);
+    }
+  }
+}
+
 async function json(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
@@ -258,8 +274,9 @@ try {
 } finally {
   cdp?.close();
   if (target?.id) await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`).catch(() => {});
+  const browserExited = new Promise(resolve => browser.once('exit', resolve));
   browser.kill('SIGTERM');
-  await delay(120);
-  fs.rmSync(profile, { recursive: true, force: true });
+  await Promise.race([browserExited, delay(1500)]);
+  await removeProfileSafely(profile);
 }
 process.exitCode = exitCode;
