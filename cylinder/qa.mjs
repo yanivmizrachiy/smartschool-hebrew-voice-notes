@@ -50,6 +50,7 @@ for (const page of pages) {
   if (page === 38) {
     assert(/r=4<\/span> ס״מ, <span dir="ltr">h=5<\/span> ס״מ/.test(html), 'page 38: direct-volume data must include length units');
     assert(/d=10<\/span> ס״מ, <span dir="ltr">h=3<\/span> ס״מ[\s\S]*r=____<\/span> ס״מ, <span dir="ltr">V=____π<\/span> ס״מ³/.test(html), 'page 38: diameter-to-volume item must preserve radius and volume units');
+    assert(/20π<\/span> ס״מ³ ___ <span dir="ltr">62\.83<\/span> ס״מ³/.test(html), 'page 38: approximation comparison must carry equal volume units on both sides');
     assert(/B=16π<\/span> ס״מ², <span dir="ltr">V=80π<\/span> ס״מ³[\s\S]*h=____<\/span> ס״מ/.test(html), 'page 38: reverse-height item must preserve area, volume, and height units');
     assert(/V=147π<\/span> ס״מ³, <span dir="ltr">h=3<\/span> ס״מ[\s\S]*r=____<\/span> ס״מ/.test(html), 'page 38: reverse-radius item must preserve volume, height, and radius units');
   }
