@@ -1,0 +1,30 @@
+{
+  "project": "מעגל",
+  "page": 6,
+  "title": "על המעגל, בתוך העיגול ומחוץ לעיגול",
+  "task1": {
+    "A": "על המעגל",
+    "B": "בתוך העיגול",
+    "C": "מחוץ לעיגול",
+    "D": "בתוך העיגול",
+    "E": "על המעגל"
+  },
+  "task2": [
+    "מרחק קטן מ־4 ס״מ → בתוך העיגול",
+    "מרחק שווה ל־4 ס״מ → על המעגל",
+    "מרחק גדול מ־4 ס״מ → מחוץ לעיגול"
+  ],
+  "task3": {
+    "location": "על המעגל",
+    "directionChangesAnswer": "לא"
+  },
+  "qa": {
+    "independentPageNumber": 6,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "radiusCm": 4,
+    "classificationByDistance": true
+  }
+}
