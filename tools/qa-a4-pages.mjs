@@ -9,7 +9,7 @@ const BOOKS = { circle: 88, cylinder: 38 };
 const EXPECTED_RATIO = 297 / 210;
 const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;
-const EXTREME_UNUSED_GAP_PX = 260;
+const EXTREME_UNUSED_GAP_PX = { circle: 150, cylinder: 260 };
 const WARN_UNUSED_GAP_PX = 150;
 
 function commandExists(command) {
