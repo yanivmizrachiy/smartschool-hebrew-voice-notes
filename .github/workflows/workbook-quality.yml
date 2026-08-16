@@ -10,7 +10,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,6 +43,16 @@ jobs:
           done
           cat /tmp/workbook-http.log
           exit 1
+      - name: Run real A4 browser QA for all circle and cylinder pages
+        run: node tools/qa-a4-pages.mjs
+      - name: Upload A4 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a4-workbook-qa
+          path: qa/a4-pages/*
+          if-no-files-found: warn
+          retention-days: 7
       - name: Run real mobile browser QA
         run: node tools/qa-mobile-viewer.mjs
       - name: Upload mobile QA screenshots
