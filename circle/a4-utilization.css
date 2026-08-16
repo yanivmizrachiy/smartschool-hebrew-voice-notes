@@ -393,3 +393,31 @@
 .a4-page:has(.page-number[aria-label="עמוד 84"]) .task{margin-block:5.8mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 84"]) .thinking{padding:4.2mm!important;line-height:1.48!important}
 .a4-page:has(.page-number[aria-label="עמוד 84"]) .choice-row{padding-block:3mm!important}
+
+
+/* Circle 150px final utilization lock — measured Chrome residuals. */
+/* Page 36 was measured at 155px blank space: enlarge the existing explanatory diagrams only. */
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .visual-card{min-height:72mm!important}
+
+/* Page 73 was measured above target: expand existing reasoning cards only. */
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .choice-box{padding:5mm!important}
+
+/* Page 74: use the available height for the three existing tangency diagrams. */
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip .coord-card{min-height:78mm!important;padding:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip svg{height:62mm!important;max-height:62mm!important}
+
+/* Page 78: restore the main coordinate figure from an older compact cap and enlarge existing work cards. */
+.a4-page:has(.page-number[aria-label="עמוד 78"])>.coord-card{padding:4mm!important;margin-block:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"])>.coord-card svg{height:auto!important;max-height:88mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-grid{gap:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-box{padding:4mm!important}
+
+
+/* Final sub-threshold tuning for Circle pages 74 and 77. */
+/* Page 74 measured 154px: add ~8px to the existing diagram row. */
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip .coord-card{min-height:80mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip svg{height:64mm!important;max-height:64mm!important}
+
+/* Page 77 rounded to 150px but was fractionally above the strict threshold: enlarge existing table rows slightly. */
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact th,
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact td{padding-block:1.3mm!important}

@@ -195,8 +195,10 @@ async function inspectPage(cdp, book, page) {
   if (metrics.svgMissingViewBox) failures.push(`${metrics.svgMissingViewBox} SVG(s) missing viewBox`);
   if (metrics.svgZeroSize) failures.push(`${metrics.svgZeroSize} zero-size SVG(s)`);
   if (metrics.outliers.length) failures.push(`elements outside A4: ${JSON.stringify(metrics.outliers)}`);
-  if (metrics.unusedGapBeforeFooter > EXTREME_UNUSED_GAP_PX && metrics.usefulChildCount > 0) {
-    failures.push(`extreme purposeless blank zone ${metrics.unusedGapBeforeFooter.toFixed(0)}px before footer`);
+  const circleUnusedGapLimit = WARN_UNUSED_GAP_PX;
+  const unusedGapLimit = book === 'circle' ? circleUnusedGapLimit : EXTREME_UNUSED_GAP_PX;
+  if (metrics.unusedGapBeforeFooter > unusedGapLimit && metrics.usefulChildCount > 0) {
+    failures.push(`purposeless blank zone ${metrics.unusedGapBeforeFooter.toFixed(0)}px before footer (limit ${unusedGapLimit}px)`);
   }
 
   if (failures.length) {
