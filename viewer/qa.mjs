@@ -6,10 +6,27 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.dirname(dir);
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const app = fs.readFileSync(path.join(dir, 'app.js'), 'utf8');
+const bootstrap = fs.readFileSync(path.join(dir, 'bootstrap.js'), 'utf8');
 const css = fs.readFileSync(path.join(dir, 'mobile-scroll.css'), 'utf8');
+const homeCss = fs.readFileSync(path.join(dir, 'home.css'), 'utf8');
 const rules = fs.readFileSync(path.join(dir, 'VIEWER_RULES.md'), 'utf8');
 const assert = (condition, message) => { if (!condition) throw new Error(`Viewer QA failed: ${message}`); };
 
+// Shared-home contract: root is a three-workbook catalog, never an implicit cone booklet.
+assert(index.includes('viewer/bootstrap.js'), 'bootstrap entrypoint must control home versus workbook mode');
+assert(!index.includes('src="viewer/app.js"'), 'root HTML must not eagerly load the cone-capable workbook app');
+assert(index.includes('id="library"') && index.includes('id="home-hero"'), 'shared home catalog and hero are required');
+assert(index.includes('מעגל · גליל · חרוט'), 'shared project title must name all three topics');
+assert(index.includes('88 דפי A4') && index.includes('38 דפי A4') && index.includes('46 דפי A4'), 'home must show the verified page counts');
+assert(index.includes('172 דפי A4'), 'home must show the verified total page count');
+assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
+assert(bootstrap.includes("new Set(['circle', 'cylinder', 'cone'])"), 'bootstrap must whitelist exactly the three workbook topics');
+assert(bootstrap.includes("await import('./app.js')"), 'workbook app must load only after a valid topic is selected');
+assert(bootstrap.includes("classList.add('is-home')") && bootstrap.includes("classList.add('has-topic')"), 'home and workbook modes must be explicit');
+assert(homeCss.includes('body.is-home .hero-section') && homeCss.includes('.workbook-grid'), 'shared-home responsive design is missing');
+assert(homeCss.includes('@media(max-width:620px)'), 'shared home requires an explicit phone layout');
+
+// Existing workbook viewer contract.
 assert(index.includes('viewer/mobile-scroll.css'), 'mobile scroll stylesheet must be loaded');
 assert(index.includes('id="page-jump"'), 'fast page navigation dock is missing');
 assert(index.includes('data-topic="cone"') && index.includes('data-topic="circle"') && index.includes('data-topic="cylinder"'), 'all three topic selectors are required');
@@ -43,10 +60,11 @@ assert(/\.wsbar__topics \.btn\{[\s\S]*min-width:44px!important;[\s\S]*min-height
 assert(css.includes('@media(prefers-reduced-motion:reduce)'), 'reduced-motion CSS contract is required');
 assert(/max-width:1024px[^\n]*hover:none[^\n]*pointer:coarse/.test(css), 'touch-device landscape mode up to 1024px must retain mobile workbook layout');
 assert(/@media print\{[\s\S]*content-visibility:visible!important/.test(css), 'print must force all workbook pages visible');
-assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'mobile viewer must hide non-booklet chrome');
+assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
+assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
 assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
 assert(rules.includes('זוכר את הדף האחרון') && rules.includes('content-visibility'), 'viewer source-of-truth must lock position memory and offscreen rendering policy');
 assert(rules.includes('44') && rules.includes('reduced-motion'), 'viewer source-of-truth must lock accessible touch targets and reduced motion');
 
-console.log('Viewer QA: PASS (three-topic A4 viewer, touch portrait/landscape, 44px accessibility, reduced motion, fast navigation, position memory, offscreen rendering and all-pages print preparation checked)');
+console.log('Viewer QA: PASS (shared three-workbook home + lazy topic bootstrap + A4 viewer, mobile portrait/landscape, accessibility, navigation, position memory, offscreen rendering and print preparation checked)');

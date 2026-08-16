@@ -56,6 +56,16 @@ jobs:
           done
           cat /tmp/workbook-http.log
           exit 1
+      - name: Run real shared-home browser QA
+        run: node tools/qa-shared-home.mjs
+      - name: Upload shared-home screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-home-qa
+          path: qa/shared-home/*.png
+          if-no-files-found: warn
+          retention-days: 7
       - name: Run real A4 browser QA for all circle and cylinder pages
         run: node tools/qa-a4-pages.mjs
       - name: Upload A4 QA evidence
