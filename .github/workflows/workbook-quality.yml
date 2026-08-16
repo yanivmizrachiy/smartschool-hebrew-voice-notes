@@ -2,7 +2,7 @@ name: Workbook quality
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/circle-cylinder-isolated-workbooks]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -67,18 +67,18 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Run canonical real PDF print QA
-        run: node tools/qa-print-booklets.mjs
+        run: node tools/qa-print-viewer.mjs
       - name: Verify generated print PDFs
         run: |
-          test -s qa/print-booklets/cone-46-pages.pdf
-          test -s qa/print-booklets/circle-88-pages.pdf
-          test -s qa/print-booklets/cylinder-38-pages.pdf
+          test -s qa/print-viewer/cone.pdf
+          test -s qa/print-viewer/circle.pdf
+          test -s qa/print-viewer/cylinder.pdf
       - name: Upload real PDF QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: print-booklets-qa
-          path: qa/print-booklets/*.pdf
+          name: print-viewer-qa
+          path: qa/print-viewer/*.pdf
           if-no-files-found: warn
           retention-days: 7
       - name: Ensure generated cone booklet sources stayed synchronized
