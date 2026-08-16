@@ -1,0 +1,28 @@
+{
+  "project": "גליל",
+  "page": 5,
+  "title": "רדיוס וקוטר בבסיס",
+  "task1": {
+    "א": "רדיוס",
+    "ב": "קוטר",
+    "ג": "לא",
+    "ד": "לא"
+  },
+  "task2": [
+    {"given": "r = 2 ס״מ", "answer": "d = 4 ס״מ"},
+    {"given": "r = 3.5 ס״מ", "answer": "d = 7 ס״מ"},
+    {"given": "d = 10 ס״מ", "answer": "r = 5 ס״מ"},
+    {"given": "d = 14 ס״מ", "answer": "r = 7 ס״מ"}
+  ],
+  "task3": ["8", "9", "בסיס"],
+  "qa": {
+    "independentPageNumber": 5,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "surfaceAreaFormulaAllowed": false,
+    "volumeFormulaAllowed": false,
+    "perspectiveMeasurementAllowed": false,
+    "multiplicationSymbol": "·",
+    "radiusAndDiameterBelongToBase": true
+  }
+}
