@@ -43,7 +43,6 @@ function visibleText(html) {
     .replace(/<[^>]+>/g, ' ').replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').trim();
 }
 function semanticText(html) {
-  // Remove explicit answer choices/tables so intentionally wrong distractors do not become false positives.
   const cleaned = html
     .replace(/<span\b[^>]*class="[^"]*(?:choice-pill|choice-item|choice)[^"]*"[^>]*>[\s\S]*?<\/span>/gi, ' ')
     .replace(/<table\b[\s\S]*?<\/table>/gi, ' ');
@@ -63,9 +62,11 @@ function addFinding(meta, rule, sample, severity = 'error') {
   else findings.push(item);
 }
 function deliberateErrorContext(text) {
-  return /(אמת\s*\/\s*שקר|תקין\s*\/\s*לא\s*תקין|תקנו[^\n]{0,30}(?:שגוי|שגיאה)|שגיאה אחת|מצאו[^\n]{0,25}טעות|איתור טעות)/.test(text);
+  return /(אמת\s*\/\s*שקר|תקין\s*\/\s*לא\s*תקין|תקנו[^\n]{0,30}(?:שגוי|שגיאה)|שגיאה אחת|מצאו[^\n]{0,25}טעות|איתור טעות|טעויות נפוצות)/.test(text);
 }
 
+const deliberatePiPages = new Set(['circle/page-24.html', 'cylinder/page-11.html']);
+const deliberateDimensionPages = new Set(['circle/page-41.html', 'circle/page-46.html']);
 const unitToken = '(?:מ״מ|ס״מ|דצ״מ|ק״מ|מ)(?:²|³)?';
 const unitRe = new RegExp(`${unitToken}(?=\\s|$|[,.|;:→)])`, 'g');
 const assignmentRe = /\b(V|A|B|C|r|d|h|l)([²³]?)\s*=\s*([\s\S]*?)(?=\b(?:V|A|B|C|r|d|h|l)(?:[²³]?)\s*=|[|;\n]|$)/g;
@@ -77,54 +78,52 @@ for (const meta of files) {
   const text = visibleText(html);
   const semantic = semanticText(html);
   const deliberate = deliberateErrorContext(text);
+  const rel = meta.file.replaceAll('\\', '/');
 
-  // Canonical visible notation.
   for (const s of matches(text, /×/g)) addFinding(meta, 'multiplication-sign-must-be-middle-dot', s);
   for (const s of matches(text, /\d\s+[xX*]\s+\d/g)) addFinding(meta, 'spaced-ascii-multiplication-forbidden', s);
   for (const s of matches(text, /\^[23]\b/g)) addFinding(meta, 'use-real-superscript', s);
   for (const s of matches(text, /(?:\d|[A-Za-zπ])\s*-\s*(?:\d|[A-Za-zπ])/g)) addFinding(meta, 'use-mathematical-minus', s);
 
-  // π is never equal to a decimal approximation unless the page is explicitly teaching/error-checking that false statement.
   for (const s of matches(text, /π\s*=\s*3(?:[.,]14\d*)?/g)) {
     const hasCorrectForm = /π\s*≈\s*3[.,]14/.test(text) || /3[.,]14\s*≈\s*π/.test(text);
-    if (!(deliberate && hasCorrectForm)) addFinding(meta, 'pi-must-not-equal-decimal', s);
+    if (!(deliberate && hasCorrectForm && deliberatePiPages.has(rel))) addFinding(meta, 'pi-must-not-equal-decimal', s);
   }
-  // Numeric evaluation of an expression containing π must use ≈ when the result is decimal.
-  for (const segment of text.split(/\n|[|;]/)) {
-    if (!segment.includes('π') || deliberateErrorContext(segment)) continue;
-    const m = segment.match(/π[^=]{0,55}=\s*(\d+[.,]\d+)(?![\dπ])/);
-    if (m && !segment.includes('≈')) addFinding(meta, 'pi-decimal-evaluation-needs-approximation', m[0]);
+  if (!deliberatePiPages.has(rel)) {
+    for (const segment of text.split(/\n|[|;]/)) {
+      if (!segment.includes('π') || deliberateErrorContext(segment)) continue;
+      const m = segment.match(/π[^=]{0,55}=\s*(\d+[.,]\d+)(?![\dπ])/);
+      if (m && !segment.includes('≈')) addFinding(meta, 'pi-decimal-evaluation-needs-approximation', m[0]);
+    }
   }
 
-  // Irrational square roots cannot be equated to rounded decimals.
   const sqrtEq = /√\s*(\d+(?:[.,]\d+)?)\s*=\s*(\d+[.,]\d+)/g; let sm;
   while ((sm = sqrtEq.exec(text))) {
     const radicand = Number(sm[1].replace(',', '.'));
     if (Number.isFinite(radicand) && !Number.isInteger(Math.sqrt(radicand))) addFinding(meta, 'irrational-root-needs-approximation', sm[0]);
   }
 
-  // Terminology checks apply to explanatory/question text after explicit distractors and tables are removed.
   for (const s of matches(semantic, /שטח\s+(?:של\s+)?ה?מעגל/g)) addFinding(meta, 'area-is-of-disk-not-circle', s);
   for (const s of matches(semantic, /היקף\s+(?:של\s+)?ה?עיגול/g)) addFinding(meta, 'circumference-is-of-circle', s);
 
-  // Unit typography.
   for (const s of matches(text, /(?:ס|מ|דצ|ק)"מ|מ"ל/g)) addFinding(meta, 'use-hebrew-gershayim-in-units', s);
   for (const s of matches(text, /(?:סמ|ממ|דמ)[״"]ר|(?:סמ|ממ|דמ)[״"]ק/g)) addFinding(meta, 'use-explicit-squared-or-cubed-unit', s);
   for (const s of matches(text, /(?:מ״מ|ס״מ|דצ״מ|ק״מ)[23]\b/g)) addFinding(meta, 'unit-power-must-be-superscript', s);
   for (const s of matches(text, /\b(?:cm|mm|dm|km)[23]\b/gi)) addFinding(meta, 'unit-power-must-be-superscript', s);
 
-  // Dimension checks parse one assignment at a time; they never cross into the next variable or task.
-  assignmentRe.lastIndex = 0; let am;
-  while ((am = assignmentRe.exec(text))) {
-    const variable = am[1], variablePower = am[2], value = am[3];
-    const units = matches(value, unitRe);
-    if (!units.length) continue;
-    const unit = units.at(-1);
-    const power = unit.endsWith('²') ? 2 : unit.endsWith('³') ? 3 : 1;
-    if (variablePower) continue; // r² etc. is a derived quantity, not a linear-length assignment.
-    if (variable === 'V' && power !== 3) addFinding(meta, 'volume-needs-cubic-units', `${variable}=${value}`);
-    if ((variable === 'A' || variable === 'B') && power !== 2) addFinding(meta, 'area-needs-squared-units', `${variable}=${value}`);
-    if (['C','r','d','h','l'].includes(variable) && power !== 1) addFinding(meta, 'length-variable-needs-linear-units', `${variable}=${value}`);
+  if (!deliberateDimensionPages.has(rel)) {
+    assignmentRe.lastIndex = 0; let am;
+    while ((am = assignmentRe.exec(text))) {
+      const variable = am[1], variablePower = am[2], value = am[3];
+      const units = matches(value, unitRe);
+      if (!units.length) continue;
+      const unit = units.at(-1);
+      const power = unit.endsWith('²') ? 2 : unit.endsWith('³') ? 3 : 1;
+      if (variablePower) continue;
+      if (variable === 'V' && power !== 3) addFinding(meta, 'volume-needs-cubic-units', `${variable}=${value}`);
+      if ((variable === 'A' || variable === 'B') && power !== 2) addFinding(meta, 'area-needs-squared-units', `${variable}=${value}`);
+      if (['C','r','d','h','l'].includes(variable) && power !== 1) addFinding(meta, 'length-variable-needs-linear-units', `${variable}=${value}`);
+    }
   }
 }
 
