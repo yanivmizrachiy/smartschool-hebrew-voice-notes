@@ -34,3 +34,9 @@
 .a4-page:has(.page-number[aria-label="עמוד 36"]) .visual-card{min-height:75mm!important;padding:3.5mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 36"]) .visual-card svg{height:47mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 36"]) .coord-caption{font-size:13px!important;margin-top:2mm!important}
+
+/* Page 77 — remove the final threshold-level warning by enlarging the three movement diagrams, not by adding filler. */
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .coord-strip{gap:2.8mm!important;margin-block:2.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .coord-strip .coord-card{min-height:55mm!important;padding:1.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .coord-strip .coord-card svg{height:48mm!important;max-height:48mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .coord-caption{font-size:12.5px!important;margin-top:1.6mm!important}
