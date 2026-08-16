@@ -125,8 +125,9 @@ for (const [name, spec] of Object.entries(BOOKS)) {
 
 const circle = loadBook('circle', BOOKS.circle);
 const circlePage7 = circle.find(page => page.page === 7);
-assert(circlePage7.tasks.filter(task => /שרטטו מעגל ברדיוס\s+(?:2|3|4)\s+ס״מ/.test(task)).length === 3,
-  'circle page 7: the only allowed repeated drill must remain the explicit 2/3/4 cm compass-radius sequence');
+const compassRadii = [...circlePage7.html.matchAll(/שרטטו מעגל ברדיוס\s+(2|3|4)\s+ס״מ/g)].map(match => Number(match[1]));
+assert(compassRadii.length === 3 && [...new Set(compassRadii)].sort((a,b) => a-b).join(',') === '2,3,4',
+  'circle page 7: the only allowed repeated drill must remain exactly the explicit 2/3/4 cm compass-radius sequence');
 
 const circleBlock = circle.filter(page => page.page >= 52 && page.page <= 60).map(page => page.text).join(' ');
 assert(/היקף/.test(circleBlock) && /שטח/.test(circleBlock) && /רדיוס/.test(circleBlock), 'circle 52–60: reverse-problem block must cover circumference, area and radius');
