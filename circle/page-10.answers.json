@@ -1,0 +1,17 @@
+{
+  "project": "מעגל",
+  "page": 10,
+  "title": "בדיקת בסיס מסכמת",
+  "task1": ["מעגל", "עיגול", "רדיוס", "קוטר"],
+  "task2": {"r6_to_d": 12, "d18_to_r": 9, "r4_5_to_d": 9},
+  "task3": {"5": "על המעגל", "3": "בתוך העיגול", "7": "מחוץ לעיגול"},
+  "task4": "d = 2 · 8 = 16 ס״מ",
+  "qa": {
+    "independentPageNumber": 10,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "objectiveAnswers": true
+  }
+}
