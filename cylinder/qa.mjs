@@ -36,7 +36,13 @@ for (const page of pages) {
   assert(/<footer class="footer">/.test(html), `page ${page}: name/date footer is required`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/\d\s*[xX]\s*\d/.test(html), `page ${page}: x/X must not be used as a numeric multiplication sign`);
-  assert(!/π\s*=\s*3(?:[.,])14/.test(html), `page ${page}: π must never be written as exactly 3.14`);
+  if (page === 11) {
+    assert(count(html, /π\s*=\s*3(?:[.,])14/g) === 1, 'page 11: the intentionally incorrect π = 3.14 statement must appear exactly once');
+    assert(/סמנו בכל שורה: תקין \/ לא תקין/.test(html), 'page 11: exact-equality distractor must be inside the closed תקין/לא תקין task');
+    assert(/π הוא מספר מדויק[\s\S]*π ≈ 3\.14[\s\S]*ולא שוויון/.test(html), 'page 11: anchor must explicitly teach π ≈ 3.14 and reject exact equality');
+  } else {
+    assert(!/π\s*=\s*3(?:[.,])14/.test(html), `page ${page}: π must never be written as exactly 3.14 outside the page-11 error-detection task`);
+  }
   assert(!/demo|placeholder/i.test(html), `page ${page}: demo/placeholder text is forbidden`);
   assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
   if (page === 1) assert(/<h1[^>]*>מושגים בסיסיים<\/h1>/.test(html), 'page 1: canonical opening title must be מושגים בסיסיים');
@@ -56,4 +62,4 @@ for (const page of pages) {
   }
 }
 
-console.log('Cylinder QA: PASS (38 student pages checked; approved sequence locked at 1–38; math-notation/unit guards active; no separate answer keys; surface-area extension blocked)');
+console.log('Cylinder QA: PASS (38 student pages checked; approved sequence locked at 1–38; math-notation/unit guards active; intentional page-11 error-detection exception locked; no separate answer keys; surface-area extension blocked)');
