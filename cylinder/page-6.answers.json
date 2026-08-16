@@ -1,0 +1,29 @@
+{
+  "project": "גליל",
+  "page": 6,
+  "title": "גובה הגליל",
+  "task1": {
+    "א": "A",
+    "ב": "D",
+    "ג": "G"
+  },
+  "task2": {
+    "heightCm": 8,
+    "sidewaysCylinder": "הקטע לאורך ציר הגליל"
+  },
+  "task3": [
+    {"statement": "גובה הגליל הוא רדיוס של אחד הבסיסים.", "answer": "לא נכון"},
+    {"statement": "בגליל ישר הגובה מאונך למישורי הבסיסים.", "answer": "נכון"},
+    {"statement": "כיוון הדף קובע מהו גובה הגליל.", "answer": "לא נכון"}
+  ],
+  "qa": {
+    "independentPageNumber": 6,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "surfaceAreaFormulaAllowed": false,
+    "volumeFormulaAllowed": false,
+    "perspectiveMeasurementAllowed": false,
+    "heightIsPerpendicularDistanceBetweenBasePlanes": true,
+    "heightIndependentOfPageOrientation": true
+  }
+}
