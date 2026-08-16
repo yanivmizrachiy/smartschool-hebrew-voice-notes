@@ -1,0 +1,27 @@
+{
+  "project": "גליל",
+  "page": 4,
+  "title": "מעטפת הגליל",
+  "task1": {
+    "lateralSurface": "B",
+    "bases": ["A", "C"]
+  },
+  "task2": {
+    "A": "בסיס",
+    "B": "מעטפת",
+    "C": "בסיס"
+  },
+  "task3": {
+    "criterion": "בכל אחד משלושת הגלילים מסמנים את המשטח הצדדי המחבר בין שני הבסיסים"
+  },
+  "task4": {
+    "correctStatement": "המעטפת מחברת בין שני הבסיסים."
+  },
+  "qa": {
+    "openResponseAllowed": false,
+    "surfaceAreaFormulaAllowed": false,
+    "volumeFormulaAllowed": false,
+    "perspectiveMeasurementAllowed": false,
+    "lateralSurfaceMustConnectBothBases": true
+  }
+}
