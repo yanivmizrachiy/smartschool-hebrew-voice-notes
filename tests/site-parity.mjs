@@ -26,7 +26,8 @@ requireMatch(app.includes("frameWrap.className = 'ws-wsframe'"), 'viewer must re
 requireMatch(app.includes("frame.className = 'ws-sheet-frame'"), 'viewer must render each sheet inside the continuous frame');
 requireMatch(app.includes("kindLabel: 'דף עבודה'"), 'viewer must retain local worksheet labeling contract');
 requireMatch(app.includes('עמוד ${entry.sequence}'), 'viewer must label pages by local sequence only');
-requireMatch(app.includes("printBooklet.addEventListener('click', () => window.print())"), 'booklet print action must print the continuous booklet');
+requireMatch(app.includes("printBooklet.addEventListener('click', printPreparedBooklet)"), 'booklet print action must use prepared whole-booklet printing');
+requireMatch(app.includes('ensureAllFramesLoaded') && app.includes('prepareFramesForPrint'), 'whole-booklet printing must load every page and remove mobile transforms before print');
 
 requireMatch(/\.ws-page\{[^}]*background:#eef1f6;[^}]*padding:0 16px 40px/i.test(css), 'Zaviyot parity: ws-page background/padding must match');
 requireMatch(/\.ws-page__sheets\{[^}]*flex-direction:column;[^}]*gap:28px;[^}]*padding-top:24px/i.test(css), 'Zaviyot parity: continuous sheet spacing must be 28px with 24px top padding');
@@ -44,4 +45,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: cone site matches the Zaviyot continuous-booklet presentation, with dark-pink theme and 14s continuous logo rotation.');
+console.log('OK: cone site matches the continuous-booklet presentation and uses safe prepared whole-booklet printing.');
