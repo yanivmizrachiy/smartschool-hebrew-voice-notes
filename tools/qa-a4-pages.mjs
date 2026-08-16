@@ -9,6 +9,8 @@ const BOOKS = { circle: 88, cylinder: 38 };
 const EXPECTED_RATIO = 297 / 210;
 const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;
+const EXTREME_UNUSED_GAP_PX = 260;
+const WARN_UNUSED_GAP_PX = 150;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
 function commandExists(command) {
@@ -127,6 +129,24 @@ async function inspectPage(cdp, book, page) {
       if (!r.width && !r.height) return false;
       return r.left < rect.left - 2 || r.right > rect.right + 2 || r.top < rect.top - 2 || r.bottom > rect.bottom + 2;
     }).slice(0, 8).map(el => ({ tag: el.tagName, cls: el.className?.baseVal || el.className || '', text: (el.textContent || '').trim().slice(0, 50) }));
+
+    const footer = sheet.querySelector('.footer');
+    const footerTop = footer?.getBoundingClientRect().top || (rect.bottom - 68);
+    const usefulChildren = [...sheet.children].filter(el => {
+      if (el.matches('.page-header,.footer,.page-number,.local-page-number')) return false;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.position === 'absolute' || style.position === 'fixed') return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 1 && r.height > 1;
+    });
+    const contentBottom = usefulChildren.length
+      ? Math.max(...usefulChildren.map(el => el.getBoundingClientRect().bottom))
+      : rect.top;
+    const unusedGapBeforeFooter = Math.max(0, footerTop - contentBottom);
+    const usableTop = sheet.querySelector('.page-header')?.getBoundingClientRect().bottom || rect.top;
+    const usableHeight = Math.max(1, footerTop - usableTop);
+    const usedVerticalRatio = Math.max(0, Math.min(1, (contentBottom - usableTop) / usableHeight));
+
     return {
       width: rect.width,
       height: rect.height,
@@ -141,7 +161,10 @@ async function inspectPage(cdp, book, page) {
       svgCount: svgs.length,
       svgMissingViewBox,
       svgZeroSize,
-      outliers
+      outliers,
+      unusedGapBeforeFooter,
+      usedVerticalRatio,
+      usefulChildCount: usefulChildren.length
     };
   })()`);
 
@@ -157,6 +180,9 @@ async function inspectPage(cdp, book, page) {
   if (metrics.svgMissingViewBox) failures.push(`${metrics.svgMissingViewBox} SVG(s) missing viewBox`);
   if (metrics.svgZeroSize) failures.push(`${metrics.svgZeroSize} zero-size SVG(s)`);
   if (metrics.outliers.length) failures.push(`elements outside A4: ${JSON.stringify(metrics.outliers)}`);
+  if (metrics.unusedGapBeforeFooter > EXTREME_UNUSED_GAP_PX && metrics.usefulChildCount > 0) {
+    failures.push(`extreme purposeless blank zone ${metrics.unusedGapBeforeFooter.toFixed(0)}px before footer`);
+  }
 
   if (failures.length) {
     await capture(cdp, path.join(OUT_DIR, `FAIL-${book}-${String(page).padStart(2, '0')}.png`));
@@ -185,12 +211,30 @@ try {
   for (const [book, count] of Object.entries(BOOKS)) {
     for (let page = 1; page <= count; page += 1) {
       const metrics = await inspectPage(cdp, book, page);
-      summary.push({ book, page, width: metrics.width, height: metrics.height, svgs: metrics.svgCount });
+      summary.push({
+        book,
+        page,
+        width: metrics.width,
+        height: metrics.height,
+        svgs: metrics.svgCount,
+        unusedGapBeforeFooter: Math.round(metrics.unusedGapBeforeFooter),
+        usedVerticalRatio: Number(metrics.usedVerticalRatio.toFixed(3)),
+        utilizationWarning: metrics.unusedGapBeforeFooter > WARN_UNUSED_GAP_PX
+      });
     }
     console.log(`PASS ${book}: ${count}/${count} A4 pages`);
   }
-  fs.writeFileSync(path.join(OUT_DIR, 'summary.json'), JSON.stringify(summary, null, 2));
-  console.log('A4 browser QA: PASS (126 pages checked for physical size, overflow, page numbers and SVG integrity)');
+
+  const warnings = summary
+    .filter(row => row.utilizationWarning)
+    .sort((a, b) => b.unusedGapBeforeFooter - a.unusedGapBeforeFooter);
+  if (warnings.length) {
+    console.log('A4 utilization review list (non-failing unless extreme):');
+    warnings.slice(0, 20).forEach(row => console.log(`${row.book} page ${row.page}: ${row.unusedGapBeforeFooter}px blank before footer; usedVerticalRatio=${row.usedVerticalRatio}`));
+  }
+
+  fs.writeFileSync(path.join(OUT_DIR, 'summary.json'), JSON.stringify({ pages: summary, utilizationWarnings: warnings }, null, 2));
+  console.log('A4 browser QA: PASS (126 pages checked for physical size, overflow, page numbers, SVG integrity and extreme blank zones)');
 } catch (error) {
   exitCode = 1;
   console.error(error.stack || error.message || error);
