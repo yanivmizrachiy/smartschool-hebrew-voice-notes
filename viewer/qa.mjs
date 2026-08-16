@@ -21,6 +21,8 @@ assert(app.includes('fitFrameToViewport'), 'A4 mobile scale-to-fit function is r
 assert(app.includes('prepareFramesForPrint'), 'print must neutralize mobile scale before A4 output');
 assert(app.includes("addEventListener('beforeprint', prepareFramesForPrint)"), 'beforeprint guard is required');
 assert(app.includes("addEventListener('afterprint', restoreFramesAfterPrint)"), 'afterprint mobile-scale restore is required');
+assert(app.includes('document.elementFromPoint'), 'current-page detection must use constant-time viewport hit testing');
+assert(!/function detectCurrentSheet\(\)[\s\S]{0,500}querySelectorAll\('\.ws-wsframe'\)/.test(app), 'current-page detection must not scan every worksheet frame on each scroll');
 assert(app.includes('scrollIntoView'), 'page navigation must jump to page boundaries');
 assert(app.includes("data-jump=\"prev\"") || app.includes("'[data-jump=\"prev\"]'"), 'previous-page navigation is required');
 assert(app.includes("data-jump=\"next\"") || app.includes("'[data-jump=\"next\"]'"), 'next-page navigation is required');
@@ -32,4 +34,4 @@ assert(/aspect-ratio:210\/297!important/.test(css), 'mobile wrapper must preserv
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'mobile viewer must hide non-booklet chrome');
 assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
 
-console.log('Viewer QA: PASS (cone/circle/cylinder mobile continuous A4 viewer contract checked, including true-A4 print restoration)');
+console.log('Viewer QA: PASS (cone/circle/cylinder continuous A4 viewer, fast navigation, mobile scaling, print restoration and constant-time page detection checked)');
