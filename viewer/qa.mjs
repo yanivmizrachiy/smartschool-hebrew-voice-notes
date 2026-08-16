@@ -23,6 +23,7 @@ assert(app.includes("addEventListener('beforeprint', prepareFramesForPrint)"), '
 assert(app.includes("addEventListener('afterprint', restoreFramesAfterPrint)"), 'afterprint mobile-scale restore is required');
 assert(app.includes('document.elementFromPoint'), 'current-page detection must use constant-time viewport hit testing');
 assert(!/function detectCurrentSheet\(\)[\s\S]{0,500}querySelectorAll\('\.ws-wsframe'\)/.test(app), 'current-page detection must not scan every worksheet frame on each scroll');
+assert(app.includes('sessionStorage.setItem') && app.includes('sessionStorage.getItem'), 'viewer must remember the last page per topic during the session');
 assert(app.includes('scrollIntoView'), 'page navigation must jump to page boundaries');
 assert(app.includes("data-jump=\"prev\"") || app.includes("'[data-jump=\"prev\"]'"), 'previous-page navigation is required');
 assert(app.includes("data-jump=\"next\"") || app.includes("'[data-jump=\"next\"]'"), 'next-page navigation is required');
@@ -31,7 +32,13 @@ assert(css.includes('--viewer-teal-dark:#06494c'), 'canonical dark turquoise sep
 assert(/\.ws-page__sheets\{[\s\S]*gap:12px!important/.test(css), 'mobile page separator gap must be 12px');
 assert(/\.ws-wsframe\{[\s\S]*width:100vw!important/.test(css), 'mobile A4 wrapper must fill viewport width');
 assert(/aspect-ratio:210\/297!important/.test(css), 'mobile wrapper must preserve A4 ratio');
+assert(css.includes('content-visibility:auto'), 'offscreen mobile pages must use content-visibility for long-workbook performance');
+assert(/\.ws-sheet-frame\{[\s\S]*pointer-events:none!important/.test(css), 'mobile iframe must not trap touch scrolling');
+assert(/max-width:1024px[^\n]*hover:none[^\n]*pointer:coarse/.test(css), 'touch-device landscape mode up to 1024px must retain mobile workbook layout');
+assert(/@media print\{[\s\S]*content-visibility:visible!important/.test(css), 'print must force all workbook pages visible');
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'mobile viewer must hide non-booklet chrome');
-assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
 
-console.log('Viewer QA: PASS (cone/circle/cylinder continuous A4 viewer, fast navigation, mobile scaling, print restoration and constant-time page detection checked)');
+assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
+assert(rules.includes('זוכר את הדף האחרון') && rules.includes('content-visibility'), 'viewer source-of-truth must lock position memory and offscreen rendering policy');
+
+console.log('Viewer QA: PASS (three-topic continuous A4 viewer, touch portrait/landscape, fast navigation, position memory, offscreen rendering, mobile scaling and print restoration checked)');
