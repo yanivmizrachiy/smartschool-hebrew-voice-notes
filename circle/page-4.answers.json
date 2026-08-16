@@ -1,0 +1,23 @@
+{
+  "project": "מעגל",
+  "page": 4,
+  "title": "קוטר",
+  "task1": {
+    "diameters": ["A", "B", "C"],
+    "notDiameters": ["D", "E", "F"]
+  },
+  "task2": {
+    "criterion": "הקטע המושלם חייב לעבור דרך O, וקצהו השני חייב להיות הנקודה שמול P על המעגל"
+  },
+  "task3": {
+    "yesNo": "לא",
+    "blanks": ["מרכז", "שני רדיוסים", "אותו ישר"]
+  },
+  "qa": {
+    "openResponseAllowed": false,
+    "piAllowed": false,
+    "areaFormulaAllowed": false,
+    "diameterMustPassCenter": true,
+    "bothEndpointsOnCircle": true
+  }
+}
