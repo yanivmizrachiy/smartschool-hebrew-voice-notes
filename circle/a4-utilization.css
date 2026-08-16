@@ -411,3 +411,13 @@
 .a4-page:has(.page-number[aria-label="עמוד 78"])>.coord-card svg{height:auto!important;max-height:88mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-grid{gap:4mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 78"]) .choice-box{padding:4mm!important}
+
+
+/* Final sub-threshold tuning for Circle pages 74 and 77. */
+/* Page 74 measured 154px: add ~8px to the existing diagram row. */
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip .coord-card{min-height:80mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip svg{height:64mm!important;max-height:64mm!important}
+
+/* Page 77 rounded to 150px but was fractionally above the strict threshold: enlarge existing table rows slightly. */
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact th,
+.a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact td{padding-block:1.3mm!important}
