@@ -230,3 +230,153 @@
 .a4-page:has(.page-number[aria-label="עמוד 85"]) .task,
 .a4-page:has(.page-number[aria-label="עמוד 87"]) .task,
 .a4-page:has(.page-number[aria-label="עמוד 88"]) .task{margin-block:2.4mm!important}
+
+/* Round 2 — residual pages above the 150px utilization target after the first Chrome scan. */
+.a4-page:has(.page-number[aria-label="עמוד 1"]),
+.a4-page:has(.page-number[aria-label="עמוד 2"]),
+.a4-page:has(.page-number[aria-label="עמוד 4"]),
+.a4-page:has(.page-number[aria-label="עמוד 6"]),
+.a4-page:has(.page-number[aria-label="עמוד 14"]),
+.a4-page:has(.page-number[aria-label="עמוד 15"]),
+.a4-page:has(.page-number[aria-label="עמוד 16"]),
+.a4-page:has(.page-number[aria-label="עמוד 18"]),
+.a4-page:has(.page-number[aria-label="עמוד 22"]),
+.a4-page:has(.page-number[aria-label="עמוד 24"]),
+.a4-page:has(.page-number[aria-label="עמוד 27"]),
+.a4-page:has(.page-number[aria-label="עמוד 30"]),
+.a4-page:has(.page-number[aria-label="עמוד 31"]),
+.a4-page:has(.page-number[aria-label="עמוד 32"]),
+.a4-page:has(.page-number[aria-label="עמוד 36"]),
+.a4-page:has(.page-number[aria-label="עמוד 37"]),
+.a4-page:has(.page-number[aria-label="עמוד 40"]),
+.a4-page:has(.page-number[aria-label="עמוד 42"]),
+.a4-page:has(.page-number[aria-label="עמוד 44"]),
+.a4-page:has(.page-number[aria-label="עמוד 45"]),
+.a4-page:has(.page-number[aria-label="עמוד 47"]),
+.a4-page:has(.page-number[aria-label="עמוד 49"]),
+.a4-page:has(.page-number[aria-label="עמוד 57"]),
+.a4-page:has(.page-number[aria-label="עמוד 61"]),
+.a4-page:has(.page-number[aria-label="עמוד 62"]),
+.a4-page:has(.page-number[aria-label="עמוד 63"]),
+.a4-page:has(.page-number[aria-label="עמוד 64"]),
+.a4-page:has(.page-number[aria-label="עמוד 65"]),
+.a4-page:has(.page-number[aria-label="עמוד 66"]),
+.a4-page:has(.page-number[aria-label="עמוד 67"]),
+.a4-page:has(.page-number[aria-label="עמוד 70"]){font-size:17.2px!important;line-height:1.47!important}
+
+.a4-page:has(.page-number[aria-label="עמוד 1"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 2"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 4"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 6"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 14"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 15"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 16"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 18"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 22"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 24"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 27"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 30"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 31"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 32"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 37"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 40"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 42"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 44"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 45"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 49"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 57"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 61"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 62"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 63"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 64"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 65"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 66"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 67"]) .task,
+.a4-page:has(.page-number[aria-label="עמוד 70"]) .task{margin-block:6.2mm!important}
+
+.a4-page:has(.page-number[aria-label="עמוד 1"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 2"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 4"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 6"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 14"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 15"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 16"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 18"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 22"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 24"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 27"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 30"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 31"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 32"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 36"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 37"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 40"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 42"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 44"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 45"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 47"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 49"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 57"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 61"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 62"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 63"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 64"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 65"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 66"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 67"]) .instruction,
+.a4-page:has(.page-number[aria-label="עמוד 70"]) .instruction{margin-bottom:4mm!important}
+
+/* Page 73: enlarge the actual coordinate diagram and the six working cards. */
+.a4-page:has(.page-number[aria-label="עמוד 73"])>.coord-card{padding:3.5mm!important;margin-block:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"])>.coord-card svg{max-height:82mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .choice-grid{gap:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 73"]) .choice-box{padding:4mm!important}
+
+/* Page 74: the three tangency diagrams are the main learning object; make them large. */
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip{gap:4mm!important;margin-block:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip .coord-card{min-height:58mm!important;padding:3mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .coord-strip svg{height:46mm!important;max-height:46mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .choice-grid{gap:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .choice-box{padding:3.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 74"]) .task{margin-block:3.5mm!important}
+
+/* Page 82: enlarge the origin diagram, table and reasoning surfaces. */
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .visual-card{min-height:70mm!important;padding:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .visual-card svg{height:44mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .task{margin-block:5.2mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .thinking{padding:4.5mm 5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .work-table th,
+.a4-page:has(.page-number[aria-label="עמוד 82"]) .work-table td{padding-block:3.5mm!important}
+
+/* Page 83: five reasoning tasks and two tables should occupy the available page height. */
+.a4-page:has(.page-number[aria-label="עמוד 83"]){font-size:16px!important;line-height:1.4!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .task{margin-block:6.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .instruction{margin-bottom:3.2mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .work-table th,
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .work-table td{padding-block:3.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .choice-row{padding-block:3.8mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) .thinking{padding:4.5mm!important}
+
+/* Page 84: four multi-step diameter tasks get larger thinking/work areas. */
+.a4-page:has(.page-number[aria-label="עמוד 84"]){font-size:17px!important;line-height:1.46!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .task{margin-block:7mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .thinking{padding:5mm!important;line-height:1.55!important}
+.a4-page:has(.page-number[aria-label="עמוד 84"]) .choice-row{padding-block:3.5mm!important}
+
+/* Page 85: the classification table is the main work surface. */
+.a4-page:has(.page-number[aria-label="עמוד 85"]){font-size:16px!important;line-height:1.4!important}
+.a4-page:has(.page-number[aria-label="עמוד 85"]) .task{margin-block:7mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 85"]) .work-table th,
+.a4-page:has(.page-number[aria-label="עמוד 85"]) .work-table td{padding-block:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 85"]) .choice-row{padding-block:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 85"]) .thinking{padding:5mm!important}
+
+/* Page 87: enlarge the rectangle/circle scene and the four decision tasks. */
+.a4-page:has(.page-number[aria-label="עמוד 87"]){font-size:16px!important;line-height:1.42!important}
+.a4-page:has(.page-number[aria-label="עמוד 87"]) .visual-card{min-height:75mm!important;padding:4mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 87"]) .visual-card svg{height:49mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 87"]) .task{margin-block:6.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 87"]) .thinking{padding:4.5mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 87"]) .choice-row{padding-block:3.5mm!important}
