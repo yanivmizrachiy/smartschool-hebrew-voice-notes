@@ -10,7 +10,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,6 +29,28 @@ jobs:
         run: node cylinder/qa.mjs
       - name: Validate shared mobile viewer contract
         run: node viewer/qa.mjs
+      - name: Start local workbook server
+        run: |
+          python3 -m http.server 4173 >/tmp/workbook-http.log 2>&1 &
+          echo $! > /tmp/workbook-http.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 0.2
+          done
+          cat /tmp/workbook-http.log
+          exit 1
+      - name: Run real mobile browser QA
+        run: node tools/qa-mobile-viewer.mjs
+      - name: Upload mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-viewer-qa
+          path: qa/mobile-viewer/*.png
+          if-no-files-found: warn
+          retention-days: 7
       - name: Ensure generated cone booklet sources stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
       - name: Verify cone print bundle exists
