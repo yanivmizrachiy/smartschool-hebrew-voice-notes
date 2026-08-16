@@ -18,6 +18,8 @@
     "correctStatement": "המעטפת מחברת בין שני הבסיסים."
   },
   "qa": {
+    "independentPageNumber": 4,
+    "singleVisiblePageTitle": true,
     "openResponseAllowed": false,
     "surfaceAreaFormulaAllowed": false,
     "volumeFormulaAllowed": false,
