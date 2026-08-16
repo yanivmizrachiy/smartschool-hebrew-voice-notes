@@ -109,32 +109,62 @@ function storedSequence() {
   return null;
 }
 
-function fitFrameToViewport(frame) {
+function isMobileWorkbookViewport() {
+  return window.matchMedia?.('(max-width:760px), (max-width:1024px) and (hover:none) and (pointer:coarse)').matches === true;
+}
+
+function clearLegacyInnerScale(frame) {
   try {
     const doc = frame.contentDocument;
     const main = doc?.querySelector('.a4-page');
-    if (!doc || !main || !frame.clientWidth) return;
-
-    main.style.transform = '';
-    main.style.transformOrigin = '';
-    const naturalWidth = main.offsetWidth;
-    if (!naturalWidth) return;
-
-    const scale = Math.min(1, frame.clientWidth / naturalWidth);
-    doc.documentElement.style.margin = '0';
-    doc.documentElement.style.padding = '0';
-    doc.documentElement.style.overflow = 'hidden';
-    doc.body.style.margin = '0';
-    doc.body.style.padding = '0';
-    doc.body.style.overflow = 'hidden';
-
-    if (scale < 0.999) {
-      main.style.transformOrigin = 'top left';
-      main.style.transform = `scale(${scale})`;
+    if (main) {
+      main.style.transform = '';
+      main.style.transformOrigin = '';
+    }
+    if (doc) {
+      doc.documentElement.style.margin = '';
+      doc.documentElement.style.padding = '';
+      doc.documentElement.style.overflow = '';
+      doc.body.style.margin = '';
+      doc.body.style.padding = '';
+      doc.body.style.overflow = '';
     }
   } catch {
-    // Viewer remains usable if a frame cannot be decorated.
+    // The A4 page remains readable even if legacy inline styles cannot be cleared.
   }
+}
+
+function fitFrameToViewport(frame) {
+  const wrap = frame.closest('.ws-wsframe');
+  if (!wrap) return;
+
+  clearLegacyInnerScale(frame);
+  frame.style.transform = '';
+  frame.style.transformOrigin = '';
+  frame.style.width = '';
+  frame.style.height = '';
+  frame.style.top = '';
+  frame.style.left = '';
+  frame.style.right = '';
+  frame.style.bottom = '';
+
+  if (!isMobileWorkbookViewport()) return;
+
+  // Keep the child document at exact A4 size and scale the iframe surface itself.
+  // This avoids Android/WebView paint failures caused by transforming content inside an iframe.
+  frame.style.width = '210mm';
+  frame.style.height = '297mm';
+  frame.style.top = '0';
+  frame.style.left = '0';
+  frame.style.right = 'auto';
+  frame.style.bottom = 'auto';
+  frame.style.transformOrigin = 'top left';
+
+  const naturalWidth = frame.offsetWidth;
+  const availableWidth = wrap.clientWidth;
+  if (!naturalWidth || !availableWidth) return;
+  const scale = availableWidth / naturalWidth;
+  frame.style.transform = 'scale(' + scale + ')';
 }
 
 function fitAllFrames() {
@@ -176,17 +206,15 @@ async function ensureAllFramesLoaded(timeoutMs = 30000) {
 
 function prepareFramesForPrint() {
   document.querySelectorAll('.ws-sheet-frame').forEach(frame => {
-    try {
-      const doc = frame.contentDocument;
-      const main = doc?.querySelector('.a4-page');
-      if (!doc || !main) return;
-      main.style.transform = 'none';
-      main.style.transformOrigin = '';
-      doc.documentElement.style.overflow = 'visible';
-      doc.body.style.overflow = 'visible';
-    } catch {
-      // Printing continues only after ensureAllFramesLoaded verified same-origin page readiness.
-    }
+    clearLegacyInnerScale(frame);
+    frame.style.transform = 'none';
+    frame.style.transformOrigin = 'top left';
+    frame.style.width = '210mm';
+    frame.style.height = '297mm';
+    frame.style.top = '0';
+    frame.style.left = '0';
+    frame.style.right = 'auto';
+    frame.style.bottom = 'auto';
   });
 }
 

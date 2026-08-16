@@ -191,6 +191,9 @@ async function runCase(topic, orientation) {
       const first = frames[0]?.getBoundingClientRect();
       const second = frames[1]?.getBoundingClientRect();
       const iframe = frames[0]?.querySelector('.ws-sheet-frame');
+      const innerDoc = iframe?.contentDocument;
+      const innerPage = innerDoc?.querySelector('.a4-page');
+      const innerStyle = innerPage ? innerDoc.defaultView.getComputedStyle(innerPage) : null;
       const jump = document.querySelector('#page-jump');
       const topbar = document.querySelector('.topbar');
       const sheets = document.querySelector('.ws-page__sheets');
@@ -204,6 +207,11 @@ async function runCase(topic, orientation) {
         gap: first && second ? second.top - first.bottom : -1,
         separator: getComputedStyle(sheets).backgroundColor,
         iframePointerEvents: iframe ? getComputedStyle(iframe).pointerEvents : '',
+        iframeTextLength: innerPage?.innerText?.replace(/\s+/g, ' ').trim().length || 0,
+        innerPageDisplay: innerStyle?.display || '',
+        innerPageVisibility: innerStyle?.visibility || '',
+        innerPageOpacity: Number(innerStyle?.opacity || 0),
+        iframeRenderedWidth: iframe?.getBoundingClientRect().width || 0,
         topbarDisplay: topbar ? getComputedStyle(topbar).display : '',
         jumpDisplay: jump ? getComputedStyle(jump).display : '',
         status: document.querySelector('#page-jump-status')?.textContent || '',
@@ -218,6 +226,9 @@ async function runCase(topic, orientation) {
     assert(metrics.gap >= 10 && metrics.gap <= 14, `${topic}/${orientation}: separator gap is ${metrics.gap}px, expected about 12px`);
     assert(metrics.separator === TEAL, `${topic}/${orientation}: separator color ${metrics.separator} != ${TEAL}`);
     assert(metrics.iframePointerEvents === 'none', `${topic}/${orientation}: iframe must not trap touch gestures`);
+    assert(metrics.iframeTextLength > 80, `${topic}/${orientation}: first A4 iframe has no real worksheet text (length ${metrics.iframeTextLength})`);
+    assert(metrics.innerPageDisplay !== 'none' && metrics.innerPageVisibility !== 'hidden' && metrics.innerPageOpacity > 0.1, `${topic}/${orientation}: A4 content is hidden inside iframe`);
+    assert(Math.abs(metrics.iframeRenderedWidth - metrics.innerWidth) <= 2, `${topic}/${orientation}: scaled iframe width ${metrics.iframeRenderedWidth} != viewport ${metrics.innerWidth}`);
     assert(metrics.topbarDisplay === 'none', `${topic}/${orientation}: desktop topbar must be hidden in mobile mode`);
     assert(metrics.jumpDisplay !== 'none', `${topic}/${orientation}: navigation dock must be visible`);
     assert(metrics.activeTopic === topic, `${topic}/${orientation}: active topic selector mismatch`);
