@@ -1,0 +1,28 @@
+{
+  "project": "גליל",
+  "page": 7,
+  "title": "מה באמת ידוע מן השרטוט?",
+  "task1": {
+    "rCm": 3,
+    "hCm": 8,
+    "derivedDiameterCm": 6,
+    "derivedBaseAreaExact": "9π ס״מ²"
+  },
+  "task2": [
+    {"statement": "קוטר הבסיס הוא 6 ס״מ.", "answer": "ניתן לדעת"},
+    {"statement": "גובה הגליל הוא 8 ס״מ.", "answer": "ניתן לדעת"},
+    {"statement": "רוחב האליפסה כפי שהיא נראית על הדף הוא קוטר הבסיס.", "answer": "לא ניתן לדעת"},
+    {"statement": "אורך קטע אלכסוני שלא סומן במספר.", "answer": "לא ניתן לדעת"},
+    {"statement": "אפשר לחשב את שטח הבסיס בעזרת ידע קודם במעגל.", "answer": "ניתן לדעת"}
+  ],
+  "task3": ["משתמשים רק בנתונים ובקשרים מתמטיים", "עיגול"],
+  "qa": {
+    "independentPageNumber": 7,
+    "singleVisiblePageTitle": true,
+    "openResponseAllowed": false,
+    "surfaceAreaFormulaAllowed": false,
+    "volumeFormulaAllowed": false,
+    "perspectiveMeasurementAllowed": false,
+    "baseLooksEllipticalButIsMathematicallyCircular": true
+  }
+}
