@@ -10,6 +10,9 @@ const count = (text, pattern) => (text.match(pattern) || []).length;
 assert(/width:210mm/.test(css) && /height:297mm/.test(css), 'A4 dimensions must be exactly 210×297mm');
 assert(/overflow:hidden/.test(css), 'A4 page must guard against overflow');
 assert(/@page\{size:A4;margin:0\}/.test(css), 'print page contract is missing');
+assert(css.includes('יניב רז - מדריך מחוזי חט\\"ב בעיר ירושלים'), 'canonical first credit line is missing');
+assert(css.includes('הדרכה במחוז ירושלים והעיר ירושלים - מנח\\"י, בהובלת איילת קריספין'), 'canonical second credit line is missing');
+assert(/white-space:pre-line/.test(css), 'credit footer must render as two lines');
 
 const pages = fs.readdirSync(dir)
   .filter(name => /^page-\d+\.html$/.test(name))
@@ -40,4 +43,4 @@ for (const page of pages) {
   if (Number.isInteger(answers.qa?.visualItems)) assert(count(html, /class="visual-card"/g) === answers.qa.visualItems, `page ${page}: visual item count mismatch`);
 }
 
-console.log(`Circle QA: PASS (${pages.length} pages checked)`);
+console.log(`Circle QA: PASS (${pages.length} pages checked, canonical 2-line footer locked)`);
