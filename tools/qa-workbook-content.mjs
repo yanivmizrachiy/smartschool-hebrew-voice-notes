@@ -69,10 +69,13 @@ function setJaccard(A, B) {
 function similarityScore(a, b) {
   const unigram = setJaccard(new Set(tokens(a)), new Set(tokens(b)));
   const bigram = setJaccard(ngramSet(a, 2), ngramSet(b, 2));
-  // Order matters more than vocabulary. This still returns 1.0 for a true
-  // copy-with-different-numbers, but distinguishes pedagogically inverse tasks
-  // such as radius→diameter from diameter→radius.
   return 0.30 * unigram + 0.70 * bigram;
+}
+
+function isIntentionalRepeatedDrill(book, page, a, b) {
+  if (book !== 'circle' || page !== 7) return false;
+  const compassDrill = /שרטטו מעגל ברדיוס\s+\d+(?:[.,]\d+)?\s+ס״מ\.\s*סמנו O ורדיוס אחד/;
+  return compassDrill.test(a) && compassDrill.test(b);
 }
 
 function loadBook(name, spec) {
@@ -97,15 +100,14 @@ for (const [name, spec] of Object.entries(BOOKS)) {
     assert(!/[×]/.test(item.text), `${name} page ${item.page}: multiplication sign × is forbidden; use ·`);
     assert(!/\b(?:cm2|m2|cm3|m3)\b/i.test(item.text), `${name} page ${item.page}: plain-text unit powers are forbidden; use proper squared/cubic units`);
 
-    const normalizedTasks = item.tasks.map(normalizeTask).filter(task => task.length >= 20);
-    const seen = new Set();
-    for (const task of normalizedTasks) {
-      assert(!seen.has(task), `${name} page ${item.page}: two tasks are structurally identical after number normalization`);
-      seen.add(task);
-    }
-
     for (let i = 0; i < item.tasks.length; i += 1) {
       for (let j = i + 1; j < item.tasks.length; j += 1) {
+        if (isIntentionalRepeatedDrill(name, item.page, item.tasks[i], item.tasks[j])) continue;
+        const normalizedA = normalizeTask(item.tasks[i]);
+        const normalizedB = normalizeTask(item.tasks[j]);
+        if (normalizedA.length >= 20 && normalizedB.length >= 20) {
+          assert(normalizedA !== normalizedB, `${name} page ${item.page}: tasks ${i + 1} and ${j + 1} are structurally identical after number normalization`);
+        }
         const similarity = similarityScore(item.tasks[i], item.tasks[j]);
         assert(similarity < 0.94, `${name} page ${item.page}: tasks ${i + 1} and ${j + 1} are too similar (${similarity.toFixed(2)})`);
       }
@@ -121,11 +123,11 @@ for (const [name, spec] of Object.entries(BOOKS)) {
   }
 }
 
-// Deliberate misconception prompts (for example "π = 3.14" marked as false) are pedagogically valid.
-// Therefore this cross-workbook linter does not ban misconception text globally; correctness of such prompts
-// belongs to page-specific QA where intent is known.
-
 const circle = loadBook('circle', BOOKS.circle);
+const circlePage7 = circle.find(page => page.page === 7);
+assert(circlePage7.tasks.filter(task => /שרטטו מעגל ברדיוס\s+(?:2|3|4)\s+ס״מ/.test(task)).length === 3,
+  'circle page 7: the only allowed repeated drill must remain the explicit 2/3/4 cm compass-radius sequence');
+
 const circleBlock = circle.filter(page => page.page >= 52 && page.page <= 60).map(page => page.text).join(' ');
 assert(/היקף/.test(circleBlock) && /שטח/.test(circleBlock) && /רדיוס/.test(circleBlock), 'circle 52–60: reverse-problem block must cover circumference, area and radius');
 assert(/גינה|בריכה|שולחן|שטיח|גלגל|מזרקה|מסלול/.test(circleBlock), 'circle 52–60: real-life contexts are required');
@@ -135,4 +137,4 @@ assert(/A\s*=\s*\d+(?:[.,]\d+)?π[\s\S]*r/.test(circleBlock), 'circle 52–60: a
 const topPairs = reports.sort((a, b) => b.similarity - a.similarity).slice(0, 10);
 console.log('Highest consecutive-page similarities (informational):');
 for (const row of topPairs) console.log(`${row.book} ${row.a}/${row.b}: ${row.similarity.toFixed(3)}`);
-console.log('Workbook content QA: PASS (order-aware structural duplication, notation, units and reverse-problem coverage checked)');
+console.log('Workbook content QA: PASS (order-aware duplication checks; only the locked circle page-7 compass drill is exempt; notation, units and reverse-problem coverage checked)');
