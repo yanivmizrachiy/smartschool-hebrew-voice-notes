@@ -30,9 +30,11 @@ jobs:
           CHANGED="$(git diff --name-only)"
           echo "$CHANGED"
           test "$CHANGED" = "print/harut-a4.html"
-      - name: Verify sources and mathematical writing remain valid
+      - name: Verify source lock and workbook mathematics
         run: |
-          npm run validate
+          node tests/source-locked.mjs
+          node tests/math-correctness.mjs
+          node tests/booklet-contract.mjs
           node circle/qa.mjs
           node cylinder/qa.mjs
           node tools/qa-workbook-content.mjs
