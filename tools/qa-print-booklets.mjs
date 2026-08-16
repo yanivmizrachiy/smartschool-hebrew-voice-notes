@@ -96,7 +96,12 @@ async function createTarget(url) {
   return json(`http://127.0.0.1:${port}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
 }
 
-function countPdfPages(buffer) {
+function countPdfPages(buffer, file) {
+  if (commandExists('pdfinfo')) {
+    const result = spawnSync('pdfinfo', [file], { encoding: 'utf8' });
+    const match = result.stdout.match(/^Pages:\s+(\d+)$/m);
+    if (result.status === 0 && match) return Number(match[1]);
+  }
   const binary = buffer.toString('latin1');
   return (binary.match(/\/Type\s*\/Page\b/g) || []).length;
 }
@@ -117,25 +122,31 @@ async function printBook(cdp, book, expected) {
 
   await evaluate(cdp, `window.__viewerEnsureAllFramesLoaded(45000)`);
   await waitFor(cdp,
-    `[...document.querySelectorAll('.ws-sheet-frame')].every(f => f.contentDocument?.readyState === 'complete' && !!f.contentDocument?.querySelector('.a4-page'))`,
+    `[...document.querySelectorAll('.ws-sheet-frame')].every(f => { try { return f.contentDocument?.readyState === 'complete' && !!f.contentDocument?.querySelector('.a4-page'); } catch { return false; } })`,
     `${book} all iframe pages ready`, 45000
   );
   await evaluate(cdp, `window.__viewerPrepareFramesForPrint()`);
   await cdp.send('Emulation.setEmulatedMedia', { media: 'print' });
-  await delay(150);
+  await delay(180);
 
   const printMetrics = await evaluate(cdp, `(() => {
     const frames = [...document.querySelectorAll('.ws-wsframe')];
     const first = frames[0]?.getBoundingClientRect();
-    const hidden = ['.topbar','.sitenav','.hero-section','.wsbar','.site-footer','#page-jump']
-      .every(sel => { const el = document.querySelector(sel); return !el || getComputedStyle(el).display === 'none'; });
+    const hidden = ['.topbar','.sitenav','.hero-section','.wsbar','.site-footer','#page-jump','.ws-wsnum']
+      .every(sel => { const nodes=[...document.querySelectorAll(sel)]; return nodes.every(el => getComputedStyle(el).display === 'none'); });
+    const transforms = [...document.querySelectorAll('.ws-sheet-frame')].map(frame => {
+      try { return getComputedStyle(frame.contentDocument.querySelector('.a4-page')).transform; }
+      catch { return 'unreadable'; }
+    });
     return {
       count: frames.length,
       firstWidth: first?.width || 0,
       firstHeight: first?.height || 0,
       ratio: first?.height / first?.width || 0,
       hidden,
-      ready: [...document.querySelectorAll('.ws-sheet-frame')].filter(f => f.contentDocument?.querySelector('.a4-page')).length
+      ready: [...document.querySelectorAll('.ws-sheet-frame')].filter(f => { try { return !!f.contentDocument?.querySelector('.a4-page'); } catch { return false; } }).length,
+      badTransforms: transforms.filter(value => value !== 'none').length,
+      hiddenByContentVisibility: frames.filter(frame => getComputedStyle(frame).contentVisibility === 'hidden').length
     };
   })()`);
 
@@ -143,6 +154,8 @@ async function printBook(cdp, book, expected) {
   assert(printMetrics.ready === expected, `${book}: only ${printMetrics.ready}/${expected} iframe pages are print-ready`);
   assert(printMetrics.hidden, `${book}: viewer chrome is visible in print media`);
   assert(Math.abs(printMetrics.ratio - A4_RATIO) < 0.01, `${book}: print wrapper ratio ${printMetrics.ratio} is not A4`);
+  assert(printMetrics.badTransforms === 0, `${book}: ${printMetrics.badTransforms} A4 pages retained mobile scale/transform in print`);
+  assert(printMetrics.hiddenByContentVisibility === 0, `${book}: content-visibility hid ${printMetrics.hiddenByContentVisibility} print pages`);
 
   const result = await cdp.send('Page.printToPDF', {
     printBackground: true,
@@ -156,7 +169,9 @@ async function printBook(cdp, book, expected) {
   const pdf = Buffer.from(result.data, 'base64');
   assert(pdf.length > 25000, `${book}: generated PDF is unexpectedly small (${pdf.length} bytes)`);
 
-  const pages = countPdfPages(pdf);
+  const file = path.join(OUT_DIR, `${book}-${expected}-pages.pdf`);
+  fs.writeFileSync(file, pdf);
+  const pages = countPdfPages(pdf, file);
   assert(pages === expected, `${book}: PDF contains ${pages} pages, expected ${expected}`);
 
   const boxes = mediaBoxes(pdf);
@@ -168,8 +183,6 @@ async function printBook(cdp, book, expected) {
     assert(Math.abs(ratio - A4_RATIO) < 0.012, `${book}: MediaBox ${index + 1} ratio ${ratio} is not A4`);
   }
 
-  const file = path.join(OUT_DIR, `${book}-${expected}-pages.pdf`);
-  fs.writeFileSync(file, pdf);
   console.log(`PASS ${book}: ${pages}/${expected} A4 PDF pages, ${(pdf.length / 1024).toFixed(0)} KiB`);
 }
 
@@ -187,7 +200,7 @@ try {
   for (const [book, expected] of Object.entries(BOOKS)) {
     await printBook(cdp, book, expected);
   }
-  console.log('Print QA: PASS (cone 46, circle 88, cylinder 38 — real Chrome PDFs, exact page counts, A4 media boxes)');
+  console.log('Print QA: PASS (cone 46, circle 88, cylinder 38 — real Chrome PDFs, exact page counts, A4 media boxes, no mobile transform or viewer chrome)');
 } catch (error) {
   exitCode = 1;
   console.error(error.stack || error.message || error);
