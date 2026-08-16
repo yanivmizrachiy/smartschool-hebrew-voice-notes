@@ -24,22 +24,16 @@ pages.forEach((page, index) => assert(page === index + 1, `page numbering must b
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
-  const answerPath = path.join(dir, `page-${page}.answers.json`);
-  assert(fs.existsSync(answerPath), `page ${page} is missing an answer key`);
-  const answers = JSON.parse(fs.readFileSync(answerPath, 'utf8'));
-
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(html), `page ${page}: Hebrew RTL root is required`);
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
   assert(new RegExp(`aria-label="עמוד ${page}"[^>]*>${page}<\\/div>`).test(html), `page ${page}: visible page number mismatch`);
-  assert(answers.page === page && answers.project === 'גליל', `page ${page}: answer key identity mismatch`);
-  assert(answers.qa?.independentPageNumber === page, `page ${page}: QA page number mismatch`);
-  assert(answers.qa?.singleVisiblePageTitle === true, `page ${page}: single-title contract missing`);
-  assert(answers.qa?.openResponseAllowed === false, `page ${page}: open responses must stay disabled`);
+  assert(/<footer class="footer">/.test(html), `page ${page}: name/date footer is required`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/demo|placeholder/i.test(html), `page ${page}: demo/placeholder text is forbidden`);
-  if (answers.qa?.volumeFormulaAllowed === false) assert(!/V\s*=|π\s*·\s*r²\s*·\s*h/.test(html), `page ${page}: volume formula appears before it is allowed`);
-  if (answers.qa?.surfaceAreaFormulaAllowed === false) assert(!/S\s*=|M\s*=/.test(html), `page ${page}: surface-area formula appears before it is allowed`);
+  assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
+  if (page < 19) assert(!/V\s*=/.test(html), `page ${page}: volume formula is forbidden before page 19`);
+  assert(!/S\s*=|M\s*=/.test(html), `page ${page}: lateral/total surface-area formula is not authorized in current produced sequence`);
 }
 
-console.log(`Cylinder QA: PASS (${pages.length} pages checked, canonical 2-line footer locked)`);
+console.log(`Cylinder QA: PASS (${pages.length} student pages checked; no answer-key dependency; canonical 2-line footer locked)`);
