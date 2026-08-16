@@ -1,29 +1,87 @@
-name: Cone workbook quality
+name: Workbook quality
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/circle-cylinder-isolated-workbooks]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
-      - name: Sync generated worksheet and visual chrome
+      - name: Sync generated cone worksheet and visual chrome
         run: npm run build
-      - name: Build A4 print bundle
+      - name: Build cone A4 print bundle
         run: npm run build:print
-      - name: Validate workbook contracts
+      - name: Validate cone workbook contracts
         run: npm run validate
-      - name: Ensure generated booklet sources stayed synchronized
+      - name: Validate circle workbook contracts
+        run: node circle/qa.mjs
+      - name: Validate cylinder workbook contracts
+        run: node cylinder/qa.mjs
+      - name: Validate circle and cylinder content quality
+        run: node tools/qa-workbook-content.mjs
+      - name: Validate shared mobile viewer contract
+        run: node viewer/qa.mjs
+      - name: Start local workbook server
+        run: |
+          python3 -m http.server 4173 >/tmp/workbook-http.log 2>&1 &
+          echo $! > /tmp/workbook-http.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 0.2
+          done
+          cat /tmp/workbook-http.log
+          exit 1
+      - name: Run real A4 browser QA for all circle and cylinder pages
+        run: node tools/qa-a4-pages.mjs
+      - name: Upload A4 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a4-workbook-qa
+          path: qa/a4-pages/*
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Run real mobile browser QA
+        run: node tools/qa-mobile-viewer.mjs
+      - name: Upload mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-viewer-qa
+          path: qa/mobile-viewer/*.png
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Run canonical real PDF print QA
+        run: node tools/qa-print-booklets.mjs
+      - name: Verify generated print PDFs
+        run: |
+          test -s qa/print-booklets/cone-46-pages.pdf
+          test -s qa/print-booklets/circle-88-pages.pdf
+          test -s qa/print-booklets/cylinder-38-pages.pdf
+      - name: Upload real PDF QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: print-booklets-qa
+          path: qa/print-booklets/*.pdf
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Ensure generated cone booklet sources stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
-      - name: Verify print bundle exists
+      - name: Verify cone print bundle exists
         run: test -s print/harut-a4.html && test -s print/styles.css

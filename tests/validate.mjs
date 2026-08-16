@@ -16,7 +16,7 @@ const oldProjectText = /smartschool|voice[- ]?notes|סמרטקול|הכתבה ב
 const allowedRootEntries = new Set([
   '.git', '.github', '.gitignore', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
   'package.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
-  'tests', 'tools', 'viewer', 'worksheets', 'visual-assets', 'visual-pages'
+  'tests', 'tools', 'viewer', 'worksheets', 'visual-assets', 'visual-pages', 'circle', 'cylinder'
 ]);
 for (const entry of fs.readdirSync(root)) if (!allowedRootEntries.has(entry)) fail(`root: unexpected entry ${entry}`);
 
@@ -127,11 +127,11 @@ const printJsPath = path.join(root, 'viewer/print.js');
 for (const file of [indexPath, appJsPath, printPagePath, printJsPath]) if (!fs.existsSync(file)) fail(`${path.relative(root, file)}: missing viewer file`);
 if (fs.existsSync(indexPath)) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  if (!/<h1>חרוט<\/h1>/.test(indexHtml)) fail('index.html: app title must be חרוט');
+  if (!/<h1[^>]*id="hero-title"[^>]*>חוברת מתמטיקה<\/h1>/.test(indexHtml)) fail('index.html: shared workbook viewer title is missing');
   if (!indexHtml.includes('id="booklet-sheets"')) fail('index.html: missing continuous booklet sheets container');
   if (!indexHtml.includes('id="print-booklet"')) fail('index.html: missing whole-booklet print action');
   if (!indexHtml.includes('id="bw-toggle"')) fail('index.html: missing booklet black-and-white toggle');
-  if (!indexHtml.includes('href="print.html"')) fail('index.html: missing print-all link');
+  if (!indexHtml.includes('data-topic="cone"') || !indexHtml.includes('data-topic="circle"') || !indexHtml.includes('data-topic="cylinder"')) fail('index.html: shared viewer must expose cone/circle/cylinder topic selectors');
   if (oldProjectText.test(indexHtml)) fail('index.html: old project branding/content is forbidden');
 }
 if (fs.existsSync(appJsPath)) {
@@ -139,7 +139,8 @@ if (fs.existsSync(appJsPath)) {
   if (!appJs.includes("fetch('content/workbook.json'")) fail('viewer/app.js: must load workbook.json dynamically');
   if (!appJs.includes('worksheets/${page.slug}.html')) fail('viewer/app.js: must load worksheet pages from slugs');
   if (!appJs.includes("frameWrap.className = 'ws-wsframe'")) fail('viewer/app.js: continuous booklet frame rendering missing');
-  if (!appJs.includes("printBooklet.addEventListener('click', () => window.print())")) fail('viewer/app.js: whole-booklet print action missing');
+  if (!appJs.includes("printBooklet.addEventListener('click', printPreparedBooklet)")) fail('viewer/app.js: prepared whole-booklet print action missing');
+  if (!appJs.includes('ensureAllFramesLoaded') || !appJs.includes('prepareFramesForPrint')) fail('viewer/app.js: safe all-pages print preparation is missing');
   if (oldProjectText.test(appJs)) fail('viewer/app.js: old project branding/content is forbidden');
 }
 if (fs.existsSync(printPagePath)) {

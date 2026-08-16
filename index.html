@@ -2,11 +2,12 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#64143f">
-  <meta name="description" content="חרוט — חוברת דיגיטלית בעברית לצפייה רציפה ולהדפסה של 46 דפי A4">
-  <title>חרוט — חוברת דיגיטלית</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#075f63">
+  <meta name="description" content="חוברות A4 במתמטיקה — חרוט, מעגל וגליל — לצפייה רציפה בנייד ולהדפסה">
+  <title>חוברות מתמטיקה — תצוגת A4</title>
   <link rel="stylesheet" href="viewer/viewer.css">
+  <link rel="stylesheet" href="viewer/mobile-scroll.css">
   <link rel="stylesheet" href="viewer/logo-motion.css">
 </head>
 <body>
@@ -23,15 +24,12 @@
     </div>
   </header>
 
-  <nav class="sitenav" aria-label="ניווט בעמוד">
+  <nav class="sitenav" aria-label="בחירת חוברת">
     <div class="container sitenav__inner">
-      <a class="sitenav__home" href="#main" aria-current="page">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
-        עמוד הבית
-      </a>
-      <a class="sitenav__link" href="#workbook">החוברת הדיגיטלית</a>
-      <a class="sitenav__link" id="student-sheet-link" href="#sheet-1">דף המחשה לתלמיד</a>
-      <a class="sitenav__link" href="#sheet-2">דפי עבודה</a>
+      <a class="sitenav__home" href="#workbook">החוברת</a>
+      <a class="sitenav__link topic-link" data-topic="cone" href="?topic=cone#workbook">חרוט</a>
+      <a class="sitenav__link topic-link" data-topic="circle" href="?topic=circle#workbook">מעגל</a>
+      <a class="sitenav__link topic-link" data-topic="cylinder" href="?topic=cylinder#workbook">גליל</a>
     </div>
   </nav>
 
@@ -39,35 +37,44 @@
     <section class="section hero-section">
       <div class="container">
         <div class="section-head">
-          <span class="section-head__eyebrow">יחידת לימוד מתוקשבת</span>
-          <h1>חרוט</h1>
-          <p>חוברת דיגיטלית אחת, מדורגת ומוכנה לצפייה ולהדפסה. כל 46 דפי ה־A4 מוצגים ברצף אחד, בדיוק במבנה החוברת של אתר זוויות.</p>
+          <span class="section-head__eyebrow">חוברות A4 להדפסה ולצפייה</span>
+          <h1 id="hero-title">חוברת מתמטיקה</h1>
+          <p id="hero-copy">בחרו נושא וגללו ברצף מדף לדף. בנייד כל דף מותאם לרוחב המסך ומופרד בפס טורקיז כהה.</p>
         </div>
         <div class="hero-actions">
           <a class="btn btn--gold" href="#workbook">פתיחת החוברת</a>
-          <a class="btn btn--ghost" href="print.html">הורדה / הדפסה של כל החוברת</a>
         </div>
       </div>
     </section>
 
-    <section class="booklet-section" id="workbook" aria-label="חוברת חרוט">
+    <section class="booklet-section" id="workbook" aria-label="חוברת דפי עבודה">
       <div class="ws-page">
         <div class="wsbar" data-noprint>
-          <span class="wsbar__side">
-            <a class="btn btn--ghost btn--sm" href="#main">‹ עמוד הבית</a>
+          <span class="wsbar__side wsbar__topics" aria-label="בחירת נושא">
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="cone" href="?topic=cone#workbook">חרוט</a>
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="circle" href="?topic=circle#workbook">מעגל</a>
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="cylinder" href="?topic=cylinder#workbook">גליל</a>
           </span>
-          <span class="wsbar__title" id="booklet-status">חוברת חרוט · טוען…</span>
+          <span class="wsbar__title" id="booklet-status">טוען חוברת…</span>
           <span class="wsbar__side wsbar__side--acts">
-            <a id="bw-toggle" class="btn btn--ghost btn--sm" href="?bw=1#workbook">תצוגת שחור-לבן</a>
-            <button id="print-booklet" type="button" class="btn btn--gold btn--sm">הורדה / הדפסה</button>
+            <a id="bw-toggle" class="btn btn--ghost btn--sm" href="#workbook">שחור־לבן</a>
+            <button id="print-booklet" type="button" class="btn btn--gold btn--sm">הדפסה</button>
           </span>
         </div>
 
-        <div id="booklet-loading" class="booklet-loading">טוען את 46 דפי החוברת…</div>
+        <div id="booklet-loading" class="booklet-loading">טוען את דפי החוברת…</div>
         <div id="booklet-sheets" class="ws-page__sheets" aria-live="polite"></div>
       </div>
     </section>
   </main>
+
+  <div class="page-jump" id="page-jump" data-noprint aria-label="ניווט מהיר בין דפים">
+    <button type="button" class="page-jump__btn" data-jump="top" aria-label="קפיצה לדף הראשון">⇈</button>
+    <button type="button" class="page-jump__btn page-jump__btn--main" data-jump="prev" aria-label="לדף הקודם">↑</button>
+    <span class="page-jump__status" id="page-jump-status">1/1</span>
+    <button type="button" class="page-jump__btn page-jump__btn--main" data-jump="next" aria-label="לדף הבא">↓</button>
+    <button type="button" class="page-jump__btn" data-jump="bottom" aria-label="קפיצה לדף האחרון">⇊</button>
+  </div>
 
   <footer class="site-footer">
     <div class="container site-footer__inner">
