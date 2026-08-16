@@ -20,6 +20,7 @@ assert(index.includes('מעגל · גליל · חרוט'), 'shared project title
 assert(index.includes('88 דפי A4') && index.includes('38 דפי A4') && index.includes('46 דפי A4'), 'home must show the verified page counts');
 assert(index.includes('172 דפי A4'), 'home must show the verified total page count');
 assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
+assert(!index.includes('כל הנושאים במקום אחד'), 'generic/demo-like home heading must not return');
 assert(bootstrap.includes("new Set(['circle', 'cylinder', 'cone'])"), 'bootstrap must whitelist exactly the three workbook topics');
 assert(bootstrap.includes("await import('./app.js')"), 'workbook app must load only after a valid topic is selected');
 assert(bootstrap.includes("classList.add('is-home')") && bootstrap.includes("classList.add('has-topic')"), 'home and workbook modes must be explicit');
@@ -35,6 +36,10 @@ assert(/cone:\s*\{\s*label:\s*'חרוט',\s*count:\s*46/.test(app), 'cone count 
 assert(/circle:\s*\{\s*label:\s*'מעגל',\s*count:\s*88/.test(app), 'circle count must be 88');
 assert(/cylinder:\s*\{\s*label:\s*'גליל',\s*count:\s*38/.test(app), 'cylinder count must be 38');
 assert(app.includes('fitFrameToViewport'), 'A4 mobile scale-to-fit function is required');
+assert(app.includes('isMobileWorkbookViewport'), 'mobile/touch viewport detection is required');
+assert(app.includes("frame.style.width = '210mm'") && app.includes("frame.style.height = '297mm'"), 'mobile iframe must preserve an exact A4 surface before scaling');
+assert(app.includes("frame.style.transform = 'scale(' + scale + ')'"), 'mobile viewer must scale the iframe surface instead of the inner A4 DOM');
+assert(!/main\.style\.transform\s*=\s*`scale\(/.test(app), 'inner .a4-page DOM must not be transformed for mobile rendering');
 assert(app.includes('ensureAllFramesLoaded'), 'printing must explicitly load every workbook iframe first');
 assert(app.includes('printPreparedBooklet'), 'print action must use a prepared all-pages workflow');
 assert(app.includes('prepareFramesForPrint'), 'print must neutralize mobile scale before A4 output');
@@ -52,19 +57,22 @@ assert(css.includes('--viewer-teal-dark:#06494c'), 'canonical dark turquoise sep
 assert(/\.ws-page__sheets\{[\s\S]*gap:12px!important/.test(css), 'mobile page separator gap must be 12px');
 assert(/\.ws-wsframe\{[\s\S]*width:100vw!important/.test(css), 'mobile A4 wrapper must fill viewport width');
 assert(/aspect-ratio:210\/297!important/.test(css), 'mobile wrapper must preserve A4 ratio');
-assert(css.includes('content-visibility:auto'), 'offscreen mobile pages must use content-visibility for long-workbook performance');
+assert(!css.includes('content-visibility:auto'), 'iframe wrappers must not use content-visibility; it can produce blank pages on Android');
+assert(!/contain:\s*[^;]*(?:paint|layout)/.test(css), 'iframe wrappers must not use paint/layout containment in mobile mode');
 assert(/\.ws-sheet-frame\{[\s\S]*pointer-events:none!important/.test(css), 'mobile iframe must not trap touch scrolling');
+assert(/\.ws-sheet-frame\{[\s\S]*transform-origin:top left!important/.test(css), 'mobile iframe transform origin must be top-left');
 assert(/\.page-jump__btn\{[\s\S]*width:44px;[\s\S]*height:44px;/.test(css), 'navigation touch targets must be at least 44×44px');
 assert(/\.page-jump__btn--main\{[\s\S]*width:48px;[\s\S]*height:48px;/.test(css), 'primary next/previous touch targets must be 48×48px');
 assert(/\.wsbar__topics \.btn\{[\s\S]*min-width:44px!important;[\s\S]*min-height:44px!important/.test(css), 'topic selector touch targets must be at least 44×44px');
 assert(css.includes('@media(prefers-reduced-motion:reduce)'), 'reduced-motion CSS contract is required');
 assert(/max-width:1024px[^\n]*hover:none[^\n]*pointer:coarse/.test(css), 'touch-device landscape mode up to 1024px must retain mobile workbook layout');
-assert(/@media print\{[\s\S]*content-visibility:visible!important/.test(css), 'print must force all workbook pages visible');
+assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.test(css), 'print must neutralize the mobile iframe transform');
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
 assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
-assert(rules.includes('זוכר את הדף האחרון') && rules.includes('content-visibility'), 'viewer source-of-truth must lock position memory and offscreen rendering policy');
+assert(rules.includes('זוכר את הדף האחרון') && rules.includes('אין להשתמש ב־`content-visibility`'), 'viewer source-of-truth must lock position memory and Android-safe iframe rendering');
+assert(rules.includes('210mm × 297mm') && rules.includes('אין לבצע `transform` על `.a4-page`'), 'viewer source-of-truth must lock iframe-surface scaling');
 assert(rules.includes('44') && rules.includes('reduced-motion'), 'viewer source-of-truth must lock accessible touch targets and reduced motion');
 
-console.log('Viewer QA: PASS (shared three-workbook home + lazy topic bootstrap + A4 viewer, mobile portrait/landscape, accessibility, navigation, position memory, offscreen rendering and print preparation checked)');
+console.log('Viewer QA: PASS (shared three-workbook home + Android-safe A4 iframe rendering + mobile portrait/landscape + accessibility + navigation + position memory + print preparation checked)');
