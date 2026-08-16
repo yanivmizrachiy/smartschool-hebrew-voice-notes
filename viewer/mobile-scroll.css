@@ -27,8 +27,8 @@
 }
 .page-jump[hidden]{display:none}
 .page-jump__btn{
-  width:36px;
-  height:36px;
+  width:44px;
+  height:44px;
   padding:0;
   display:grid;
   place-items:center;
@@ -38,15 +38,17 @@
   color:#fff;
   font:700 20px/1 system-ui,sans-serif;
   cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
 .page-jump__btn--main{
-  width:42px;
-  height:42px;
+  width:48px;
+  height:48px;
   background:#fff;
   color:var(--viewer-teal-dark);
   font-size:23px;
 }
 .page-jump__btn:disabled{opacity:.32;cursor:default}
+.page-jump__btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .page-jump__status{
   min-width:52px;
   color:#fff;
@@ -100,8 +102,9 @@
     gap:3px!important;
   }
   .wsbar__topics .btn{
-    min-height:34px!important;
-    padding:5px 8px!important;
+    min-width:44px!important;
+    min-height:44px!important;
+    padding:6px 9px!important;
     border-radius:999px!important;
     font-size:.72rem!important;
   }
@@ -159,8 +162,8 @@
     padding:5px;
     touch-action:manipulation;
   }
-  .page-jump__btn{width:34px;height:34px;font-size:18px}
-  .page-jump__btn--main{width:40px;height:40px;font-size:22px}
+  .page-jump__btn{width:44px;height:44px;font-size:18px}
+  .page-jump__btn--main{width:48px;height:48px;font-size:22px}
   .page-jump__status{min-width:46px;font-size:12px}
 }
 
@@ -168,6 +171,11 @@
   .wsbar__topics .btn{padding-inline:6px!important;font-size:.68rem!important}
   .wsbar__title{font-size:.72rem!important}
   .page-jump__status{min-width:42px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
 
 @media print{
