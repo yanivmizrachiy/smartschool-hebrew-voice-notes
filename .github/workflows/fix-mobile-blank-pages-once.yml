@@ -1,0 +1,181 @@
+name: Fix mobile blank pages once
+
+on:
+  push:
+    branches: [fix/remove-demo-copy]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/remove-demo-copy
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply robust iframe scaling and content-visible QA
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          // 1) Viewer: scale the iframe as one A4 surface instead of transforming the inner worksheet DOM.
+          {
+            const file = 'viewer/app.js';
+            let text = fs.readFileSync(file, 'utf8');
+            const fitRe = /function fitFrameToViewport\(frame\) \{[\s\S]*?\n\}\n\nfunction fitAllFrames/;
+            if (!fitRe.test(text)) throw new Error('fitFrameToViewport block not found exactly');
+            const replacement = `function isMobileWorkbookViewport() {
+  return window.matchMedia?.('(max-width:760px), (max-width:1024px) and (hover:none) and (pointer:coarse)').matches === true;
+}
+
+function clearLegacyInnerScale(frame) {
+  try {
+    const doc = frame.contentDocument;
+    const main = doc?.querySelector('.a4-page');
+    if (main) {
+      main.style.transform = '';
+      main.style.transformOrigin = '';
+    }
+    if (doc) {
+      doc.documentElement.style.margin = '';
+      doc.documentElement.style.padding = '';
+      doc.documentElement.style.overflow = '';
+      doc.body.style.margin = '';
+      doc.body.style.padding = '';
+      doc.body.style.overflow = '';
+    }
+  } catch {
+    // The A4 page remains readable even if legacy inline styles cannot be cleared.
+  }
+}
+
+function fitFrameToViewport(frame) {
+  const wrap = frame.closest('.ws-wsframe');
+  if (!wrap) return;
+
+  clearLegacyInnerScale(frame);
+  frame.style.transform = '';
+  frame.style.transformOrigin = '';
+  frame.style.width = '';
+  frame.style.height = '';
+  frame.style.top = '';
+  frame.style.left = '';
+  frame.style.right = '';
+  frame.style.bottom = '';
+
+  if (!isMobileWorkbookViewport()) return;
+
+  // Keep the child document at exact A4 size and scale the iframe surface itself.
+  // This avoids Android/WebView paint failures caused by transforming content inside an iframe.
+  frame.style.width = '210mm';
+  frame.style.height = '297mm';
+  frame.style.top = '0';
+  frame.style.left = '0';
+  frame.style.right = 'auto';
+  frame.style.bottom = 'auto';
+  frame.style.transformOrigin = 'top left';
+
+  const naturalWidth = frame.offsetWidth;
+  const availableWidth = wrap.clientWidth;
+  if (!naturalWidth || !availableWidth) return;
+  const scale = availableWidth / naturalWidth;
+  frame.style.transform = \`scale(\${scale})\`;
+}
+
+function fitAllFrames`;
+            text = text.replace(fitRe, replacement);
+
+            const printRe = /function prepareFramesForPrint\(\) \{[\s\S]*?\n\}\n\nfunction restoreFramesAfterPrint/;
+            if (!printRe.test(text)) throw new Error('prepareFramesForPrint block not found exactly');
+            text = text.replace(printRe, `function prepareFramesForPrint() {
+  document.querySelectorAll('.ws-sheet-frame').forEach(frame => {
+    clearLegacyInnerScale(frame);
+    frame.style.transform = 'none';
+    frame.style.transformOrigin = 'top left';
+    frame.style.width = '210mm';
+    frame.style.height = '297mm';
+    frame.style.top = '0';
+    frame.style.left = '0';
+    frame.style.right = 'auto';
+    frame.style.bottom = 'auto';
+  });
+}
+
+function restoreFramesAfterPrint`);
+            fs.writeFileSync(file, text);
+          }
+
+          // 2) Mobile browser QA: verify real worksheet text exists and is visible inside the iframe.
+          {
+            const file = 'tools/qa-mobile-viewer.mjs';
+            let text = fs.readFileSync(file, 'utf8');
+            const marker = `      const iframe = frames[0]?.querySelector('.ws-sheet-frame');\n      const jump = document.querySelector('#page-jump');`;
+            if (!text.includes(marker)) throw new Error('mobile QA iframe marker not found');
+            text = text.replace(marker, `      const iframe = frames[0]?.querySelector('.ws-sheet-frame');
+      const innerDoc = iframe?.contentDocument;
+      const innerPage = innerDoc?.querySelector('.a4-page');
+      const innerStyle = innerPage ? innerDoc.defaultView.getComputedStyle(innerPage) : null;
+      const jump = document.querySelector('#page-jump');`);
+
+            const metricsMarker = `        iframePointerEvents: iframe ? getComputedStyle(iframe).pointerEvents : '',\n        topbarDisplay:`;
+            if (!text.includes(metricsMarker)) throw new Error('mobile QA metrics marker not found');
+            text = text.replace(metricsMarker, `        iframePointerEvents: iframe ? getComputedStyle(iframe).pointerEvents : '',
+        iframeTextLength: innerPage?.innerText?.replace(/\\s+/g, ' ').trim().length || 0,
+        innerPageDisplay: innerStyle?.display || '',
+        innerPageVisibility: innerStyle?.visibility || '',
+        innerPageOpacity: Number(innerStyle?.opacity || 0),
+        iframeRenderedWidth: iframe?.getBoundingClientRect().width || 0,
+        topbarDisplay:`);
+
+            const assertMarker = `    assert(metrics.iframePointerEvents === 'none', \`${'${topic}/${orientation}'}: iframe must not trap touch gestures\`);\n    assert(metrics.topbarDisplay === 'none',`;
+            if (!text.includes(assertMarker)) throw new Error('mobile QA assertion marker not found');
+            text = text.replace(assertMarker, `    assert(metrics.iframePointerEvents === 'none', \`${'${topic}/${orientation}'}: iframe must not trap touch gestures\`);
+    assert(metrics.iframeTextLength > 80, \`${'${topic}/${orientation}'}: first A4 iframe has no real worksheet text (length \${metrics.iframeTextLength})\`);
+    assert(metrics.innerPageDisplay !== 'none' && metrics.innerPageVisibility !== 'hidden' && metrics.innerPageOpacity > 0.1, \`${'${topic}/${orientation}'}: A4 content is hidden inside iframe\`);
+    assert(Math.abs(metrics.iframeRenderedWidth - metrics.innerWidth) <= 2, \`${'${topic}/${orientation}'}: scaled iframe width \${metrics.iframeRenderedWidth} != viewport \${metrics.innerWidth}\`);
+    assert(metrics.topbarDisplay === 'none',`);
+            fs.writeFileSync(file, text);
+          }
+
+          // 3) Remove generic/demo-like copy from the public home. Keep only factual project information.
+          {
+            const file = 'index.html';
+            let text = fs.readFileSync(file, 'utf8');
+            text = text.replace(/\n\s*<p id="hero-copy">[\s\S]*?<\/p>/, '');
+            text = text.replace(/\n\s*<div class="library-heading">[\s\S]*?<\/div>\n\n\s*<div class="workbook-grid">/, '\n\n        <div class="workbook-grid">');
+            fs.writeFileSync(file, text);
+          }
+
+          // 4) Canonical viewer source of truth: remove the risky iframe paint optimization and lock the new architecture.
+          {
+            const file = 'viewer/VIEWER_RULES.md';
+            let text = fs.readFileSync(file, 'utf8');
+            text = text.replace('- דפים רחוקים מהמסך משתמשים ב־`content-visibility:auto` כדי להפחית עבודת layout/paint.\n', '- אין להשתמש ב־`content-visibility` או `contain: paint` על עטיפות `iframe` של דפי A4; באנדרואיד הם עלולים ליצור מסגרת לבנה ללא ציור התוכן.\n');
+            const anchor = '- שינוי גודל וסיבוב מסך מפעילים התאמת קנה־מידה מחדש בלי לשנות את תוכן דף ה־A4.\n';
+            if (!text.includes(anchor)) throw new Error('viewer rules scale anchor not found');
+            text = text.replace(anchor, `${anchor}- בנייד ה־iframe עצמו נשאר משטח A4 בגודל \`210mm × 297mm\` ומוקטן כיחידה אחת לרוחב המסך; אין לבצע \`transform\` על \`.a4-page\` בתוך מסמך ה־iframe.\n`);
+            fs.writeFileSync(file, text);
+          }
+          NODE
+      - name: Verify intended changes
+        run: |
+          git diff --check
+          git diff --name-only
+          grep -F "frame.style.width = '210mm'" viewer/app.js
+          grep -F 'iframeTextLength' tools/qa-mobile-viewer.mjs
+          ! grep -F 'content-visibility:auto' viewer/mobile-scroll.css
+          ! grep -F 'כל הנושאים במקום אחד' index.html
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add viewer/app.js viewer/mobile-scroll.css viewer/VIEWER_RULES.md tools/qa-mobile-viewer.mjs index.html
+          git commit -m 'Fix blank A4 content on Android viewer'
+          git push origin HEAD:fix/remove-demo-copy
