@@ -255,20 +255,21 @@ function updateJumpStatus() {
 }
 
 function detectCurrentSheet() {
-  const frames = [...document.querySelectorAll('.ws-wsframe')];
-  if (!frames.length) return;
-  const targetY = Math.max(0, window.innerHeight * 0.18);
-  let best = frames[0];
-  let bestDistance = Infinity;
-  for (const frame of frames) {
-    const rect = frame.getBoundingClientRect();
-    const distance = Math.abs(rect.top - targetY);
-    if (distance < bestDistance) {
-      best = frame;
-      bestDistance = distance;
-    }
+  if (!entries.length) return;
+  const x = Math.max(1, Math.min(window.innerWidth - 2, window.innerWidth / 2));
+  const baseY = Math.max(56, Math.min(window.innerHeight - 2, window.innerHeight * 0.18));
+  const offsets = [0, 18, -18, 36, -36];
+  let frameWrap = null;
+
+  for (const offset of offsets) {
+    const y = Math.max(1, Math.min(window.innerHeight - 2, baseY + offset));
+    const element = document.elementFromPoint(x, y);
+    frameWrap = element?.closest?.('.ws-wsframe') || null;
+    if (frameWrap) break;
   }
-  const next = Number(best.dataset.sequence) || 1;
+
+  if (!frameWrap) return;
+  const next = Number(frameWrap.dataset.sequence) || 1;
   if (next !== currentSequence) {
     currentSequence = next;
     updateJumpStatus();
