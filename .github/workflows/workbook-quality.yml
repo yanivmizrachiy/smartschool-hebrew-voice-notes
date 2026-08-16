@@ -27,6 +27,8 @@ jobs:
         run: node circle/qa.mjs
       - name: Validate cylinder workbook contracts
         run: node cylinder/qa.mjs
+      - name: Validate circle and cylinder content quality
+        run: node tools/qa-workbook-content.mjs
       - name: Validate shared mobile viewer contract
         run: node viewer/qa.mjs
       - name: Start local workbook server
