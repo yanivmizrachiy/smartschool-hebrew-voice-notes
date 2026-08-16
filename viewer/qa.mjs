@@ -18,6 +18,9 @@ assert(/cone:\s*\{\s*label:\s*'חרוט',\s*count:\s*46/.test(app), 'cone count 
 assert(/circle:\s*\{\s*label:\s*'מעגל',\s*count:\s*88/.test(app), 'circle count must be 88');
 assert(/cylinder:\s*\{\s*label:\s*'גליל',\s*count:\s*38/.test(app), 'cylinder count must be 38');
 assert(app.includes('fitFrameToViewport'), 'A4 mobile scale-to-fit function is required');
+assert(app.includes('prepareFramesForPrint'), 'print must neutralize mobile scale before A4 output');
+assert(app.includes("addEventListener('beforeprint', prepareFramesForPrint)"), 'beforeprint guard is required');
+assert(app.includes("addEventListener('afterprint', restoreFramesAfterPrint)"), 'afterprint mobile-scale restore is required');
 assert(app.includes('scrollIntoView'), 'page navigation must jump to page boundaries');
 assert(app.includes("data-jump=\"prev\"") || app.includes("'[data-jump=\"prev\"]'"), 'previous-page navigation is required');
 assert(app.includes("data-jump=\"next\"") || app.includes("'[data-jump=\"next\"]'"), 'next-page navigation is required');
@@ -29,4 +32,4 @@ assert(/aspect-ratio:210\/297!important/.test(css), 'mobile wrapper must preserv
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'mobile viewer must hide non-booklet chrome');
 assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
 
-console.log('Viewer QA: PASS (cone/circle/cylinder mobile continuous A4 viewer contract checked)');
+console.log('Viewer QA: PASS (cone/circle/cylinder mobile continuous A4 viewer contract checked, including true-A4 print restoration)');
