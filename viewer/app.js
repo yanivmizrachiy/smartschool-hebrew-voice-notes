@@ -22,6 +22,7 @@ let entries = [];
 let currentSequence = 1;
 let scrollTicking = false;
 let resizeTicking = false;
+let printPreparing = false;
 
 function visibleKind(entry) {
   return entry.sequence === 1 && entry.kind === 'worksheet' ? 'דף עבודה' : entry.kindLabel;
@@ -140,6 +141,39 @@ function fitAllFrames() {
   document.querySelectorAll('.ws-sheet-frame').forEach(fitFrameToViewport);
 }
 
+function isFrameReady(frame) {
+  try {
+    return frame.contentDocument?.readyState === 'complete' && !!frame.contentDocument?.querySelector('.a4-page');
+  } catch {
+    return false;
+  }
+}
+
+async function ensureAllFramesLoaded(timeoutMs = 30000) {
+  const frames = [...document.querySelectorAll('.ws-sheet-frame')];
+  frames.forEach(frame => { frame.loading = 'eager'; });
+
+  const waiting = frames.filter(frame => !isFrameReady(frame));
+  if (!waiting.length) return;
+
+  await Promise.race([
+    Promise.all(waiting.map(frame => new Promise((resolve, reject) => {
+      const onLoad = () => {
+        cleanup();
+        if (isFrameReady(frame)) resolve();
+        else reject(new Error(`עמוד ${frame.title || ''} לא נטען במלואו`));
+      };
+      const cleanup = () => frame.removeEventListener('load', onLoad);
+      frame.addEventListener('load', onLoad, { once: true });
+      if (isFrameReady(frame)) {
+        cleanup();
+        resolve();
+      }
+    }))),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('טעינת כל דפי החוברת להדפסה חרגה מהזמן המותר')), timeoutMs))
+  ]);
+}
+
 function prepareFramesForPrint() {
   document.querySelectorAll('.ws-sheet-frame').forEach(frame => {
     try {
@@ -151,7 +185,7 @@ function prepareFramesForPrint() {
       doc.documentElement.style.overflow = 'visible';
       doc.body.style.overflow = 'visible';
     } catch {
-      // Printing continues even if one frame cannot be normalized.
+      // Printing continues only after ensureAllFramesLoaded verified same-origin page readiness.
     }
   });
 }
@@ -161,6 +195,26 @@ function restoreFramesAfterPrint() {
     fitAllFrames();
     detectCurrentSheet();
   });
+}
+
+async function printPreparedBooklet() {
+  if (printPreparing) return;
+  printPreparing = true;
+  const originalText = printBooklet.textContent;
+  printBooklet.disabled = true;
+  printBooklet.textContent = 'מכין להדפסה…';
+  try {
+    await ensureAllFramesLoaded();
+    prepareFramesForPrint();
+    window.print();
+  } catch (error) {
+    console.error(error);
+    status.textContent = `שגיאה בהכנת ההדפסה: ${error.message || error}`;
+  } finally {
+    printBooklet.disabled = false;
+    printBooklet.textContent = originalText;
+    printPreparing = false;
+  }
 }
 
 function decorateFrame(frame, entry) {
@@ -341,10 +395,10 @@ window.addEventListener('resize', handleResize, { passive: true });
 window.addEventListener('orientationchange', handleResize, { passive: true });
 window.addEventListener('beforeprint', prepareFramesForPrint);
 window.addEventListener('afterprint', restoreFramesAfterPrint);
-printBooklet.addEventListener('click', () => {
-  prepareFramesForPrint();
-  window.print();
-});
+printBooklet.addEventListener('click', printPreparedBooklet);
+
+window.__viewerEnsureAllFramesLoaded = ensureAllFramesLoaded;
+window.__viewerPrepareFramesForPrint = prepareFramesForPrint;
 
 loadEntries()
   .then(result => {
@@ -362,10 +416,7 @@ loadEntries()
       detectCurrentSheet();
     });
 
-    if (params.get('print') === '1') setTimeout(() => {
-      prepareFramesForPrint();
-      window.print();
-    }, 700);
+    if (params.get('print') === '1') setTimeout(() => printPreparedBooklet(), 700);
   })
   .catch(error => {
     loading.hidden = false;
