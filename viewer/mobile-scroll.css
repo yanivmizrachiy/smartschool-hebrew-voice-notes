@@ -127,6 +127,7 @@
     background:#fff!important;
     touch-action:pan-y;
     contain:layout paint;
+    content-visibility:auto;
   }
   .ws-sheet-frame{
     width:100%!important;
@@ -171,4 +172,5 @@
 
 @media print{
   .page-jump{display:none!important}
+  .ws-wsframe{content-visibility:visible!important}
 }
