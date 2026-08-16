@@ -41,6 +41,40 @@ for (const page of pages) {
   if (page <= 20) assert(!html.includes('π'), `page ${page}: π is forbidden before page 21`);
   if (page <= 20) assert(!/A\s*=\s*π|π\s*[·*]?\s*r²/.test(html), `page ${page}: area formula is forbidden before page 21`);
 
+  if (page === 52) {
+    assert(/<h1[^>]*>היקף נתון — מוצאים רדיוס<\/h1>/.test(html), 'page 52: reverse-circumference title is required');
+    assert(/גדר|שולחן|מסלול|מזרקה|טרמפולינה|גלגל/.test(html), 'page 52: real-life circumference contexts are required');
+    assert(/C=20π[\s\S]*r=____[\s\S]*A=____π/.test(html), 'page 52: circumference → radius → area chain is required');
+  }
+
+  if (page === 53) {
+    assert(/<h1[^>]*>שטח נתון — מוצאים רדיוס<\/h1>/.test(html), 'page 53: reverse-area title is required');
+    assert(/ערוגה|שטיח|רחבת|שולחן|בריכה|פיצה/.test(html), 'page 53: real-life area contexts are required');
+    assert(/A=81π[\s\S]*r=____[\s\S]*d=____/.test(html), 'page 53: area → radius → diameter chain is required');
+  }
+
+  if (page === 54) {
+    assert(/<h1[^>]*>מהיקף לשטח ומשטח להיקף<\/h1>/.test(html), 'page 54: circumference/area bridge title is required');
+    assert(/C=20π/.test(html) && /A=49π/.test(html), 'page 54: both circumference→area and area→circumference cases are required');
+    assert(/גינה|שטיח|מזרקה|שולחן|בריכה/.test(html), 'page 54: real-life bridge contexts are required');
+  }
+
+  if (page === 56) {
+    assert(/<h1[^>]*>מה צריך למצוא קודם\?<\/h1>/.test(html), 'page 56: intermediate-value reasoning title is required');
+    assert(/שולחן|שטיח|ערוגה|מכסה|מסלול|בריכה/.test(html), 'page 56: real-life intermediate-value contexts are required');
+    assert(/C=16π[\s\S]*r=____[\s\S]*A=____π/.test(html), 'page 56: circumference → radius → area chain is required');
+  }
+
+  if (page === 60) {
+    assert(/<h1[^>]*>בעיות מעגל מחיי היום־יום<\/h1>/.test(html), 'page 60: real-life capstone title is required');
+    assert(/בריכה|רחבה|שולחן|ערוגה|גלגל/.test(html), 'page 60: varied real-life contexts are required');
+    assert(/C=16π/.test(html) && /A=36π/.test(html), 'page 60: both reverse circumference and reverse area problems are required');
+  }
+
+  if ([52, 53, 54, 56, 60].includes(page)) {
+    assert(!/דמ״ר|דצ״מ/.test(html), `page ${page}: ambiguous decimeter abbreviations are forbidden in the real-life reverse-problem block`);
+  }
+
   if (page >= 71 && page <= 79) {
     assert(/<h1[^>]*>מעגל ברביע הראשון<\/h1>/.test(html), `page ${page}: canonical first-quadrant title is required`);
     assert(!/\(\s*[-−]\d+\s*,|,\s*[-−]\d+\s*\)/.test(html), `page ${page}: negative ordered-pair coordinates are forbidden in the first-quadrant block`);
@@ -51,4 +85,4 @@ for (const page of pages) {
   }
 }
 
-console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; no separate answer keys; canonical A4/footer/coordinate rules locked)`);
+console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; reverse real-life circumference/area problems locked; no separate answer keys; canonical A4/footer/coordinate rules locked)`);
