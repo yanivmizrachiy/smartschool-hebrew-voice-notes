@@ -41,24 +41,38 @@ function normalizeTask(text) {
     .toLowerCase()
     .replace(/[−–—]/g, '-')
     .replace(/\d+(?:[.,]\d+)?/g, '#')
-    .replace(/[a-z]\d?/gi, 'v')
     .replace(/[π²³]/g, 'm')
     .replace(/[()\[\]{}:;,.!?"'׳״־+=·÷<>]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-function tokenSet(text) {
-  return new Set(normalizeTask(text).split(' ').filter(token => token.length > 1));
+function tokens(text) {
+  return normalizeTask(text).split(' ').filter(token => token.length > 1 || /^[a-z]$/i.test(token));
 }
 
-function jaccard(a, b) {
-  const A = tokenSet(a);
-  const B = tokenSet(b);
+function ngramSet(text, n) {
+  const list = tokens(text);
+  const grams = new Set();
+  if (list.length < n) return grams;
+  for (let i = 0; i <= list.length - n; i += 1) grams.add(list.slice(i, i + n).join(' '));
+  return grams;
+}
+
+function setJaccard(A, B) {
   if (!A.size || !B.size) return 0;
   let intersection = 0;
   for (const token of A) if (B.has(token)) intersection += 1;
   return intersection / (A.size + B.size - intersection);
+}
+
+function similarityScore(a, b) {
+  const unigram = setJaccard(new Set(tokens(a)), new Set(tokens(b)));
+  const bigram = setJaccard(ngramSet(a, 2), ngramSet(b, 2));
+  // Order matters more than vocabulary. This still returns 1.0 for a true
+  // copy-with-different-numbers, but distinguishes pedagogically inverse tasks
+  // such as radius→diameter from diameter→radius.
+  return 0.30 * unigram + 0.70 * bigram;
 }
 
 function loadBook(name, spec) {
@@ -92,7 +106,7 @@ for (const [name, spec] of Object.entries(BOOKS)) {
 
     for (let i = 0; i < item.tasks.length; i += 1) {
       for (let j = i + 1; j < item.tasks.length; j += 1) {
-        const similarity = jaccard(item.tasks[i], item.tasks[j]);
+        const similarity = similarityScore(item.tasks[i], item.tasks[j]);
         assert(similarity < 0.94, `${name} page ${item.page}: tasks ${i + 1} and ${j + 1} are too similar (${similarity.toFixed(2)})`);
       }
     }
@@ -101,7 +115,7 @@ for (const [name, spec] of Object.entries(BOOKS)) {
   for (let i = 0; i < pages.length - 1; i += 1) {
     const a = pages[i];
     const b = pages[i + 1];
-    const similarity = jaccard(a.text, b.text);
+    const similarity = similarityScore(a.text, b.text);
     reports.push({ book: name, a: a.page, b: b.page, similarity });
     assert(similarity < 0.93, `${name}: consecutive pages ${a.page}/${b.page} are too similar after normalization (${similarity.toFixed(2)})`);
   }
@@ -121,4 +135,4 @@ assert(/A\s*=\s*\d+(?:[.,]\d+)?π[\s\S]*r/.test(circleBlock), 'circle 52–60: a
 const topPairs = reports.sort((a, b) => b.similarity - a.similarity).slice(0, 10);
 console.log('Highest consecutive-page similarities (informational):');
 for (const row of topPairs) console.log(`${row.book} ${row.a}/${row.b}: ${row.similarity.toFixed(3)}`);
-console.log('Workbook content QA: PASS (structural duplication, notation, units and reverse-problem coverage checked)');
+console.log('Workbook content QA: PASS (order-aware structural duplication, notation, units and reverse-problem coverage checked)');
