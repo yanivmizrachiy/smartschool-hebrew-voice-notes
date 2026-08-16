@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#075f63">
-  <meta name="description" content="חוברות A4 במתמטיקה — חרוט, מעגל וגליל — לצפייה רציפה בנייד ולהדפסה">
-  <title>חוברות מתמטיקה — תצוגת A4</title>
+  <meta name="description" content="דפי עבודה A4 במתמטיקה — מעגל, גליל וחרוט — לצפייה רציפה בנייד ולהדפסה">
+  <title>דפי עבודה במתמטיקה — מעגל · גליל · חרוט</title>
   <link rel="stylesheet" href="viewer/viewer.css">
   <link rel="stylesheet" href="viewer/mobile-scroll.css">
   <link rel="stylesheet" href="viewer/logo-motion.css">
@@ -24,36 +24,130 @@
     </div>
   </header>
 
-  <nav class="sitenav" aria-label="בחירת חוברת">
+  <nav class="sitenav" aria-label="ניווט ראשי">
     <div class="container sitenav__inner">
-      <a class="sitenav__home" href="#workbook">החוברת</a>
-      <a class="sitenav__link topic-link" data-topic="cone" href="?topic=cone#workbook">חרוט</a>
-      <a class="sitenav__link topic-link" data-topic="circle" href="?topic=circle#workbook">מעגל</a>
-      <a class="sitenav__link topic-link" data-topic="cylinder" href="?topic=cylinder#workbook">גליל</a>
+      <a class="sitenav__home" href="./" aria-label="דף הבית">דף הבית</a>
+      <a class="sitenav__link topic-link" data-topic="circle" href="?topic=circle&sheet=1#workbook">מעגל</a>
+      <a class="sitenav__link topic-link" data-topic="cylinder" href="?topic=cylinder&sheet=1#workbook">גליל</a>
+      <a class="sitenav__link topic-link" data-topic="cone" href="?topic=cone&sheet=1#workbook">חרוט</a>
     </div>
   </nav>
 
   <main id="main">
-    <section class="section hero-section">
-      <div class="container">
-        <div class="section-head">
-          <span class="section-head__eyebrow">חוברות A4 להדפסה ולצפייה</span>
-          <h1 id="hero-title">חוברת מתמטיקה</h1>
-          <p id="hero-copy">בחרו נושא וגללו ברצף מדף לדף. בנייד כל דף מותאם לרוחב המסך ומופרד בפס טורקיז כהה.</p>
+    <section class="section hero-section" id="home-hero">
+      <div class="container home-hero-grid">
+        <div class="home-hero-copy">
+          <span class="section-head__eyebrow">172 דפי A4 · שלוש חוברות מתמטיקה</span>
+          <h1 id="hero-title">מעגל · גליל · חרוט</h1>
+          <p id="hero-copy">סדרת דפי עבודה מודפסים, מדורגים וברורים. בחרו נושא, פתחו את החוברת וגללו ברצף מדף לדף. בנייד כל דף A4 מותאם לרוחב המסך.</p>
+          <div class="hero-actions home-hero-actions">
+            <a class="btn btn--gold" href="?topic=circle&sheet=1#workbook">פתיחת מעגל</a>
+            <a class="btn btn--ghost" href="?topic=cylinder&sheet=1#workbook">פתיחת גליל</a>
+            <a class="btn btn--ghost" href="?topic=cone&sheet=1#workbook">פתיחת חרוט</a>
+          </div>
         </div>
-        <div class="hero-actions">
-          <a class="btn btn--gold" href="#workbook">פתיחת החוברת</a>
+        <div class="home-hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 460 300" role="presentation">
+            <defs>
+              <linearGradient id="hero-teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d7e82"/><stop offset="1" stop-color="#06494c"/></linearGradient>
+              <linearGradient id="hero-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3a8"/><stop offset="1" stop-color="#ffe555"/></linearGradient>
+            </defs>
+            <rect x="18" y="24" width="424" height="252" rx="34" fill="#eef8f7"/>
+            <circle cx="122" cy="151" r="64" fill="#fff" stroke="url(#hero-teal)" stroke-width="10"/>
+            <circle cx="122" cy="151" r="5" fill="#06494c"/>
+            <line x1="122" y1="151" x2="181" y2="151" stroke="#06494c" stroke-width="5" stroke-linecap="round"/>
+            <g transform="translate(220 68)">
+              <ellipse cx="56" cy="28" rx="48" ry="18" fill="#fff" stroke="#0d7e82" stroke-width="6"/>
+              <path d="M8 28v104c0 10 21 18 48 18s48-8 48-18V28" fill="#dff3f2" stroke="#0d7e82" stroke-width="6"/>
+              <ellipse cx="56" cy="132" rx="48" ry="18" fill="#fff" stroke="#0d7e82" stroke-width="6"/>
+            </g>
+            <g transform="translate(333 72)">
+              <ellipse cx="48" cy="128" rx="42" ry="15" fill="url(#hero-gold)" stroke="#64143f" stroke-width="5"/>
+              <path d="M48 15L6 128M48 15l42 113" fill="none" stroke="#64143f" stroke-width="6" stroke-linecap="round"/>
+              <path d="M6 128c0 9 19 15 42 15s42-6 42-15" fill="none" stroke="#64143f" stroke-width="5"/>
+            </g>
+          </svg>
         </div>
       </div>
     </section>
 
-    <section class="booklet-section" id="workbook" aria-label="חוברת דפי עבודה">
+    <section class="library-section" id="library" aria-labelledby="library-title">
+      <div class="container">
+        <div class="library-heading">
+          <span class="library-kicker">בחרו חוברת</span>
+          <h2 id="library-title">כל הנושאים במקום אחד</h2>
+          <p>כל חוברת נפתחת בעמוד הראשון שלה. משם אפשר לגלול ברצף, לדלג בין דפים ולהדפיס.</p>
+        </div>
+
+        <div class="workbook-grid">
+          <article class="workbook-card workbook-card--circle">
+            <div class="workbook-card__visual" aria-hidden="true">
+              <svg viewBox="0 0 240 170" role="presentation">
+                <circle cx="120" cy="83" r="61" fill="#fff" stroke="#075f63" stroke-width="7"/>
+                <circle cx="120" cy="83" r="5" fill="#075f63"/>
+                <line x1="120" y1="83" x2="178" y2="83" stroke="#075f63" stroke-width="5" stroke-linecap="round"/>
+                <line x1="58" y1="83" x2="182" y2="83" stroke="#e2ae19" stroke-width="3" stroke-dasharray="7 6"/>
+              </svg>
+            </div>
+            <div class="workbook-card__body">
+              <div class="workbook-card__meta"><span>88 דפי A4</span><span>מעגל ועיגול</span></div>
+              <h3>מעגל</h3>
+              <p>מן המושגים הבסיסיים, רדיוס וקוטר, דרך π, היקף ושטח ועד שאלות משולבות ומערכת צירים.</p>
+              <a class="workbook-card__button" href="?topic=circle&sheet=1#workbook">פתחו את חוברת המעגל <span aria-hidden="true">←</span></a>
+            </div>
+          </article>
+
+          <article class="workbook-card workbook-card--cylinder">
+            <div class="workbook-card__visual" aria-hidden="true">
+              <svg viewBox="0 0 240 170" role="presentation">
+                <ellipse cx="120" cy="38" rx="62" ry="22" fill="#fff" stroke="#075f63" stroke-width="6"/>
+                <path d="M58 38v91c0 12 28 22 62 22s62-10 62-22V38" fill="#dff3f2" stroke="#075f63" stroke-width="6"/>
+                <ellipse cx="120" cy="129" rx="62" ry="22" fill="#fff" stroke="#075f63" stroke-width="6"/>
+                <line x1="120" y1="38" x2="120" y2="129" stroke="#e2ae19" stroke-width="4" stroke-dasharray="7 6"/>
+              </svg>
+            </div>
+            <div class="workbook-card__body">
+              <div class="workbook-card__meta"><span>38 דפי A4</span><span>גליל ישר</span></div>
+              <h3>גליל</h3>
+              <p>היכרות עם הגוף והבסיסים, שטח בסיס, נפח, יחידות וקיבול, חישובים הפוכים ובעיות מחיי היום־יום.</p>
+              <a class="workbook-card__button" href="?topic=cylinder&sheet=1#workbook">פתחו את חוברת הגליל <span aria-hidden="true">←</span></a>
+            </div>
+          </article>
+
+          <article class="workbook-card workbook-card--cone">
+            <div class="workbook-card__visual" aria-hidden="true">
+              <svg viewBox="0 0 240 170" role="presentation">
+                <ellipse cx="120" cy="139" rx="66" ry="20" fill="#fff3a8" stroke="#64143f" stroke-width="6"/>
+                <path d="M120 18L54 139M120 18l66 121" fill="none" stroke="#64143f" stroke-width="7" stroke-linecap="round"/>
+                <path d="M54 139c0 11 30 20 66 20s66-9 66-20" fill="none" stroke="#64143f" stroke-width="6"/>
+                <line x1="120" y1="18" x2="120" y2="139" stroke="#075f63" stroke-width="4" stroke-dasharray="7 6"/>
+              </svg>
+            </div>
+            <div class="workbook-card__body">
+              <div class="workbook-card__meta"><span>46 דפי A4</span><span>חרוט ישר</span></div>
+              <h3>חרוט</h3>
+              <p>חוברת רציפה המשלבת מושגים, גובה ויוצר, פיתגורס, נפח, חתכים ומשימות חזותיות.</p>
+              <a class="workbook-card__button" href="?topic=cone&sheet=1#workbook">פתחו את חוברת החרוט <span aria-hidden="true">←</span></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="library-summary" aria-label="סיכום החוברות">
+          <div><strong>172</strong><span>דפי A4 בסך הכול</span></div>
+          <div><strong>3</strong><span>חוברות נפרדות</span></div>
+          <div><strong>A4</strong><span>צפייה והדפסה</span></div>
+          <div><strong>RTL</strong><span>עברית מלאה</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="booklet-section" id="workbook" aria-label="חוברת דפי עבודה" hidden>
       <div class="ws-page">
         <div class="wsbar" data-noprint>
           <span class="wsbar__side wsbar__topics" aria-label="בחירת נושא">
-            <a class="btn btn--ghost btn--sm topic-link" data-topic="cone" href="?topic=cone#workbook">חרוט</a>
-            <a class="btn btn--ghost btn--sm topic-link" data-topic="circle" href="?topic=circle#workbook">מעגל</a>
-            <a class="btn btn--ghost btn--sm topic-link" data-topic="cylinder" href="?topic=cylinder#workbook">גליל</a>
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="circle" href="?topic=circle&sheet=1#workbook">מעגל</a>
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="cylinder" href="?topic=cylinder&sheet=1#workbook">גליל</a>
+            <a class="btn btn--ghost btn--sm topic-link" data-topic="cone" href="?topic=cone&sheet=1#workbook">חרוט</a>
           </span>
           <span class="wsbar__title" id="booklet-status">טוען חוברת…</span>
           <span class="wsbar__side wsbar__side--acts">
@@ -61,14 +155,13 @@
             <button id="print-booklet" type="button" class="btn btn--gold btn--sm">הדפסה</button>
           </span>
         </div>
-
         <div id="booklet-loading" class="booklet-loading">טוען את דפי החוברת…</div>
         <div id="booklet-sheets" class="ws-page__sheets" aria-live="polite"></div>
       </div>
     </section>
   </main>
 
-  <div class="page-jump" id="page-jump" data-noprint aria-label="ניווט מהיר בין דפים">
+  <div class="page-jump" id="page-jump" data-noprint aria-label="ניווט מהיר בין דפים" hidden>
     <button type="button" class="page-jump__btn" data-jump="top" aria-label="קפיצה לדף הראשון">⇈</button>
     <button type="button" class="page-jump__btn page-jump__btn--main" data-jump="prev" aria-label="לדף הקודם">↑</button>
     <span class="page-jump__status" id="page-jump-status">1/1</span>
@@ -83,6 +176,6 @@
     </div>
   </footer>
 
-  <script type="module" src="viewer/app.js"></script>
+  <script type="module" src="viewer/bootstrap.js"></script>
 </body>
 </html>
