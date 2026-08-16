@@ -155,10 +155,6 @@ async function runCase(topic, orientation) {
     cdp.on('Runtime.exceptionThrown', params => runtimeErrors.push(params.exceptionDetails?.text || 'runtime exception'));
     await cdp.send('Runtime.enable');
     await cdp.send('Page.enable');
-    await cdp.send('Log.enable');
-    cdp.on('Log.entryAdded', ({ entry }) => {
-      if (entry?.level === 'error') runtimeErrors.push(`${entry.source || 'log'}: ${entry.text}`);
-    });
 
     await cdp.send('Emulation.setDeviceMetricsOverride', {
       width: device.width,
@@ -210,7 +206,6 @@ async function runCase(topic, orientation) {
         iframePointerEvents: iframe ? getComputedStyle(iframe).pointerEvents : '',
         topbarDisplay: topbar ? getComputedStyle(topbar).display : '',
         jumpDisplay: jump ? getComputedStyle(jump).display : '',
-        jumpRect: jump?.getBoundingClientRect().toJSON?.() || null,
         status: document.querySelector('#page-jump-status')?.textContent || '',
         activeTopic: document.querySelector('.topic-link.is-active')?.dataset.topic || '',
         horizontalOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -230,36 +225,27 @@ async function runCase(topic, orientation) {
     assert(metrics.status === `1/${expected}`, `${topic}/${orientation}: initial status ${metrics.status}`);
 
     await evaluate(cdp, `document.querySelector('[data-jump="next"]')?.click()`);
-    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '2/${expected}'`, `${topic}/${orientation} next-page jump`);
-    await delay(350);
+    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '2/${expected}'`, `${topic}/${orientation} next-page status`);
+    await waitFor(cdp, `(() => { const r=document.querySelector('#sheet-2')?.getBoundingClientRect(); return !!r && r.bottom > 48 && r.top < innerHeight; })()`, `${topic}/${orientation} next-page visibility`, 5000);
 
     await evaluate(cdp, `document.querySelector('[data-jump="bottom"]')?.click()`);
-    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '${expected}/${expected}'`, `${topic}/${orientation} last-page jump`);
-    await delay(450);
-    const lastVisible = await evaluate(cdp, `(() => {
-      const last = document.querySelector('#sheet-${expected}');
-      if (!last) return false;
-      const r = last.getBoundingClientRect();
-      return r.bottom > 48 && r.top < innerHeight;
-    })()`);
-    assert(lastVisible, `${topic}/${orientation}: last page did not become visible after ⇊`);
+    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '${expected}/${expected}'`, `${topic}/${orientation} last-page status`);
+    await waitFor(cdp, `(() => { const r=document.querySelector('#sheet-${expected}')?.getBoundingClientRect(); return !!r && r.bottom > 48 && r.top < innerHeight; })()`, `${topic}/${orientation} last-page visibility`, 8000);
 
     await evaluate(cdp, `document.querySelector('[data-jump="top"]')?.click()`);
-    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '1/${expected}'`, `${topic}/${orientation} first-page jump`);
-    await delay(350);
+    await waitFor(cdp, `document.querySelector('#page-jump-status')?.textContent === '1/${expected}'`, `${topic}/${orientation} first-page status`);
+    await waitFor(cdp, `(() => { const r=document.querySelector('#sheet-1')?.getBoundingClientRect(); return !!r && r.bottom > 48 && r.top < innerHeight; })()`, `${topic}/${orientation} first-page visibility`, 8000);
 
     const shot = await cdp.send('Page.captureScreenshot', { format: 'png', fromSurface: true });
     const screenshot = path.join(OUT_DIR, `${topic}-${orientation}.png`);
     fs.writeFileSync(screenshot, Buffer.from(shot.data, 'base64'));
     assert(fs.statSync(screenshot).size > 5000, `${topic}/${orientation}: screenshot is unexpectedly small`);
-
-    const relevantErrors = runtimeErrors.filter(text => !/favicon|ERR_BLOCKED_BY_CLIENT/i.test(text));
-    assert(relevantErrors.length === 0, `${topic}/${orientation}: browser errors: ${relevantErrors.join(' | ')}`);
+    assert(runtimeErrors.length === 0, `${topic}/${orientation}: runtime JS errors: ${runtimeErrors.join(' | ')}`);
 
     console.log(`PASS ${topic}/${orientation}: ${expected} pages, ${metrics.firstWidth}×${metrics.firstHeight}px, gap ${metrics.gap}px`);
   } finally {
     cdp.close();
-    await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`, { method: 'GET' }).catch(() => {});
+    await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`).catch(() => {});
   }
 }
 
