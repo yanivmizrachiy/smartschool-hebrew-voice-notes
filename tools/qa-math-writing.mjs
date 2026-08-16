@@ -4,7 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 const reportDir = path.join(root, 'qa', 'math-writing');
 fs.mkdirSync(reportDir, { recursive: true });
-const workbook = JSON.parse(fs.readFileSync(path.join(root, 'content', 'workbook.json'), 'utf8'));
+const workbook = JSON.parse(fs.readFileSync(path.join(root, 'content/workbook.json'), 'utf8'));
 
 function conePrintFiles() {
   const pages = new Map((workbook.pages || []).map(p => [p.id, p]));
@@ -80,11 +80,14 @@ for (const meta of files) {
   const deliberate = deliberateErrorContext(text);
   const rel = meta.file.replaceAll('\\', '/');
 
+  // Multiplication and algebraic typography.
   for (const s of matches(text, /×/g)) addFinding(meta, 'multiplication-sign-must-be-middle-dot', s);
-  for (const s of matches(text, /\d\s+[xX*]\s+\d/g)) addFinding(meta, 'spaced-ascii-multiplication-forbidden', s);
+  for (const s of matches(text, /(?:\d|[A-Za-zπ])\s*\*\s*(?:\d|[A-Za-zπ(])/g)) addFinding(meta, 'asterisk-multiplication-forbidden', s);
+  for (const s of matches(text, /\d\s+[xX]\s+\d/g)) addFinding(meta, 'spaced-x-multiplication-forbidden', s);
   for (const s of matches(text, /\^[23]\b/g)) addFinding(meta, 'use-real-superscript', s);
   for (const s of matches(text, /(?:\d|[A-Za-zπ])\s*-\s*(?:\d|[A-Za-zπ])/g)) addFinding(meta, 'use-mathematical-minus', s);
 
+  // Exact versus approximate notation for π and irrational roots.
   for (const s of matches(text, /π\s*=\s*3(?:[.,]14\d*)?/g)) {
     const hasCorrectForm = /π\s*≈\s*3[.,]14/.test(text) || /3[.,]14\s*≈\s*π/.test(text);
     if (!(deliberate && hasCorrectForm && deliberatePiPages.has(rel))) addFinding(meta, 'pi-must-not-equal-decimal', s);
@@ -96,21 +99,23 @@ for (const meta of files) {
       if (m && !segment.includes('≈')) addFinding(meta, 'pi-decimal-evaluation-needs-approximation', m[0]);
     }
   }
-
   const sqrtEq = /√\s*(\d+(?:[.,]\d+)?)\s*=\s*(\d+[.,]\d+)/g; let sm;
   while ((sm = sqrtEq.exec(text))) {
     const radicand = Number(sm[1].replace(',', '.'));
     if (Number.isFinite(radicand) && !Number.isInteger(Math.sqrt(radicand))) addFinding(meta, 'irrational-root-needs-approximation', sm[0]);
   }
 
+  // Circle/disk terminology outside explicit distractors.
   for (const s of matches(semantic, /שטח\s+(?:של\s+)?ה?מעגל/g)) addFinding(meta, 'area-is-of-disk-not-circle', s);
   for (const s of matches(semantic, /היקף\s+(?:של\s+)?ה?עיגול/g)) addFinding(meta, 'circumference-is-of-circle', s);
 
+  // Unit typography: canonical gershayim plus explicit superscript ²/³, including metres.
   for (const s of matches(text, /(?:ס|מ|דצ|ק)"מ|מ"ל/g)) addFinding(meta, 'use-hebrew-gershayim-in-units', s);
-  for (const s of matches(text, /(?:סמ|ממ|דמ)[״"]ר|(?:סמ|ממ|דמ)[״"]ק/g)) addFinding(meta, 'use-explicit-squared-or-cubed-unit', s);
-  for (const s of matches(text, /(?:מ״מ|ס״מ|דצ״מ|ק״מ)[23]\b/g)) addFinding(meta, 'unit-power-must-be-superscript', s);
-  for (const s of matches(text, /\b(?:cm|mm|dm|km)[23]\b/gi)) addFinding(meta, 'unit-power-must-be-superscript', s);
+  for (const s of matches(text, /(?:מ|קמ|דצמ|סמ|ממ)[״"](?:ר|ק)/g)) addFinding(meta, 'use-explicit-squared-or-cubed-unit', s);
+  for (const s of matches(text, /(?:מ״מ|ס״מ|דצ״מ|ק״מ|מ)[23]\b/g)) addFinding(meta, 'unit-power-must-be-superscript', s);
+  for (const s of matches(text, /\b(?:cm|mm|dm|km|m)[23]\b/gi)) addFinding(meta, 'unit-power-must-be-superscript', s);
 
+  // Dimension checks parse one assignment at a time; explicit error-analysis pages are exempt only here.
   if (!deliberateDimensionPages.has(rel)) {
     assignmentRe.lastIndex = 0; let am;
     while ((am = assignmentRe.exec(text))) {
