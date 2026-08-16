@@ -1,0 +1,39 @@
+name: Wire Circle utilization profiles once
+
+on:
+  push:
+    branches:
+      - fix/circle-no-name-date-a4-utilization
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-no-name-date-a4-utilization
+          fetch-depth: 0
+      - name: Import measured utilization stylesheet
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('circle/styles.css')
+          text = p.read_text()
+          imp = '@import url("a4-utilization.css");\n'
+          if not text.startswith(imp):
+              p.write_text(imp + text)
+          PY
+          git diff --check
+          head -n 1 circle/styles.css | grep -F '@import url("a4-utilization.css");'
+      - name: Commit import
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/styles.css
+          git commit -m 'Apply measured A4 utilization profiles to Circle'
+          git push origin HEAD:fix/circle-no-name-date-a4-utilization
