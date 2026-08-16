@@ -22,23 +22,9 @@ const pages = fs.readdirSync(dir)
   .map(name => Number(name.match(/\d+/)[0]))
   .sort((a,b) => a-b);
 
-assert(pages.length > 0, 'at least one worksheet page is required');
-assert(new Set(pages).size === pages.length, 'page numbers must be unique');
-
-const fullSeriesReady = pages.length === 88 && pages[0] === 1 && pages.at(-1) === 88;
-if (fullSeriesReady) {
-  pages.forEach((page, index) => assert(page === index + 1, `full series must be continuous from 1; found page ${page} at position ${index + 1}`));
-} else {
-  const early = pages.filter(page => page < 71);
-  early.forEach((page, index) => assert(page === index + 1, `current early production block must be continuous from 1; found page ${page} at position ${index + 1}`));
-  const firstQuadrant = pages.filter(page => page >= 71 && page <= 79);
-  if (firstQuadrant.length) {
-    assert(firstQuadrant.length === 9, 'first-quadrant production block must contain all pages 71–79 once started');
-    firstQuadrant.forEach((page, index) => assert(page === 71 + index, `first-quadrant block mismatch at page ${page}`));
-  }
-  const later = pages.filter(page => page >= 80);
-  if (later.length) later.forEach((page, index) => assert(page === 80 + index, `later production block must be continuous from 80; found page ${page}`));
-}
+assert(pages.length === 88, `complete workbook must contain exactly 88 student pages; found ${pages.length}`);
+assert(new Set(pages).size === 88, 'page numbers must be unique');
+pages.forEach((page, index) => assert(page === index + 1, `complete workbook must be continuous from 1 to 88; found page ${page} at position ${index + 1}`));
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
@@ -50,13 +36,19 @@ for (const page of pages) {
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/demo|placeholder/i.test(html), `page ${page}: demo/placeholder text is forbidden`);
   assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
+
+  if (page === 1) assert(/<h1[^>]*>מושגים בסיסיים<\/h1>/.test(html), 'page 1: canonical opening title must be מושגים בסיסיים');
   if (page <= 20) assert(!html.includes('π'), `page ${page}: π is forbidden before page 21`);
   if (page <= 20) assert(!/A\s*=\s*π|π\s*[·*]?\s*r²/.test(html), `page ${page}: area formula is forbidden before page 21`);
+
   if (page >= 71 && page <= 79) {
     assert(/<h1[^>]*>מעגל ברביע הראשון<\/h1>/.test(html), `page ${page}: canonical first-quadrant title is required`);
     assert(!/\(\s*[-−]\d+\s*,|,\s*[-−]\d+\s*\)/.test(html), `page ${page}: negative ordered-pair coordinates are forbidden in the first-quadrant block`);
-    assert(!/x\s*[²^]\s*\+\s*y\s*[²^]|\(x\s*[-−+]/i.test(html), `page ${page}: analytic circle-equation notation is forbidden`);
+  }
+
+  if (page >= 71 && page <= 88) {
+    assert(!/x\s*[²^]\s*\+\s*y\s*[²^]|\(x\s*[-−+]\s*[^)]*\)\s*[²^]\s*\+\s*\(y\s*[-−+]/i.test(html), `page ${page}: analytic circle-equation notation is forbidden`);
   }
 }
 
-console.log(`Circle QA: PASS (${pages.length} student pages checked; no separate answer keys; canonical footer and first-quadrant block locked)`);
+console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; no separate answer keys; canonical A4/footer/coordinate rules locked)`);
