@@ -7,7 +7,7 @@ for (let page = 1; page <= 88; page += 1) {
   const before = text;
 
   // Remove the student name/date row entirely, not merely visually.
-  text = text.replace(/\n?\s*<footer\s+class=["']footer["'][^>]*>[\s\S]*?<\/footer>\s*/gi, '\n');
+  text = text.replace(/\n?\s*<(?:footer|div)\s+class=["']footer["'][^>]*>[\s\S]*?<\/(?:footer|div)>\s*/gi, '\n');
   text = text.replace(/\n?\s*<div\s+class=["'][^"']*(?:student-meta|name-date|identity-fields)[^"']*["'][^>]*>[\s\S]*?<\/div>\s*/gi, '\n');
 
   if (/שם\s*(?:התלמיד)?\s*[:：]|תאריך\s*[:：]/u.test(text)) {
@@ -40,7 +40,7 @@ if (changed.length !== 88) {
   let qa = fs.readFileSync(file, 'utf8');
   const anchor = "    assert(!/answers\\.json/i.test(html), `${file}: answer-key reference forbidden`);";
   if (!qa.includes(anchor)) throw new Error('circle QA anchor not found');
-  const addition = `${anchor}\n    assert(!/<footer\\s+class=[\"']footer[\"']/i.test(html), \`${'${file}'}: name/date footer is forbidden\`);\n    assert(!/שם\\s*(?:התלמיד)?\\s*[:：]|תאריך\\s*[:：]/u.test(html), \`${'${file}'}: student name/date fields are forbidden\`);`;
+  const addition = `${anchor}\n    assert(!/<(?:footer|div)\\s+class=[\"']footer[\"']/i.test(html), \`${'${file}'}: student footer is forbidden\`);\n    assert(!/שם\\s*(?:התלמיד)?\\s*[:：]|תאריך\\s*[:：]/u.test(html), \`${'${file}'}: student name/date fields are forbidden\`);`;
   qa = qa.replace(anchor, addition);
   fs.writeFileSync(file, qa);
 }
