@@ -127,7 +127,10 @@ const printJsPath = path.join(root, 'viewer/print.js');
 for (const file of [indexPath, appJsPath, printPagePath, printJsPath]) if (!fs.existsSync(file)) fail(`${path.relative(root, file)}: missing viewer file`);
 if (fs.existsSync(indexPath)) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  if (!/<h1[^>]*id="hero-title"[^>]*>חוברת מתמטיקה<\/h1>/.test(indexHtml)) fail('index.html: shared workbook viewer title is missing');
+  if (!/<h1[^>]*id="hero-title"[^>]*>מעגל · גליל · חרוט<\/h1>/.test(indexHtml)) fail('index.html: shared project title must name circle, cylinder and cone');
+  if (!indexHtml.includes('172 דפי A4')) fail('index.html: verified 172-page shared total is missing');
+  if (!indexHtml.includes('viewer/bootstrap.js') || indexHtml.includes('src="viewer/app.js"')) fail('index.html: root must use lazy shared-home bootstrap instead of eager workbook app');
+  if (!indexHtml.includes('id="library"')) fail('index.html: shared three-workbook library is missing');
   if (!indexHtml.includes('id="booklet-sheets"')) fail('index.html: missing continuous booklet sheets container');
   if (!indexHtml.includes('id="print-booklet"')) fail('index.html: missing whole-booklet print action');
   if (!indexHtml.includes('id="bw-toggle"')) fail('index.html: missing booklet black-and-white toggle');
