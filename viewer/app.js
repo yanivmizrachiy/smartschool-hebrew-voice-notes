@@ -120,6 +120,29 @@ function fitAllFrames() {
   document.querySelectorAll('.ws-sheet-frame').forEach(fitFrameToViewport);
 }
 
+function prepareFramesForPrint() {
+  document.querySelectorAll('.ws-sheet-frame').forEach(frame => {
+    try {
+      const doc = frame.contentDocument;
+      const main = doc?.querySelector('.a4-page');
+      if (!doc || !main) return;
+      main.style.transform = 'none';
+      main.style.transformOrigin = '';
+      doc.documentElement.style.overflow = 'visible';
+      doc.body.style.overflow = 'visible';
+    } catch {
+      // Printing continues even if one frame cannot be normalized.
+    }
+  });
+}
+
+function restoreFramesAfterPrint() {
+  requestAnimationFrame(() => {
+    fitAllFrames();
+    detectCurrentSheet();
+  });
+}
+
 function decorateFrame(frame, entry) {
   try {
     const doc = frame.contentDocument;
@@ -284,7 +307,12 @@ pageJump.addEventListener('click', event => {
 window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('resize', handleResize, { passive: true });
 window.addEventListener('orientationchange', handleResize, { passive: true });
-printBooklet.addEventListener('click', () => window.print());
+window.addEventListener('beforeprint', prepareFramesForPrint);
+window.addEventListener('afterprint', restoreFramesAfterPrint);
+printBooklet.addEventListener('click', () => {
+  prepareFramesForPrint();
+  window.print();
+});
 
 loadEntries()
   .then(result => {
@@ -302,7 +330,10 @@ loadEntries()
       detectCurrentSheet();
     });
 
-    if (params.get('print') === '1') setTimeout(() => window.print(), 700);
+    if (params.get('print') === '1') setTimeout(() => {
+      prepareFramesForPrint();
+      window.print();
+    }, 700);
   })
   .catch(error => {
     loading.hidden = false;
