@@ -14,6 +14,8 @@
     "blanks": ["מרכז", "שני רדיוסים", "אותו ישר"]
   },
   "qa": {
+    "independentPageNumber": 4,
+    "singleVisiblePageTitle": true,
     "openResponseAllowed": false,
     "piAllowed": false,
     "areaFormulaAllowed": false,
