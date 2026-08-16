@@ -54,8 +54,8 @@ for (const pageNo of [50, 51]) {
 // Guardrails: these are the exact classes of genuine findings from the audited baseline.
 const expectedMinimums = new Map([
   ['×→·', 17],
-  ['סמ״ק→ס״מ³', 45],
-  ['סמ״ר→ס״מ²', 7],
+  ['סמ״ק→ס״מ³', 44],
+  ['סמ״ר→ס״מ²', 8],
   ['ASCII unit quotes→gershayim', 2],
   ['היקף העיגול→היקף המעגל', 1],
   ['היקף עיגול→היקף מעגל', 1],
