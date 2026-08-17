@@ -9,8 +9,8 @@ const BOOKS = { circle: 88, cylinder: 38 };
 const EXPECTED_RATIO = 297 / 210;
 const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;
-const UNUSED_GAP_LIMIT_PX = Object.freeze({ circle: 150, cylinder: 260 });
-const WARN_UNUSED_GAP_PX = 150;
+const UNUSED_GAP_LIMIT_PX = Object.freeze({ circle: 60, cylinder: 260 });
+const WARN_UNUSED_GAP_PX = 60;
 
 function commandExists(command) {
   return spawnSync('bash', ['-lc', `command -v ${command}`], { encoding: 'utf8' }).status === 0;

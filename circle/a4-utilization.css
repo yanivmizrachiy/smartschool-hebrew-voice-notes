@@ -421,3 +421,14 @@
 /* Page 77 rounded to 150px but was fractionally above the strict threshold: enlarge existing table rows slightly. */
 .a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact th,
 .a4-page:has(.page-number[aria-label="עמוד 77"]) .table-compact td{padding-block:1.3mm!important}
+
+
+/* Full-height vertical balance — canonical */
+/*
+  The sheet itself distributes genuine worksheet blocks through the usable A4 height.
+  This removes the visually empty bottom band without inventing questions or filler.
+  Existing per-page profiles still enlarge real diagrams/tables/answer surfaces where useful.
+*/
+.a4-page{display:flex;flex-direction:column;justify-content:space-between}
+.a4-page>*{flex-shrink:0}
+.a4-page>:last-child{margin-bottom:0!important}
