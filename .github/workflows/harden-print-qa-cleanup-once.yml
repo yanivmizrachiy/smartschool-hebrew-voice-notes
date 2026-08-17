@@ -1,0 +1,46 @@
+name: Harden print QA cleanup once
+
+on:
+  push:
+    branches:
+      - fix/circle-a4-utilization-final
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-a4-utilization-final
+          fetch-depth: 0
+      - name: Harden Chrome profile cleanup
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('tools/qa-print-booklets.mjs')
+          s = p.read_text()
+          anchor = "const delay = ms => new Promise(resolve => setTimeout(resolve, ms));\n"
+          helper = '''const delay = ms => new Promise(resolve => setTimeout(resolve, ms));\n\nasync function removeProfileSafely(profilePath) {\n  for (let attempt = 1; attempt <= 6; attempt += 1) {\n    try {\n      fs.rmSync(profilePath, { recursive: true, force: true, maxRetries: 2, retryDelay: 80 });\n      return;\n    } catch (error) {\n      if (!['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(error?.code)) throw error;\n      if (attempt === 6) {\n        console.warn(`Print QA cleanup warning: could not remove temporary Chrome profile after ${attempt} attempts: ${error.message}`);\n        return;\n      }\n      await delay(attempt * 120);\n    }\n  }\n}\n'''
+          old_final = "  browser.kill('SIGTERM');\n  await delay(120);\n  fs.rmSync(profile, { recursive: true, force: true });"
+          new_final = "  const browserExited = new Promise(resolve => browser.once('exit', resolve));\n  browser.kill('SIGTERM');\n  await Promise.race([browserExited, delay(1500)]);\n  await removeProfileSafely(profile);"
+          if anchor not in s:
+              raise SystemExit('delay anchor not found')
+          if old_final not in s:
+              raise SystemExit('print cleanup anchor not found')
+          s = s.replace(anchor, helper, 1).replace(old_final, new_final, 1)
+          p.write_text(s)
+          PY
+          node --check tools/qa-print-booklets.mjs
+      - name: Remove one-time workflow and commit
+        run: |
+          git rm .github/workflows/harden-print-qa-cleanup-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tools/qa-print-booklets.mjs
+          git diff --check
+          git commit -m 'Make print QA Chrome cleanup race-safe'
+          git push origin HEAD:fix/circle-a4-utilization-final
