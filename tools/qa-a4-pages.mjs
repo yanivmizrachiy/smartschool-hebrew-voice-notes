@@ -9,7 +9,7 @@ const BOOKS = { circle: 88, cylinder: 38 };
 const EXPECTED_RATIO = 297 / 210;
 const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;
-const EXTREME_UNUSED_GAP_PX = 260;
+const UNUSED_GAP_LIMIT_PX = Object.freeze({ circle: 150, cylinder: 260 });
 const WARN_UNUSED_GAP_PX = 150;
 
 function commandExists(command) {
@@ -195,8 +195,7 @@ async function inspectPage(cdp, book, page) {
   if (metrics.svgMissingViewBox) failures.push(`${metrics.svgMissingViewBox} SVG(s) missing viewBox`);
   if (metrics.svgZeroSize) failures.push(`${metrics.svgZeroSize} zero-size SVG(s)`);
   if (metrics.outliers.length) failures.push(`elements outside A4: ${JSON.stringify(metrics.outliers)}`);
-  const circleUnusedGapLimit = WARN_UNUSED_GAP_PX;
-  const unusedGapLimit = book === 'circle' ? circleUnusedGapLimit : EXTREME_UNUSED_GAP_PX;
+  const unusedGapLimit = UNUSED_GAP_LIMIT_PX[book];
   if (metrics.unusedGapBeforeFooter > unusedGapLimit && metrics.usefulChildCount > 0) {
     failures.push(`purposeless blank zone ${metrics.unusedGapBeforeFooter.toFixed(0)}px before footer (limit ${unusedGapLimit}px)`);
   }
