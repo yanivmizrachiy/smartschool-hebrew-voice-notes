@@ -432,3 +432,24 @@
 .a4-page{display:flex;flex-direction:column;justify-content:space-between}
 .a4-page>*{flex-shrink:0;margin-block:0!important}
 .a4-page>:last-child{margin-bottom:0!important}
+
+/* Full-height dense-page exceptions — measured */
+/* These four pages already use the lower A4 area densely enough without flex distribution. */
+.a4-page:has(.page-number[aria-label="עמוד 47"]),
+.a4-page:has(.page-number[aria-label="עמוד 57"]),
+.a4-page:has(.page-number[aria-label="עמוד 83"]),
+.a4-page:has(.page-number[aria-label="עמוד 85"]){display:block}
+
+.a4-page:has(.page-number[aria-label="עמוד 47"]) > .anchor,
+.a4-page:has(.page-number[aria-label="עמוד 57"]) > .anchor,
+.a4-page:has(.page-number[aria-label="עמוד 83"]) > .anchor,
+.a4-page:has(.page-number[aria-label="עמוד 85"]) > .anchor{margin:5mm 0 4mm!important}
+
+.a4-page:has(.page-number[aria-label="עמוד 57"]) > .task,
+.a4-page:has(.page-number[aria-label="עמוד 83"]) > .task,
+.a4-page:has(.page-number[aria-label="עמוד 85"]) > .task{margin:2.7mm 0!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:5.3mm 0!important}
+
+/* Page 57 measured 71px unused in the pre-flex layout; slightly taller real table rows reclaim ~3.5mm. */
+.a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table th,
+.a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table td{padding-block:2.55mm!important}
