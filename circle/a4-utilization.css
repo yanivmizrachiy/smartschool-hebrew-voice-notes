@@ -430,5 +430,5 @@
   Existing per-page profiles still enlarge real diagrams/tables/answer surfaces where useful.
 */
 .a4-page{display:flex;flex-direction:column;justify-content:space-between}
-.a4-page>*{flex-shrink:0}
+.a4-page>*{flex-shrink:0;margin-block:0!important}
 .a4-page>:last-child{margin-bottom:0!important}
