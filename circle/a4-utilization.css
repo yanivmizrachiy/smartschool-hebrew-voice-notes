@@ -435,7 +435,7 @@
 
 /* Dense-page flex tuning — measured from Chrome overflow. */
 /* Keep full-height flex distribution; trim only excess internal height on four dense pages. */
-.a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:4.2mm 0!important}
+.a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:3.5mm 0!important}
 .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table th,
 .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table td{padding-block:2.2mm!important}
 .a4-page:has(.page-number[aria-label="עמוד 83"]) > .task{margin:4.8mm 0!important}
