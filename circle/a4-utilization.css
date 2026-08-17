@@ -453,3 +453,8 @@
 /* Page 57 measured 71px unused in the pre-flex layout; slightly taller real table rows reclaim ~3.5mm. */
 .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table th,
 .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table td{padding-block:2.55mm!important}
+
+/* Dense-page task spacing — restore measured page-specific values after flex opt-out. */
+.a4-page:has(.page-number[aria-label="עמוד 57"]) > .task{margin:4.2mm 0!important}
+.a4-page:has(.page-number[aria-label="עמוד 83"]) > .task{margin:6.5mm 0!important}
+.a4-page:has(.page-number[aria-label="עמוד 85"]) > .task{margin:7mm 0!important}
