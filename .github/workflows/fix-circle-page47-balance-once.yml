@@ -1,0 +1,39 @@
+name: Fix circle page 47 balance once
+
+on:
+  push:
+    branches:
+      - fix/circle-a4-full-height-balance
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-a4-full-height-balance
+          fetch-depth: 0
+      - name: Tune page 47 measured margin
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('circle/a4-utilization.css')
+          s = p.read_text()
+          old = '.a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:4.2mm 0!important}'
+          new = '.a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:3.5mm 0!important}'
+          if s.count(old) != 1:
+              raise SystemExit(f'expected one page47 tuning rule, found {s.count(old)}')
+          p.write_text(s.replace(old, new))
+          PY
+      - name: Commit measured fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/a4-utilization.css
+          git commit -m 'Tune Circle page 47 full-height balance'
+          git push origin HEAD:fix/circle-a4-full-height-balance
