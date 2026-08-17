@@ -1,0 +1,45 @@
+name: Apply measured circle A4 utilization once
+
+on:
+  push:
+    branches:
+      - fix/circle-no-name-date-a4-utilization
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-prove:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-no-name-date-a4-utilization
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply measured utilization tiers
+        run: node tools/apply-circle-a4-utilization.mjs
+      - name: Validate circle contracts
+        run: node circle/qa.mjs
+      - name: Start local server
+        run: |
+          python3 -m http.server 4173 >/tmp/workbook-http.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 0.2
+          done
+          cat /tmp/workbook-http.log
+          exit 1
+      - name: Prove all A4 pages and hardened Circle utilization threshold
+        run: node tools/qa-a4-pages.mjs
+      - name: Commit proven utilization improvements
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/page-*.html circle/styles.css tools/qa-a4-pages.mjs
+          git commit -m 'Improve measured A4 utilization across circle workbook'
+          git push origin HEAD:fix/circle-no-name-date-a4-utilization
