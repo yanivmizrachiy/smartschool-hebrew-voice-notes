@@ -1,0 +1,51 @@
+name: Finalize Circle flex tuning once
+
+on:
+  push:
+    branches:
+      - fix/circle-a4-full-height-balance
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/circle-a4-full-height-balance
+          fetch-depth: 0
+      - name: Replace block opt-outs with measured flex compaction
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('circle/a4-utilization.css')
+          s = p.read_text()
+          marker = '/* Full-height dense-page exceptions — measured */'
+          if marker not in s:
+              raise SystemExit('dense-page exception marker missing')
+          s = s[:s.index(marker)].rstrip() + '\n\n'
+          s += '''/* Dense-page flex tuning — measured from Chrome overflow. */
+          /* Keep full-height flex distribution; trim only excess internal height on four dense pages. */
+          .a4-page:has(.page-number[aria-label="עמוד 47"]) > .task{margin:4.2mm 0!important}
+          .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table th,
+          .a4-page:has(.page-number[aria-label="עמוד 57"]) .work-table td{padding-block:2.2mm!important}
+          .a4-page:has(.page-number[aria-label="עמוד 83"]) > .task{margin:4.8mm 0!important}
+          .a4-page:has(.page-number[aria-label="עמוד 85"]) > .task{margin:5.6mm 0!important}
+          '''
+          p.write_text(s)
+          PY
+      - name: Verify static contracts
+        run: |
+          node circle/qa.mjs
+          git diff --check
+      - name: Commit measured flex tuning
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add circle/a4-utilization.css
+          git commit -m 'Tune four dense Circle pages within full-height flex layout'
+          git push origin HEAD:fix/circle-a4-full-height-balance
