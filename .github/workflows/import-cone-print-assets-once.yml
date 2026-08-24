@@ -98,14 +98,15 @@ jobs:
           npm run render:pages
           test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
 
-      - name: Commit verified assets to repair branch
+      - name: Commit verified assets and remove one-time importer
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .asset-import qa/layout-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add visual-assets visual-pages
+          git rm .github/workflows/import-cone-print-assets-once.yml
+          git add -A visual-assets visual-pages .github/workflows
           git diff --cached --check
           git commit -m "[assets-ready] Replace tiny cone visuals with verified A4 sources"
           git push origin HEAD:fix/cone-print-visual-assets-20260824
