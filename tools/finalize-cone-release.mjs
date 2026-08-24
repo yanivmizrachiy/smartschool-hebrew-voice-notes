@@ -28,6 +28,9 @@ if (probeLocalServer()) {
   throw new Error('Port 4173 is already serving HTTP content. Stop the existing server before final cone QA to avoid rendering stale content.');
 }
 
+const outDir = 'qa/layout-pages';
+fs.rmSync(outDir, { recursive: true, force: true });
+
 console.log('\n== Start local server for real 46-page render ==');
 const server = spawn('python3', ['-m', 'http.server', '4173'], {
   stdio: 'ignore',
@@ -50,15 +53,14 @@ try {
 
   run('npm', ['run', 'render:pages'], 'Render all 46 cone A4 pages in Chrome');
 
-  const outDir = 'qa/layout-pages';
   const rendered = fs.existsSync(outDir)
     ? fs.readdirSync(outDir).filter(name => name.endsWith('.png'))
     : [];
   if (rendered.length !== 46) {
-    throw new Error(`Expected 46 rendered cone pages, found ${rendered.length}`);
+    throw new Error(`Expected 46 freshly rendered cone pages, found ${rendered.length}`);
   }
 
-  console.log('\nREADY: exact final assets verified, npm check passed, and 46/46 cone A4 pages rendered.');
+  console.log('\nREADY: exact final assets verified, npm check passed, and 46/46 fresh cone A4 pages rendered.');
   console.log('Next gate: reopen the pull request and require the repository GitHub Actions workflows to pass before merge.');
 } finally {
   if (!server.killed && server.exitCode === null) server.kill('SIGTERM');
