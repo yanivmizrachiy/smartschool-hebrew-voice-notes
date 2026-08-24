@@ -6,7 +6,8 @@
     "build": "node src/build.mjs",
     "build:print": "node src/build-print.mjs",
     "render:pages": "node tools/render-layout-pages.mjs",
-    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs && node tests/site-parity.mjs && node tests/repo-hygiene.mjs",
-    "check": "npm run build && npm run build:print && npm run validate"
+    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs && node tests/site-parity.mjs && node tools/verify-final-cone-pngs.mjs && node tests/repo-hygiene.mjs",
+    "check": "npm run build && npm run build:print && npm run validate",
+    "finalize:cone": "node tools/finalize-cone-release.mjs"
   }
 }
