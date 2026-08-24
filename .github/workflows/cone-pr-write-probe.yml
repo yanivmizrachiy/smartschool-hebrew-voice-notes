@@ -23,6 +23,7 @@ jobs:
           rm .github/workflows/cone-pr-write-probe.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .asset-staging/pr-write-probe-ok.txt .github/workflows/cone-pr-write-probe.yml
+          git add -f .asset-staging/pr-write-probe-ok.txt
+          git add .github/workflows/cone-pr-write-probe.yml
           git commit -m 'Verify PR Actions write permission for cone asset import'
           git push origin HEAD:fix/cone-final-png-ready-20260824
