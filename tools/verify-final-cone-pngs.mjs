@@ -31,10 +31,14 @@ const expected = {
 };
 
 const failures = [];
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 function pngDimensions(buffer) {
-  if (buffer.length < 24 || buffer.toString('ascii', 1, 4) !== 'PNG') {
-    throw new Error('not a PNG file');
+  if (buffer.length < 33 || !buffer.subarray(0, 8).equals(PNG_SIGNATURE)) {
+    throw new Error('invalid PNG signature');
+  }
+  if (buffer.readUInt32BE(8) !== 13 || buffer.toString('ascii', 12, 16) !== 'IHDR') {
+    throw new Error('missing canonical 13-byte IHDR chunk');
   }
   return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
 }
@@ -67,4 +71,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('OK: all four final cone PNG assets match the exact verified source bytes and 1055x1491 dimensions.');
+console.log('OK: all four final cone PNG assets match the exact verified source bytes, valid PNG/IHDR structure, and 1055x1491 dimensions.');
