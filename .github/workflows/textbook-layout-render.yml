@@ -8,10 +8,108 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
+  import-cone-print-assets:
+    if: github.event_name == 'pull_request' && github.head_ref == 'fix/cone-print-visual-assets-20260824'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/cone-print-visual-assets-20260824
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download verified original A4 PNG sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .asset-import
+          download() {
+            local id="$1" out="$2"
+            curl --fail --location --retry 3 --retry-delay 2 \
+              "https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t" \
+              --output ".asset-import/${out}"
+          }
+          download "1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1" "anis-basics.png"
+          download "1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm" "cone-in-my-head.png"
+          download "1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue" "world-of-cones.png"
+          download "1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN" "jerusalem-cone-vision.png"
+      - name: Verify exact image format, A4 dimensions and source-scale size
+        shell: python
+        run: |
+          from pathlib import Path
+          import struct
+          expected = {
+              'anis-basics.png': (1055, 1491, 2_000_000),
+              'cone-in-my-head.png': (1055, 1491, 2_000_000),
+              'world-of-cones.png': (1055, 1491, 2_000_000),
+              'jerusalem-cone-vision.png': (1055, 1491, 2_000_000),
+          }
+          for name, (ew, eh, minimum) in expected.items():
+              p = Path('.asset-import') / name
+              data = p.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n', f'{name}: source is not PNG'
+              w, h = struct.unpack('>II', data[16:24])
+              assert (w, h) == (ew, eh), f'{name}: unexpected dimensions {(w,h)}'
+              assert len(data) >= minimum, f'{name}: unexpectedly compressed ({len(data)} bytes)'
+              print(f'OK {name}: {w}x{h}, {len(data)} bytes')
+      - name: Replace four tiny JPG placeholders with original PNG sources
+        shell: python
+        run: |
+          from pathlib import Path
+          mapping = {
+              'anis-basics': 'anis-basics.png',
+              'cone-in-my-head': 'cone-in-my-head.png',
+              'world-of-cones': 'world-of-cones.png',
+              'jerusalem-cone-vision': 'jerusalem-cone-vision.png',
+          }
+          for stem, filename in mapping.items():
+              source = Path('.asset-import') / filename
+              target = Path('visual-assets') / filename
+              target.write_bytes(source.read_bytes())
+              page = Path('visual-pages') / f'{stem}.html'
+              html = page.read_text(encoding='utf-8')
+              old = f'../visual-assets/{stem}.jpg'
+              new = f'../visual-assets/{filename}'
+              assert old in html, f'{page}: expected JPG reference not found'
+              page.write_text(html.replace(old, new), encoding='utf-8')
+              jpg = Path('visual-assets') / f'{stem}.jpg'
+              assert jpg.exists(), f'{jpg}: placeholder missing'
+              jpg.unlink()
+      - name: Validate complete cone workbook
+        run: npm run check
+      - name: Render all 46 A4 pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/harut-assets-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          npm run render:pages
+          count="$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)"
+          test "$count" -eq 46
+          echo "Verified render count: ${count}/46"
+      - name: Restore permanent workflow and commit only verified repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          git show origin/main:.github/workflows/textbook-layout-render.yml > .github/workflows/textbook-layout-render.yml
+          rm -rf .asset-import qa/layout-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A visual-assets visual-pages .github/workflows/textbook-layout-render.yml
+          git diff --cached --check
+          git commit -m "Replace cone visual placeholders with verified print-quality A4 PNGs"
+          git push origin HEAD:fix/cone-print-visual-assets-20260824
+
   render:
+    if: !(github.event_name == 'pull_request' && github.head_ref == 'fix/cone-print-visual-assets-20260824')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
