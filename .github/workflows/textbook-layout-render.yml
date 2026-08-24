@@ -30,10 +30,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .asset-import
-          gdown --id "1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1" --output ".asset-import/anis-basics.png"
-          gdown --id "1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm" --output ".asset-import/cone-in-my-head.png"
-          gdown --id "1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue" --output ".asset-import/world-of-cones.png"
-          gdown --id "1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN" --output ".asset-import/jerusalem-cone-vision.png"
+          gdown "1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1" -O ".asset-import/anis-basics.png"
+          gdown "1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm" -O ".asset-import/cone-in-my-head.png"
+          gdown "1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue" -O ".asset-import/world-of-cones.png"
+          gdown "1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN" -O ".asset-import/jerusalem-cone-vision.png"
       - name: Verify exact image format, A4 dimensions and source-scale size
         shell: python
         run: |
