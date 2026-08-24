@@ -2,9 +2,9 @@
 
 /* A4 utilization: use otherwise empty space as useful lined workspace without changing worksheet content. */
 .a4-page:has(.page-number[aria-label="עמוד 14"]){--a4-work-extra:15mm}
-.a4-page:has(.page-number[aria-label="עמוד 17"]){--a4-work-extra:20mm}
+.a4-page:has(.page-number[aria-label="עמוד 4"]),.a4-page:has(.page-number[aria-label="עמוד 17"]){--a4-work-extra:20mm}
 .a4-page:has(.page-number[aria-label="עמוד 10"]){--a4-work-extra:25mm}
-.a4-page:has(.page-number[aria-label="עמוד 4"]),.a4-page:has(.page-number[aria-label="עמוד 5"]),.a4-page:has(.page-number[aria-label="עמוד 11"]),.a4-page:has(.page-number[aria-label="עמוד 13"]){--a4-work-extra:30mm}
+.a4-page:has(.page-number[aria-label="עמוד 5"]),.a4-page:has(.page-number[aria-label="עמוד 11"]),.a4-page:has(.page-number[aria-label="עמוד 13"]){--a4-work-extra:30mm}
 .a4-page:has(.page-number[aria-label="עמוד 16"]),.a4-page:has(.page-number[aria-label="עמוד 24"]),.a4-page:has(.page-number[aria-label="עמוד 34"]),.a4-page:has(.page-number[aria-label="עמוד 38"]){--a4-work-extra:35mm}
 .a4-page:has(.page-number[aria-label="עמוד 20"]),.a4-page:has(.page-number[aria-label="עמוד 21"]),.a4-page:has(.page-number[aria-label="עמוד 22"]){--a4-work-extra:40mm}
 .a4-page:has(.page-number[aria-label="עמוד 12"]),.a4-page:has(.page-number[aria-label="עמוד 19"]){--a4-work-extra:45mm}
