@@ -23,21 +23,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install Drive-aware downloader
+        run: python3 -m pip install --disable-pip-version-check gdown
       - name: Download verified original A4 PNG sources
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p .asset-import
-          download() {
-            local id="$1" out="$2"
-            curl --fail --location --retry 3 --retry-delay 2 \
-              "https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t" \
-              --output ".asset-import/${out}"
-          }
-          download "1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1" "anis-basics.png"
-          download "1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm" "cone-in-my-head.png"
-          download "1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue" "world-of-cones.png"
-          download "1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN" "jerusalem-cone-vision.png"
+          gdown --id "1wQPNuzR0fMOaGBBx6qrDHW5rlisxBps1" --output ".asset-import/anis-basics.png"
+          gdown --id "1KyAPcf6KGY9rguQWJOk-WH9R_8LimHkm" --output ".asset-import/cone-in-my-head.png"
+          gdown --id "1sXJ9kI9XqdCYDLcrPS3hP-Fy-h3G1zue" --output ".asset-import/world-of-cones.png"
+          gdown --id "1pHJ47SBHMVu95s23JOwgbmnmIMuC5BxN" --output ".asset-import/jerusalem-cone-vision.png"
       - name: Verify exact image format, A4 dimensions and source-scale size
         shell: python
         run: |
