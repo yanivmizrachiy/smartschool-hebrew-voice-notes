@@ -80,6 +80,9 @@ jobs:
               if old_jpg.exists():
                   old_jpg.unlink()
 
+      - name: Remove one-time workflow from tested tree
+        run: rm .github/workflows/import-cone-print-assets-once.yml
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -98,14 +101,13 @@ jobs:
           npm run render:pages
           test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
 
-      - name: Commit verified assets and remove one-time importer
+      - name: Commit verified assets and importer removal
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .asset-import qa/layout-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/import-cone-print-assets-once.yml
           git add -A visual-assets visual-pages .github/workflows
           git diff --cached --check
           git commit -m "[assets-ready] Replace tiny cone visuals with verified A4 sources"
