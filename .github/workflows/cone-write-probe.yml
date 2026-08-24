@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/cone-final-png-ready-20260824
+  workflow_dispatch:
 
 permissions:
   contents: write
