@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Preflight exact final cone visual assets
+        run: node tools/verify-final-cone-pngs.mjs
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
       - name: Sync generated cone worksheet and visual chrome
         run: npm run build
