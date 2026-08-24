@@ -27,6 +27,24 @@ for (const file of allRel) {
   if (/^tools\/apply-.*\.(?:py|mjs|js)$/i.test(file)) fail(`${file}: one-time transformation script must be removed after use`);
 }
 
+const rulesPath = path.join(root, 'RULES.md');
+if (!fs.existsSync(rulesPath) || fs.statSync(rulesPath).size === 0) {
+  fail('RULES.md: the sole project source of truth is missing or empty');
+} else {
+  const rules = fs.readFileSync(rulesPath, 'utf8');
+  if (!rules.includes('מקור האמת היחיד')) fail('RULES.md: must explicitly declare itself the sole source of truth');
+  if (!rules.includes('מעגל, גליל וחרוט')) fail('RULES.md: must explicitly cover circle, cylinder and cone');
+}
+
+for (const file of allRel) {
+  if (file === 'RULES.md') continue;
+  const base = path.basename(file).toLowerCase();
+  if (base === 'rules.md') fail(`${file}: duplicate RULES.md is forbidden; root RULES.md is the only requirements authority`);
+  if (/^source[-_ ]?of[-_ ]?truth(?:\.[^/]*)?$/i.test(path.basename(file))) {
+    fail(`${file}: parallel source-of-truth file is forbidden; use root RULES.md only`);
+  }
+}
+
 const workflowDir = path.join(root, '.github', 'workflows');
 const allowedWorkflows = new Set(['workbook-quality.yml', 'textbook-layout-render.yml']);
 if (!fs.existsSync(workflowDir)) {
@@ -56,7 +74,7 @@ for (const file of studentRuntimeFiles) {
 
 const workbookPath = path.join(root, 'content', 'workbook.json');
 if (!fs.existsSync(workbookPath)) {
-  fail('content/workbook.json: missing source of truth');
+  fail('content/workbook.json: missing cone implementation manifest');
 } else {
   const wb = JSON.parse(fs.readFileSync(workbookPath, 'utf8'));
   if (wb.pageCount !== 38 || wb.pages?.length !== 38) fail('content/workbook.json: worksheet count must remain 38');
@@ -83,7 +101,7 @@ for (const htmlPath of walk(path.join(root, 'visual-pages')).filter(p => p.endsW
   }
 }
 
-for (const required of ['RULES.md', 'README.md', 'content/source-registry.json', 'print/harut-a4.html', 'print/styles.css']) {
+for (const required of ['README.md', 'content/source-registry.json', 'print/harut-a4.html', 'print/styles.css']) {
   const file = path.join(root, required);
   if (!fs.existsSync(file) || fs.statSync(file).size === 0) fail(`${required}: required repository artifact is missing or empty`);
 }
@@ -94,4 +112,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, and source-of-truth drift.');
+console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, and parallel sources of truth.');
