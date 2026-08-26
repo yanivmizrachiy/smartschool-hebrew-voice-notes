@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/simple-workbook.schema.json",
+  "$schema": "schemas/simple-workbook.schema.json",
   "schemaVersion": 1,
   "id": "cylinder",
   "label": "גליל",
