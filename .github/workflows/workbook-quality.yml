@@ -26,6 +26,8 @@ jobs:
           cache: npm
       - name: Install locked Node dependencies
         run: npm ci
+      - name: Audit Node dependencies
+        run: npm audit --audit-level=high
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
       - name: Validate generated source synchronization without mutation
         run: npm run build
@@ -114,12 +116,14 @@ jobs:
           test -s qa/print-booklets/cone-46-pages.pdf
           test -s qa/print-booklets/circle-88-pages.pdf
           test -s qa/print-booklets/cylinder-38-pages.pdf
+      - name: Record canonical PDF fingerprints
+        run: node tools/qa-pdf-fingerprints.mjs
       - name: Upload real PDF QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: print-booklets-qa
-          path: qa/print-booklets/*.pdf
+          path: qa/print-booklets/*
           if-no-files-found: warn
           retention-days: 7
       - name: Build isolated deployment artifact
