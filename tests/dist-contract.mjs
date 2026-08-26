@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
@@ -15,6 +16,33 @@ const required = [
 ];
 
 const fail = message => { throw new Error(`Dist contract failed: ${message}`); };
+const sha256 = data => crypto.createHash('sha256').update(data).digest('hex');
+
+function walkFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkFiles(full));
+    else out.push(full);
+  }
+  return out;
+}
+
+function runtimeTreeFingerprint() {
+  const entries = walkFiles(dist)
+    .filter(file => path.basename(file) !== 'build-manifest.json')
+    .map(file => ({
+      path: path.relative(dist, file).replaceAll('\\', '/'),
+      sha256: sha256(fs.readFileSync(file))
+    }))
+    .sort((a, b) => a.path.localeCompare(b.path, 'en'));
+  return {
+    fileCount: entries.length,
+    sha256: sha256(entries.map(entry => `${entry.path}\0${entry.sha256}`).join('\n'))
+  };
+}
+
 if (!fs.existsSync(dist)) fail('dist/ does not exist; run node src/build-site.mjs');
 
 for (const rel of required) {
@@ -55,8 +83,14 @@ if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'build-manifest.json'), 'utf8'));
+if (manifest.schemaVersion !== 2) fail(`build manifest schemaVersion must be 2, found ${manifest.schemaVersion}`);
 if (manifest.counts?.circlePages !== 88 || manifest.counts?.cylinderPages !== 38 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 172) {
   fail('build manifest counts are not 88/38/46/172');
 }
 
-console.log('OK: dist/ contains the complete 172-page runtime, only runtime manifests, and no development/source-provenance files.');
+const actualRuntimeTree = runtimeTreeFingerprint();
+if (manifest.runtimeTree?.fileCount !== actualRuntimeTree.fileCount || manifest.runtimeTree?.sha256 !== actualRuntimeTree.sha256) {
+  fail(`runtime tree fingerprint mismatch; manifest=${JSON.stringify(manifest.runtimeTree)} actual=${JSON.stringify(actualRuntimeTree)}`);
+}
+
+console.log(`OK: dist/ contains the complete 172-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);
