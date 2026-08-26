@@ -1,9 +1,20 @@
-const TOPICS = new Set(['circle', 'cylinder', 'cone']);
 const params = new URLSearchParams(location.search);
 const requestedTopic = params.get('topic');
-const hasTopic = TOPICS.has(requestedTopic);
+
+let catalog = null;
+try {
+  const response = await fetch('content/catalog.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  catalog = await response.json();
+} catch (error) {
+  console.error('Failed to load workbook catalog', error);
+}
+
+const topicIds = new Set((catalog?.books || []).map(book => book.id));
+const hasTopic = topicIds.has(requestedTopic);
 
 if (hasTopic) {
+  window.__WORKBOOK_CATALOG__ = catalog;
   document.body.classList.add('has-topic');
   document.querySelector('#workbook')?.removeAttribute('hidden');
   document.querySelector('#page-jump')?.removeAttribute('hidden');
@@ -19,5 +30,5 @@ if (hasTopic) {
   document.querySelector('#workbook')?.setAttribute('hidden', '');
   document.querySelector('#page-jump')?.setAttribute('hidden', '');
   document.querySelector('#library')?.removeAttribute('hidden');
-  document.title = 'דפי עבודה במתמטיקה — מעגל · גליל · חרוט';
+  document.title = catalog?.title ? `דפי עבודה במתמטיקה — ${catalog.title}` : 'דפי עבודה במתמטיקה — מעגל · גליל · חרוט';
 }
