@@ -122,12 +122,17 @@ jobs:
           path: qa/print-booklets/*.pdf
           if-no-files-found: warn
           retention-days: 7
-      - name: Create canonical build fingerprint
-        run: node tools/create-build-manifest.mjs
-      - name: Verify canonical build fingerprint
-        run: |
-          test -s dist/build-manifest.json
-          node -e "const m=require('./dist/build-manifest.json'); if(m.counts.circlePages!==88||m.counts.cylinderPages!==38||m.counts.conePages!==46||m.counts.totalPages!==172) process.exit(1)"
+      - name: Build isolated deployment artifact
+        run: node src/build-site.mjs
+      - name: Validate isolated deployment artifact
+        run: node tests/dist-contract.mjs
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-site-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
       - name: Upload canonical build fingerprint
         uses: actions/upload-artifact@v4
         with:
