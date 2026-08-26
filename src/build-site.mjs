@@ -13,8 +13,11 @@ const runtimeEntries = [
   'worksheets',
   'visual-pages',
   'visual-assets',
-  'content',
-  'print'
+  'print',
+  'content/catalog.json',
+  'content/circle.json',
+  'content/cylinder.json',
+  'content/workbook.json'
 ];
 
 fs.rmSync(dist, { recursive: true, force: true });
@@ -24,6 +27,7 @@ for (const rel of runtimeEntries) {
   const source = path.join(root, rel);
   if (!fs.existsSync(source)) throw new Error(`Site runtime entry is missing: ${rel}`);
   const target = path.join(dist, rel);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.cpSync(source, target, { recursive: true });
 }
 
@@ -33,4 +37,4 @@ const manifestResult = spawnSync(process.execPath, ['tools/create-build-manifest
 });
 if (manifestResult.status !== 0) process.exit(manifestResult.status || 1);
 
-console.log(`Built deployment artifact at ${path.relative(root, dist)}/ from ${runtimeEntries.length} canonical runtime entries.`);
+console.log(`Built deployment artifact at ${path.relative(root, dist)}/ from ${runtimeEntries.length} explicit runtime entries.`);
