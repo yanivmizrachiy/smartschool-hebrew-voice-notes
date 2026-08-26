@@ -7,17 +7,16 @@ const heroTitle = document.querySelector('#hero-title');
 const pageJump = document.querySelector('#page-jump');
 const pageJumpStatus = document.querySelector('#page-jump-status');
 
-const TOPICS = {
-  cone: { label: 'חרוט', count: 46 },
-  circle: { label: 'מעגל', count: 88, folder: 'circle' },
-  cylinder: { label: 'גליל', count: 38, folder: 'cylinder' }
-};
 const STORAGE_PREFIX = 'math-workbook:last-sheet:';
 const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-
 const params = new URLSearchParams(location.search);
-const topicKey = TOPICS[params.get('topic')] ? params.get('topic') : 'cone';
-const topic = TOPICS[topicKey];
+const topicKey = params.get('topic');
+const catalog = window.__WORKBOOK_CATALOG__;
+const catalogBook = catalog?.books?.find(book => book.id === topicKey);
+
+if (!catalogBook) throw new Error(`נושא לא מוכר בקטלוג: ${topicKey || ''}`);
+
+let topic = null;
 let entries = [];
 let currentSequence = 1;
 let scrollTicking = false;
@@ -68,27 +67,34 @@ function buildConeEntries(data) {
   });
 }
 
-function buildSimpleEntries() {
-  return Array.from({ length: topic.count }, (_, index) => {
+function buildSimpleEntries(data) {
+  return Array.from({ length: data.pageCount }, (_, index) => {
     const sequence = index + 1;
     return {
       sequence,
       key: `${topicKey}-${sequence}`,
       kind: 'worksheet',
       kindLabel: 'דף עבודה',
-      title: `${topic.label} — עמוד ${sequence}`,
+      title: `${data.label} — עמוד ${sequence}`,
       subtitle: '',
-      url: `${topic.folder}/page-${sequence}.html`,
+      url: `${data.folder}/${data.pagePattern.replace('{page}', String(sequence))}`,
       worksheetId: sequence
     };
   });
 }
 
 async function loadEntries() {
-  if (topicKey !== 'cone') return buildSimpleEntries();
-  const response = await fetch('content/workbook.json', { cache: 'no-store' });
+  const response = await fetch(catalogBook.manifest, { cache: 'no-store' });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return buildConeEntries(await response.json());
+  const data = await response.json();
+
+  if (topicKey === 'cone') {
+    topic = { label: data.project, count: data.printSheetCount };
+    return buildConeEntries(data);
+  }
+
+  topic = { label: data.label, count: data.pageCount };
+  return buildSimpleEntries(data);
 }
 
 function rememberSequence(sequence) {
