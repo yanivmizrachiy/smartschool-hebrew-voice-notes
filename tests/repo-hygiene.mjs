@@ -70,7 +70,7 @@ for (const file of allRel) {
 }
 
 const workflowDir = path.join(root, '.github', 'workflows');
-const allowedWorkflows = new Set(['workbook-quality.yml', 'textbook-layout-render.yml']);
+const allowedWorkflows = new Set(['workbook-quality.yml', 'textbook-layout-render.yml', 'codeql.yml']);
 if (!fs.existsSync(workflowDir)) {
   fail('.github/workflows: missing CI workflows');
 } else {
