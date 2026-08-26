@@ -35,6 +35,8 @@ jobs:
         run: node tests/build-reproducibility.mjs
       - name: Validate cone workbook contracts
         run: npm run validate
+      - name: Validate property-based geometry invariants
+        run: node tests/math-properties.mjs
       - name: Validate circle workbook contracts
         run: node circle/qa.mjs
       - name: Validate cylinder workbook contracts
@@ -51,6 +53,16 @@ jobs:
           path: qa/math-writing/*
           if-no-files-found: warn
           retention-days: 14
+      - name: Audit full-page raster source quality
+        run: node tools/qa-visual-assets.mjs
+      - name: Upload visual asset readiness status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-asset-readiness
+          path: qa/visual-assets/status.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Validate shared mobile viewer contract
         run: node viewer/qa.mjs
       - name: Start local workbook server
