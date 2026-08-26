@@ -11,15 +11,13 @@ const required = [
   'content/catalog.json',
   'content/circle.json',
   'content/cylinder.json',
-  'content/workbook.json',
-  'dist-build-manifest-placeholder'
+  'content/workbook.json'
 ];
 
 const fail = message => { throw new Error(`Dist contract failed: ${message}`); };
 if (!fs.existsSync(dist)) fail('dist/ does not exist; run node src/build-site.mjs');
 
 for (const rel of required) {
-  if (rel === 'dist-build-manifest-placeholder') continue;
   if (!fs.existsSync(path.join(dist, rel))) fail(`missing runtime file ${rel}`);
 }
 if (!fs.existsSync(path.join(dist, 'build-manifest.json'))) fail('missing build-manifest.json');
@@ -42,9 +40,18 @@ for (const page of cone.visualPages || []) {
   if (!fs.existsSync(path.join(dist, 'visual-pages', `${page.slug}.html`))) fail(`missing cone visual page ${page.slug}`);
 }
 
-const forbidden = ['RULES.md', 'README.md', 'qa', 'tests', 'research', '.github', 'package.json', 'package-lock.json'];
+const forbidden = [
+  'RULES.md', 'README.md', 'qa', 'tests', 'research', '.github', 'package.json', 'package-lock.json',
+  'content/source-registry.json', 'content/schemas'
+];
 for (const rel of forbidden) {
   if (fs.existsSync(path.join(dist, rel))) fail(`development-only entry leaked into deployment artifact: ${rel}`);
+}
+
+const contentEntries = fs.readdirSync(path.join(dist, 'content')).sort();
+const expectedContentEntries = ['catalog.json', 'circle.json', 'cylinder.json', 'workbook.json'];
+if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
+  fail(`dist/content must contain runtime manifests only; found ${contentEntries.join(', ')}`);
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'build-manifest.json'), 'utf8'));
@@ -52,4 +59,4 @@ if (manifest.counts?.circlePages !== 88 || manifest.counts?.cylinderPages !== 38
   fail('build manifest counts are not 88/38/46/172');
 }
 
-console.log('OK: dist/ contains the complete 172-page runtime and excludes development-only project files.');
+console.log('OK: dist/ contains the complete 172-page runtime, only runtime manifests, and no development/source-provenance files.');
