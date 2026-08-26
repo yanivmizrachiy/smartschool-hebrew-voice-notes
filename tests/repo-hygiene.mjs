@@ -38,8 +38,8 @@ if (!fs.existsSync(rulesPath) || fs.statSync(rulesPath).size === 0) {
   if (!rules.includes('Viewer משותף') || !rules.includes('Viewer בנייד')) fail('RULES.md: viewer/mobile requirements must live in the sole project authority');
 }
 
-// No parallel requirements authority may exist by filename or by self-declaration.
-// Subordinate docs may say that RULES.md is authoritative; they may not claim authority for themselves.
+// No parallel requirements authority may exist by filename or by a true self-declaration.
+// Subordinate docs are allowed (and encouraged) to say that root RULES.md is authoritative.
 const textExtensions = new Set(['.md', '.txt', '.mjs', '.js', '.ts', '.json', '.yml', '.yaml', '.html', '.css']);
 for (const file of allRel) {
   if (file === 'RULES.md') continue;
@@ -60,9 +60,8 @@ for (const file of allRel) {
   catch { continue; }
 
   const selfAuthority = [
-    /(?:מסמך|קובץ)\s+זה[^\n]{0,160}(?:מקור\s+האמת|מקור\s+אמת)/i,
-    /^#{1,6}[^\n]{0,120}(?:מקור\s+האמת\s+היחיד|מקור\s+אמת\s+יחיד)/im,
-    /this\s+(?:document|file)[^\n]{0,160}(?:sole\s+source\s+of\s+truth|source\s+of\s+truth)/i
+    /(?:^|\n)\s*(?:#{1,6}\s*)?(?:מסמך|קובץ)\s+זה\s+(?:הוא\s+)?(?:\*\*)?(?:מקור\s+האמת|מקור\s+אמת)/im,
+    /(?:^|\n)\s*(?:#{1,6}\s*)?this\s+(?:document|file)\s+(?:is\s+)?(?:the\s+)?(?:sole\s+)?source\s+of\s+truth/im
   ].some(re => re.test(text));
 
   if (selfAuthority) {
