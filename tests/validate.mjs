@@ -128,7 +128,8 @@ for (const file of [indexPath, appJsPath, printPagePath, printJsPath]) if (!fs.e
 if (fs.existsSync(indexPath)) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
   if (!/<h1[^>]*id="hero-title"[^>]*>מעגל · גליל · חרוט<\/h1>/.test(indexHtml)) fail('index.html: shared project title must name circle, cylinder and cone');
-  if (!indexHtml.includes('172 דפי A4')) fail('index.html: verified 172-page shared total is missing');
+  if (!indexHtml.includes('data-total-pages') || !indexHtml.includes('data-book-pages="circle"') || !indexHtml.includes('data-book-pages="cylinder"') || !indexHtml.includes('data-book-pages="cone"')) fail('index.html: manifest-driven home count slots are missing');
+  if (indexHtml.includes('88 דפי A4') || indexHtml.includes('38 דפי A4') || indexHtml.includes('46 דפי A4') || indexHtml.includes('172 דפי A4')) fail('index.html: canonical page counts must not be duplicated as hard-coded home text');
   if (!indexHtml.includes('viewer/bootstrap.js') || indexHtml.includes('src="viewer/app.js"')) fail('index.html: root must use lazy shared-home bootstrap instead of eager workbook app');
   if (!indexHtml.includes('id="library"')) fail('index.html: shared three-workbook library is missing');
   if (!indexHtml.includes('id="booklet-sheets"')) fail('index.html: missing continuous booklet sheets container');
