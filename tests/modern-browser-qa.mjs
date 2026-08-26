@@ -31,6 +31,21 @@ async function waitForHome(page) {
   }, { counts: EXPECTED_HOME_COUNTS, total: EXPECTED_TOTAL });
 }
 
+async function viewerDiagnostic(page) {
+  return page.evaluate(() => ({
+    url: location.href,
+    bodyClasses: [...document.body.classList],
+    frames: document.querySelectorAll('.ws-wsframe').length,
+    iframeElements: document.querySelectorAll('.ws-sheet-frame').length,
+    loadingText: document.querySelector('#booklet-loading')?.textContent?.trim() || '',
+    loadingHidden: document.querySelector('#booklet-loading')?.hidden ?? null,
+    statusText: document.querySelector('#booklet-status')?.textContent?.trim() || '',
+    libraryHidden: document.querySelector('#library')?.hidden ?? null,
+    workbookHidden: document.querySelector('#workbook')?.hidden ?? null,
+    jumpHidden: document.querySelector('#page-jump')?.hidden ?? null
+  }));
+}
+
 async function homeSnapshot(page) {
   return page.evaluate(() => ({
     cards: [...document.querySelectorAll('.workbook-card h3')].map(node => node.textContent?.trim()),
@@ -58,7 +73,12 @@ async function assertHome(page, engineName) {
 async function assertBook(page, engineName, book) {
   const url = `${ROOT_URL}?topic=${book.id}&sheet=1#workbook`;
   await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(expected => document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === expected, book.count);
+  try {
+    await page.waitForFunction(expected => document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === expected, book.count, { timeout: 15000 });
+  } catch (error) {
+    const diagnostic = await viewerDiagnostic(page);
+    throw new Error(`Modern browser QA failed: ${engineName}/${book.id}: viewer hydration timeout; state=${JSON.stringify(diagnostic)}; cause=${error.message || error}`);
+  }
   const snapshot = await page.evaluate(() => ({
     frames: document.querySelectorAll('.ws-wsframe').length,
     firstSrc: document.querySelector('.ws-sheet-frame')?.getAttribute('src') || '',
@@ -75,7 +95,12 @@ async function assertBook(page, engineName, book) {
 
 async function assertMobile(page, engineName) {
   await page.goto(`${ROOT_URL}?topic=cone&sheet=1#workbook`, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => document.querySelectorAll('.ws-wsframe').length === 46);
+  try {
+    await page.waitForFunction(() => document.querySelectorAll('.ws-wsframe').length === 46, null, { timeout: 15000 });
+  } catch (error) {
+    const diagnostic = await viewerDiagnostic(page);
+    throw new Error(`Modern browser QA failed: ${engineName}/mobile: viewer hydration timeout; state=${JSON.stringify(diagnostic)}; cause=${error.message || error}`);
+  }
   await page.locator('.ws-sheet-frame').first().waitFor({ state: 'attached' });
   await page.waitForFunction(() => {
     const frame = document.querySelector('.ws-sheet-frame');
