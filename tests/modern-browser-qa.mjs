@@ -10,6 +10,8 @@ const BOOKS = [
   { id: 'cylinder', count: 38, first: 'cylinder/page-1.html' },
   { id: 'cone', count: 46, first: 'worksheets/page-17.html' }
 ];
+const EXPECTED_HOME_COUNTS = BOOKS.map(book => `${book.count} דפי A4`);
+const EXPECTED_TOTAL = String(BOOKS.reduce((sum, book) => sum + book.count, 0));
 const ENGINES = { chromium, firefox, webkit };
 
 fs.rmSync(OUT_DIR, { recursive: true, force: true });
@@ -20,10 +22,13 @@ function assert(condition, message) {
 }
 
 async function waitForHome(page) {
-  await page.waitForFunction(() => {
-    const counts = [...document.querySelectorAll('[data-book-pages]')];
-    return document.body.classList.contains('is-home') && counts.length === 3 && counts.every(node => /\d+/.test(node.textContent || ''));
-  });
+  await page.waitForFunction(({ counts: expectedCounts, total: expectedTotal }) => {
+    const counts = [...document.querySelectorAll('[data-book-pages]')].map(node => node.textContent?.trim() || '');
+    const total = document.querySelector('[data-total-pages]')?.textContent?.trim() || '';
+    return document.body.classList.contains('is-home')
+      && JSON.stringify(counts) === JSON.stringify(expectedCounts)
+      && total === expectedTotal;
+  }, { counts: EXPECTED_HOME_COUNTS, total: EXPECTED_TOTAL });
 }
 
 async function homeSnapshot(page) {
@@ -42,8 +47,8 @@ async function assertHome(page, engineName) {
   await waitForHome(page);
   const snapshot = await homeSnapshot(page);
   assert(JSON.stringify(snapshot.cards) === JSON.stringify(['מעגל', 'גליל', 'חרוט']), `${engineName}: home card order ${JSON.stringify(snapshot.cards)}`);
-  assert(JSON.stringify(snapshot.counts) === JSON.stringify(['88 דפי A4', '38 דפי A4', '46 דפי A4']), `${engineName}: home counts ${JSON.stringify(snapshot.counts)}`);
-  assert(snapshot.total === '172', `${engineName}: home total ${snapshot.total}`);
+  assert(JSON.stringify(snapshot.counts) === JSON.stringify(EXPECTED_HOME_COUNTS), `${engineName}: home counts ${JSON.stringify(snapshot.counts)}`);
+  assert(snapshot.total === EXPECTED_TOTAL, `${engineName}: home total ${snapshot.total}`);
   assert(snapshot.iframeCount === 0, `${engineName}: root must create zero workbook iframes`);
   assert(Math.abs(snapshot.overflowX) <= 2, `${engineName}: home horizontal overflow ${snapshot.overflowX}px`);
   assert(snapshot.direction === 'rtl', `${engineName}: document direction must be rtl`);
@@ -72,7 +77,10 @@ async function assertMobile(page, engineName) {
   await page.goto(`${ROOT_URL}?topic=cone&sheet=1#workbook`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('.ws-wsframe').length === 46);
   await page.locator('.ws-sheet-frame').first().waitFor({ state: 'attached' });
-  await page.waitForTimeout(150);
+  await page.waitForFunction(() => {
+    const frame = document.querySelector('.ws-sheet-frame');
+    return frame?.style.width === '210mm' && frame?.style.height === '297mm' && !!frame?.style.transform;
+  });
   const snapshot = await page.evaluate(() => {
     const wrap = document.querySelector('.ws-wsframe');
     const frame = document.querySelector('.ws-sheet-frame');
