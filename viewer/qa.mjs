@@ -55,7 +55,10 @@ assert(homeCss.includes('@media(max-width:620px)'), 'shared home requires an exp
 
 // Existing workbook viewer contract.
 assert(index.includes('viewer/mobile-scroll.css'), 'mobile scroll stylesheet must be loaded');
+assert(index.includes('id="workbook"') && index.includes('id="booklet-status"') && index.includes('id="booklet-loading"') && index.includes('id="booklet-sheets"'), 'complete workbook viewer shell is required');
+assert(index.includes('id="bw-toggle"') && index.includes('id="print-booklet"'), 'workbook view controls are required');
 assert(index.includes('id="page-jump"'), 'fast page navigation dock is missing');
+assert(index.includes('data-jump="top"') && index.includes('data-jump="prev"') && index.includes('data-jump="next"') && index.includes('data-jump="bottom"'), 'complete fast page navigation controls are required');
 assert(index.includes('data-topic="cone"') && index.includes('data-topic="circle"') && index.includes('data-topic="cylinder"'), 'all three topic selectors are required');
 assert(app.includes('fitFrameToViewport'), 'A4 mobile scale-to-fit function is required');
 assert(app.includes('isMobileWorkbookViewport'), 'mobile/touch viewport detection is required');
@@ -92,4 +95,4 @@ assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
-console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + Android-safe A4 rendering + mobile accessibility/navigation + print preparation checked)');
+console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + complete workbook shell + Android-safe A4 rendering + mobile accessibility/navigation + print preparation checked)');
