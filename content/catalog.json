@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/catalog.schema.json",
+  "$schema": "schemas/catalog.schema.json",
   "schemaVersion": 1,
   "projectId": "circle-cylinder-cone",
   "title": "מעגל · גליל · חרוט",
