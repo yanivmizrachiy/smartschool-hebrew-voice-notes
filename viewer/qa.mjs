@@ -66,6 +66,10 @@ assert(app.includes("frame.style.width = '210mm'") && app.includes("frame.style.
 assert(app.includes("frame.style.transform = 'scale(' + scale + ')'"), 'mobile viewer must scale the iframe surface instead of the inner A4 DOM');
 assert(!/main\.style\.transform\s*=\s*`scale\(/.test(app), 'inner .a4-page DOM must not be transformed for mobile rendering');
 assert(app.includes('ensureAllFramesLoaded'), 'printing must explicitly load every workbook iframe first');
+assert(app.includes('waitForFrameReadiness') && app.includes('doc.fonts?.ready'), 'printing must wait for frame fonts readiness');
+assert(app.includes('waitForImageReady') && app.includes('image.decode()'), 'printing must wait for image decode readiness');
+assert(!app.includes("setTimeout(() => printPreparedBooklet(), 700)"), 'print mode must not rely on an arbitrary 700ms delay');
+assert(app.includes("if (params.get('print') === '1') void printPreparedBooklet()"), 'print query mode must enter the readiness-gated print workflow directly');
 assert(app.includes('printPreparedBooklet'), 'print action must use a prepared all-pages workflow');
 assert(app.includes('prepareFramesForPrint'), 'print must neutralize mobile scale before A4 output');
 assert(app.includes("addEventListener('beforeprint', prepareFramesForPrint)"), 'beforeprint guard is required');
@@ -95,4 +99,4 @@ assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
-console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + complete workbook shell + Android-safe A4 rendering + mobile accessibility/navigation + print preparation checked)');
+console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + complete workbook shell + real print readiness + Android-safe A4 rendering + mobile accessibility/navigation checked)');
