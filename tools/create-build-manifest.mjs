@@ -17,6 +17,33 @@ function gitSha() {
   return 'unknown';
 }
 
+function walkFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkFiles(full));
+    else out.push(full);
+  }
+  return out;
+}
+
+function runtimeTreeFingerprint() {
+  const entries = walkFiles(dist)
+    .filter(file => path.basename(file) !== 'build-manifest.json')
+    .map(file => ({
+      path: path.relative(dist, file).replaceAll('\\', '/'),
+      sha256: sha256(fs.readFileSync(file))
+    }))
+    .sort((a, b) => a.path.localeCompare(b.path, 'en'));
+
+  const canonical = entries.map(entry => `${entry.path}\0${entry.sha256}`).join('\n');
+  return {
+    fileCount: entries.length,
+    sha256: sha256(canonical)
+  };
+}
+
 const catalog = readJson('content/catalog.json');
 const manifests = Object.fromEntries(
   catalog.books.map(book => [book.id, readJson(book.manifest)])
@@ -31,12 +58,14 @@ if (circlePages !== 88 || cylinderPages !== 38 || conePages !== 46 || totalPages
   throw new Error(`Refusing build manifest for unexpected counts: circle=${circlePages}, cylinder=${cylinderPages}, cone=${conePages}, total=${totalPages}`);
 }
 
+const runtimeTree = runtimeTreeFingerprint();
 const manifest = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   gitSha: gitSha(),
   rulesSha256: sha256(read('RULES.md')),
   catalogSha256: sha256(read('content/catalog.json')),
   manifestSha256: Object.fromEntries(catalog.books.map(book => [book.id, sha256(read(book.manifest))])),
+  runtimeTree,
   counts: {
     circlePages,
     cylinderPages,
@@ -48,4 +77,4 @@ const manifest = {
 fs.mkdirSync(dist, { recursive: true });
 const target = path.join(dist, 'build-manifest.json');
 fs.writeFileSync(target, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
-console.log(`Built ${path.relative(root, target)} for ${totalPages} A4 pages at ${manifest.gitSha}.`);
+console.log(`Built ${path.relative(root, target)} for ${totalPages} A4 pages at ${manifest.gitSha}; runtime=${runtimeTree.fileCount} files/${runtimeTree.sha256}.`);
