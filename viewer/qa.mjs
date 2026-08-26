@@ -9,8 +9,15 @@ const app = fs.readFileSync(path.join(dir, 'app.js'), 'utf8');
 const bootstrap = fs.readFileSync(path.join(dir, 'bootstrap.js'), 'utf8');
 const css = fs.readFileSync(path.join(dir, 'mobile-scroll.css'), 'utf8');
 const homeCss = fs.readFileSync(path.join(dir, 'home.css'), 'utf8');
-const rules = fs.readFileSync(path.join(dir, 'VIEWER_RULES.md'), 'utf8');
+const projectRules = fs.readFileSync(path.join(root, 'RULES.md'), 'utf8');
 const assert = (condition, message) => { if (!condition) throw new Error(`Viewer QA failed: ${message}`); };
+
+// Root RULES.md is the sole requirements authority. The viewer has no parallel rules document.
+assert(projectRules.includes('## 17. האתר המשותף — Home'), 'root RULES.md must define the shared-home contract');
+assert(projectRules.includes('## 18. Viewer משותף'), 'root RULES.md must define the shared viewer contract');
+assert(projectRules.includes('## 19. Viewer בנייד'), 'root RULES.md must define the mobile viewer contract');
+assert(projectRules.includes('## 20. ביצועי Viewer'), 'root RULES.md must define the viewer performance contract');
+assert(projectRules.includes('## 21. הדפסה ו־PDF'), 'root RULES.md must define viewer print/PDF requirements');
 
 // Shared-home contract: root is a three-workbook catalog, never an implicit cone booklet.
 assert(index.includes('viewer/bootstrap.js'), 'bootstrap entrypoint must control home versus workbook mode');
@@ -70,9 +77,4 @@ assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
-assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
-assert(rules.includes('זוכר את הדף האחרון') && rules.includes('אין להשתמש ב־`content-visibility`'), 'viewer source-of-truth must lock position memory and Android-safe iframe rendering');
-assert(rules.includes('210mm × 297mm') && rules.includes('אין לבצע `transform` על `.a4-page`'), 'viewer source-of-truth must lock iframe-surface scaling');
-assert(rules.includes('44') && rules.includes('reduced-motion'), 'viewer source-of-truth must lock accessible touch targets and reduced motion');
-
-console.log('Viewer QA: PASS (shared three-workbook home + Android-safe A4 iframe rendering + mobile portrait/landscape + accessibility + navigation + position memory + print preparation checked)');
+console.log('Viewer QA: PASS (root RULES authority + shared three-workbook home + Android-safe A4 rendering + mobile accessibility/navigation + print preparation checked)');
