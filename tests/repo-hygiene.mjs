@@ -34,14 +34,39 @@ if (!fs.existsSync(rulesPath) || fs.statSync(rulesPath).size === 0) {
   const rules = fs.readFileSync(rulesPath, 'utf8');
   if (!rules.includes('מקור האמת היחיד')) fail('RULES.md: must explicitly declare itself the sole source of truth');
   if (!rules.includes('מעגל, גליל וחרוט')) fail('RULES.md: must explicitly cover circle, cylinder and cone');
+  if (!rules.includes('האתר המשותף — Home')) fail('RULES.md: shared-home requirements must live in the sole project authority');
+  if (!rules.includes('Viewer משותף') || !rules.includes('Viewer בנייד')) fail('RULES.md: viewer/mobile requirements must live in the sole project authority');
 }
 
+// No parallel requirements authority may exist by filename or by self-declaration.
+// Subordinate docs may say that RULES.md is authoritative; they may not claim authority for themselves.
+const textExtensions = new Set(['.md', '.txt', '.mjs', '.js', '.ts', '.json', '.yml', '.yaml', '.html', '.css']);
 for (const file of allRel) {
   if (file === 'RULES.md') continue;
-  const base = path.basename(file).toLowerCase();
-  if (base === 'rules.md') fail(`${file}: duplicate RULES.md is forbidden; root RULES.md is the only requirements authority`);
-  if (/^source[-_ ]?of[-_ ]?truth(?:\.[^/]*)?$/i.test(path.basename(file))) {
-    fail(`${file}: parallel source-of-truth file is forbidden; use root RULES.md only`);
+  const base = path.basename(file);
+  const lowerBase = base.toLowerCase();
+
+  if (lowerBase === 'rules.md') fail(`${file}: duplicate RULES.md is forbidden; root RULES.md is the only requirements authority`);
+  if (/^(?:source[-_ ]?of[-_ ]?truth|project[-_ ]?rules)(?:\.[^/]*)?$/i.test(base)) {
+    fail(`${file}: parallel requirements/source-of-truth file is forbidden; use root RULES.md only`);
+  }
+  if (/_rules\.md$/i.test(base)) {
+    fail(`${file}: *_RULES.md is forbidden because project requirements belong only in root RULES.md`);
+  }
+
+  if (!textExtensions.has(path.extname(file).toLowerCase())) continue;
+  let text;
+  try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
+  catch { continue; }
+
+  const selfAuthority = [
+    /(?:מסמך|קובץ)\s+זה[^\n]{0,160}(?:מקור\s+האמת|מקור\s+אמת)/i,
+    /^#{1,6}[^\n]{0,120}(?:מקור\s+האמת\s+היחיד|מקור\s+אמת\s+יחיד)/im,
+    /this\s+(?:document|file)[^\n]{0,160}(?:sole\s+source\s+of\s+truth|source\s+of\s+truth)/i
+  ].some(re => re.test(text));
+
+  if (selfAuthority) {
+    fail(`${file}: self-declared requirements authority is forbidden; only root RULES.md may be the source of truth`);
   }
 }
 
@@ -112,4 +137,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, and parallel sources of truth.');
+console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, and parallel requirements authorities.');
