@@ -28,6 +28,8 @@ jobs:
         run: npm ci
       - name: Audit Node dependencies
         run: npm audit --audit-level=high
+      - name: Typecheck strict workbook contracts
+        run: npx --yes --package typescript@7.0.2 tsc -p src/tsconfig.json --noEmit
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
       - name: Validate generated source synchronization without mutation
         run: npm run build
