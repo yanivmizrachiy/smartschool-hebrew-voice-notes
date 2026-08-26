@@ -48,6 +48,10 @@ assert(index.includes('data-total-pages') && index.includes('data-book-count'), 
 assert(!index.includes('88 דפי A4') && !index.includes('38 דפי A4') && !index.includes('46 דפי A4') && !index.includes('172 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
 assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
 assert(!index.includes('כל הנושאים במקום אחד'), 'generic/demo-like home heading must not return');
+assert(index.includes('href="viewer/home.css"'), 'home stylesheet must be present in the initial HTML');
+assert(index.indexOf('viewer/home.css') < index.indexOf('viewer/bootstrap.js'), 'home stylesheet must load before bootstrap hydration');
+assert(index.includes("if (!new URLSearchParams(location.search).has('topic')) document.body.classList.add('is-home')"), 'Home mode must be established synchronously before module hydration');
+assert(!bootstrap.includes("document.createElement('link')") && !bootstrap.includes('homeStyles'), 'bootstrap must not inject the Home stylesheet after first paint');
 assert(bootstrap.includes("await import('./app.js')"), 'workbook app must load only after a valid catalog topic is selected');
 assert(bootstrap.includes("classList.add('is-home')") && bootstrap.includes("classList.add('has-topic')"), 'home and workbook modes must be explicit');
 assert(homeCss.includes('body.is-home .hero-section') && homeCss.includes('.workbook-grid'), 'shared-home responsive design is missing');
@@ -99,4 +103,4 @@ assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
-console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + complete workbook shell + real print readiness + Android-safe A4 rendering + mobile accessibility/navigation checked)');
+console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + stable first paint + complete workbook shell + real print readiness + Android-safe A4 rendering + mobile accessibility/navigation checked)');
