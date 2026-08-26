@@ -24,10 +24,12 @@ jobs:
         with:
           node-version: 24
       # Numbering follows the razpages rule: one topic-local page number, never the internal worksheet id.
-      - name: Sync generated cone worksheet and visual chrome
+      - name: Validate generated source synchronization without mutation
         run: npm run build
       - name: Build cone A4 print bundle
         run: npm run build:print
+      - name: Verify deterministic print build
+        run: node tests/build-reproducibility.mjs
       - name: Validate cone workbook contracts
         run: npm run validate
       - name: Validate circle workbook contracts
@@ -105,7 +107,7 @@ jobs:
           path: qa/print-booklets/*.pdf
           if-no-files-found: warn
           retention-days: 7
-      - name: Ensure generated cone booklet sources stayed synchronized
+      - name: Ensure generated artifacts stayed synchronized
         run: git diff --exit-code -- worksheets visual-pages print content src tests package.json
       - name: Verify cone print bundle exists
         run: test -s print/harut-a4.html && test -s print/styles.css
