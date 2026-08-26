@@ -139,7 +139,8 @@ if (fs.existsSync(indexPath)) {
 }
 if (fs.existsSync(appJsPath)) {
   const appJs = fs.readFileSync(appJsPath, 'utf8');
-  if (!appJs.includes("fetch('content/workbook.json'")) fail('viewer/app.js: must load workbook.json dynamically');
+  if (!appJs.includes('catalogBook.manifest')) fail('viewer/app.js: must load the selected workbook through the canonical catalog manifest');
+  if (/const\s+TOPICS\s*=/.test(appJs)) fail('viewer/app.js: must not duplicate canonical topic counts in a private TOPICS constant');
   if (!appJs.includes('worksheets/${page.slug}.html')) fail('viewer/app.js: must load worksheet pages from slugs');
   if (!appJs.includes("frameWrap.className = 'ws-wsframe'")) fail('viewer/app.js: continuous booklet frame rendering missing');
   if (!appJs.includes("printBooklet.addEventListener('click', printPreparedBooklet)")) fail('viewer/app.js: prepared whole-booklet print action missing');
