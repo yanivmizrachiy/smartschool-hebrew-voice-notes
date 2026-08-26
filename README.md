@@ -26,13 +26,21 @@
 - `npm run build` — build לא־הרסני: מאמת שקובצי המקור מסונכרנים עם ה־manifest ואינו משנה אותם.
 - `npm run sync:source` — סנכרון מפורש ומכוון של metadata/מספור/קרדיטים לקובצי המקור; יש להריץ רק כאשר רוצים לייצר שינוי source ולסקור את ה־diff.
 - `npm run build:print` — בונה את חבילת ההדפסה המאוחדת של החרוט.
+- `npm run build:site` — בונה `dist/` נקי שמכיל רק את תוצרי ה־runtime שנועדו לפריסה, ומוסיף fingerprint קנוני.
+- `npm run validate:repro` — מוכיח ששתי בניות print רצופות מאותו source מייצרות fingerprint זהה.
+- `npm run validate:math-properties` — מריץ invariants גאומטריים דטרמיניסטיים על מאות/אלפי צירופי נתונים.
+- `npm run validate:dist` — בודק שה־deployment artifact מכיל את כל 172 הדפים ואינו מדליף קבצי פיתוח/QA.
 - `npm run validate` — מפעיל את חוזי הקטלוג, התוכן, המתמטיקה, המספור, המקורות, הדפים החזותיים והיגיינת הריפו.
-- `npm run check` — build לא־הרסני + print + validate.
+- `npm run check` — מסלול האימות המלא: build לא־הרסני, print, reproducibility, validation, `dist/` ו־dist contract.
 - `npm run render:pages` — מרנדר את רצף A4 דרך Chrome כאשר שרת מקומי פעיל ב־`127.0.0.1:4173`.
 
 ## CI
 
-`Workbook quality` ו־`Textbook layout render` הם שערי האיכות המרכזיים. הם רצים על Node 24, מאמתים את שלוש החוברות ושומרים ראיות עבור בדיקות browser/PDF/render. שינוי בתשתית נעשה רק אם יש צורך אמיתי וללא רגרסיה.
+`Workbook quality`, `Textbook layout render` ו־`CodeQL` הם שערי האיכות המרכזיים. סביבת Node נעולה ל־24 LTS, התקנת npm משתמשת ב־`npm ci`, ו־CI בודק בין היתר catalog/manifests, reproducibility, מתמטיקה, browser, mobile, A4, PDF, render fidelity, deployment artifact ו־security analysis.
+
+CI שומר artifacts כגון screenshots, PDFs, visual-asset readiness, `dist/` מאומת ו־`dist/build-manifest.json`, כדי ש־PASS יהיה ניתן להוכחה ולא רק הודעת טקסט.
+
+Dependabot מוגדר למעקב שבועי אחר npm ו־GitHub Actions.
 
 ## מבנה הריפו
 
@@ -47,8 +55,10 @@
 - `viewer/` — אפליקציית הדפדוף וההדפסה, המונעת מהקטלוג הקנוני.
 - `src/` — מנועי build וסנכרון מפורש.
 - `tests/` — חוזי איכות קבועים.
-- `qa/` — ביקורות ותיעוד QA; אינו מקור דרישות.
-- `print/harut-a4.html` — חבילת ההדפסה המאוחדת של החרוט לאחר build:print.
+- `tools/` — כלי QA/build evidence.
+- `qa/` — ביקורות ותיעוד QA; אינו מקור דרישות. תיקיות evidence generated אינן נשמרות כמקור.
+- `print/harut-a4.html` — חבילת ההדפסה המאוחדת של החרוט לאחר `build:print`.
+- `dist/` — artifact generated לפריסה בלבד; אינו source ונשמר מחוץ ל־Git.
 
 ## היגיינת ריפו
 
@@ -56,7 +66,7 @@
 
 ## פער חזותי ידוע — חרוט
 
-`qa/VISUAL_SOURCE_AUDIT_2026-08-13.md` מתעד שארבעת דפי התמונה המלאים עדיין משתמשים בנכסי JPG דחוסים שאינם נכסי המקור הסופיים להדפסה. מקורות ה־PNG האיכותיים חייבים להיכנס לריפו עצמו לפני שמכריזים שהפער הזה סגור. אין לעקוף זאת באמצעות קישור Drive פרטי או CSS בלבד.
+ארבעת דפי התמונה המלאים עדיין משתמשים בנכסי JPG שאינם נכסי המקור הסופיים להדפסה. `tools/qa-visual-assets.mjs` מייצר status מכונתי ומסמן אותם `BLOCKED EXTERNAL ASSET` כאשר הם מתחת לרף הרזולוציה. אין להמציא תחליף; המקורות האיכותיים צריכים להיכנס לריפו לפני שניתן לסגור את הפער.
 
 ## עיקרון
 
