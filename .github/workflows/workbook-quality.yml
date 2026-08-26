@@ -130,6 +130,10 @@ jobs:
         run: node src/build-site.mjs
       - name: Validate isolated deployment artifact
         run: node tests/dist-contract.mjs
+      - name: Verify complete site build reproducibility
+        run: node tests/site-reproducibility.mjs
+      - name: Validate reproducible deployment artifact
+        run: node tests/dist-contract.mjs
       - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
         with:
