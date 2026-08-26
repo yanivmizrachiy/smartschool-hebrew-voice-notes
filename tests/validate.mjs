@@ -14,8 +14,8 @@ const forbiddenInternalStudentText = /(?:RULES\.md|workbook\.json|source-registr
 const oldProjectText = /smartschool|voice[- ]?notes|סמרטקול|הכתבה בעברית/i;
 
 const allowedRootEntries = new Set([
-  '.git', '.github', '.gitignore', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
-  'package.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
+  '.git', '.github', '.gitignore', '.nvmrc', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
+  'package.json', 'package-lock.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
   'tests', 'tools', 'viewer', 'worksheets', 'visual-assets', 'visual-pages', 'circle', 'cylinder'
 ]);
 for (const entry of fs.readdirSync(root)) if (!allowedRootEntries.has(entry)) fail(`root: unexpected entry ${entry}`);
