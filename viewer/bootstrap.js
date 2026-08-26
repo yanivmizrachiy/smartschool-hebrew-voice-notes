@@ -46,6 +46,7 @@ async function hydrateHomeFromCatalog() {
 }
 
 if (hasTopic) {
+  document.body.classList.remove('is-home');
   window.__WORKBOOK_CATALOG__ = catalog;
   document.body.classList.add('has-topic');
   document.querySelector('#workbook')?.removeAttribute('hidden');
@@ -53,11 +54,6 @@ if (hasTopic) {
   document.querySelector('#library')?.setAttribute('hidden', '');
   await import('./app.js');
 } else {
-  const homeStyles = document.createElement('link');
-  homeStyles.rel = 'stylesheet';
-  homeStyles.href = 'viewer/home.css';
-  document.head.append(homeStyles);
-
   document.body.classList.add('is-home');
   document.querySelector('#workbook')?.setAttribute('hidden', '');
   document.querySelector('#page-jump')?.setAttribute('hidden', '');
