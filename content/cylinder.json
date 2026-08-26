@@ -1,0 +1,13 @@
+{
+  "$schema": "../schemas/simple-workbook.schema.json",
+  "schemaVersion": 1,
+  "id": "cylinder",
+  "label": "גליל",
+  "pageCount": 38,
+  "sourceType": "numbered-html-series",
+  "folder": "cylinder",
+  "pagePattern": "page-{page}.html",
+  "pageRange": { "start": 1, "end": 38 },
+  "identity": { "nameField": true, "dateField": true },
+  "a4UtilizationMaxBlankPx": 150
+}
