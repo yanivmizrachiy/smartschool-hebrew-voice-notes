@@ -185,28 +185,74 @@ function isFrameReady(frame) {
   }
 }
 
+function imageReady(image) {
+  return image.complete && image.naturalWidth > 0;
+}
+
+function imageLoadError(image, frameTitle, reason) {
+  const source = image.currentSrc || image.src || '(ללא src)';
+  return new Error(`${frameTitle}: ${reason} — ${source}`);
+}
+
+async function waitForImageEvent(image, frameTitle, timeoutMs = 8000) {
+  if (imageReady(image)) return;
+
+  await new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = callback => value => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      image.removeEventListener('load', onLoad);
+      image.removeEventListener('error', onError);
+      callback(value);
+    };
+    const succeed = finish(resolve);
+    const fail = finish(reject);
+    const onLoad = () => {
+      if (image.naturalWidth > 0) succeed();
+      else fail(imageLoadError(image, frameTitle, 'אירוע load הסתיים ללא נתוני תצוגה'));
+    };
+    const onError = () => fail(imageLoadError(image, frameTitle, 'שגיאת טעינת תמונה'));
+    const timer = setTimeout(() => fail(imageLoadError(image, frameTitle, 'טעינת התמונה חרגה מהזמן המותר')), timeoutMs);
+
+    image.addEventListener('load', onLoad, { once: true });
+    image.addEventListener('error', onError, { once: true });
+
+    // Close the race between the first readiness check and listener registration.
+    if (imageReady(image)) succeed();
+    else if (image.complete && image.naturalWidth <= 0) fail(imageLoadError(image, frameTitle, 'התמונה הסתיימה ללא נתוני תצוגה'));
+  });
+}
+
+async function reloadImageOnce(image, frameTitle) {
+  const source = image.currentSrc || image.src;
+  if (!source) throw imageLoadError(image, frameTitle, 'אין כתובת תמונה לטעינה חוזרת');
+
+  const retryUrl = new URL(source, image.ownerDocument.baseURI);
+  retryUrl.searchParams.set('__print_retry', '1');
+  image.src = retryUrl.href;
+  await waitForImageEvent(image, frameTitle);
+}
+
 async function waitForImageReady(image, frameTitle) {
-  if (!image.complete) {
-    await new Promise((resolve, reject) => {
-      const cleanup = () => {
-        image.removeEventListener('load', onLoad);
-        image.removeEventListener('error', onError);
-      };
-      const onLoad = () => {
-        cleanup();
-        resolve();
-      };
-      const onError = () => {
-        cleanup();
-        reject(new Error(`${frameTitle}: תמונה לא נטענה`));
-      };
-      image.addEventListener('load', onLoad, { once: true });
-      image.addEventListener('error', onError, { once: true });
-    });
+  try {
+    await waitForImageEvent(image, frameTitle);
+  } catch (firstError) {
+    // A transient deferred/off-screen image failure must not create a blank PDF.
+    // Retry exactly once; a genuinely missing or undecodable asset remains a hard failure.
+    console.warn(firstError);
+    await reloadImageOnce(image, frameTitle);
   }
 
-  if (image.naturalWidth <= 0) throw new Error(`${frameTitle}: תמונה ללא נתוני תצוגה`);
-  if (typeof image.decode === 'function') await image.decode();
+  if (!imageReady(image)) throw imageLoadError(image, frameTitle, 'תמונה ללא נתוני תצוגה לאחר ניסיון חוזר');
+  if (typeof image.decode === 'function') {
+    try {
+      await image.decode();
+    } catch (error) {
+      throw imageLoadError(image, frameTitle, `פענוח התמונה נכשל: ${error?.message || error}`);
+    }
+  }
 }
 
 async function waitForFrameReadiness(frame) {
