@@ -185,27 +185,66 @@ function isFrameReady(frame) {
   }
 }
 
+async function waitForImageReady(image, frameTitle) {
+  if (!image.complete) {
+    await new Promise((resolve, reject) => {
+      const cleanup = () => {
+        image.removeEventListener('load', onLoad);
+        image.removeEventListener('error', onError);
+      };
+      const onLoad = () => {
+        cleanup();
+        resolve();
+      };
+      const onError = () => {
+        cleanup();
+        reject(new Error(`${frameTitle}: תמונה לא נטענה`));
+      };
+      image.addEventListener('load', onLoad, { once: true });
+      image.addEventListener('error', onError, { once: true });
+    });
+  }
+
+  if (image.naturalWidth <= 0) throw new Error(`${frameTitle}: תמונה ללא נתוני תצוגה`);
+  if (typeof image.decode === 'function') await image.decode();
+}
+
+async function waitForFrameReadiness(frame) {
+  if (!isFrameReady(frame)) throw new Error(`עמוד ${frame.title || ''} לא נטען במלואו`);
+  const doc = frame.contentDocument;
+  if (!doc) throw new Error(`עמוד ${frame.title || ''} ללא מסמך זמין`);
+
+  if (doc.fonts?.ready) await doc.fonts.ready;
+  await Promise.all([...doc.images].map(image => waitForImageReady(image, frame.title || 'עמוד')));
+}
+
 async function ensureAllFramesLoaded(timeoutMs = 30000) {
   const frames = [...document.querySelectorAll('.ws-sheet-frame')];
   frames.forEach(frame => { frame.loading = 'eager'; });
 
-  const waiting = frames.filter(frame => !isFrameReady(frame));
-  if (!waiting.length) return;
+  const readiness = (async () => {
+    const waiting = frames.filter(frame => !isFrameReady(frame));
+    if (waiting.length) {
+      await Promise.all(waiting.map(frame => new Promise((resolve, reject) => {
+        const onLoad = () => {
+          cleanup();
+          if (isFrameReady(frame)) resolve();
+          else reject(new Error(`עמוד ${frame.title || ''} לא נטען במלואו`));
+        };
+        const cleanup = () => frame.removeEventListener('load', onLoad);
+        frame.addEventListener('load', onLoad, { once: true });
+        if (isFrameReady(frame)) {
+          cleanup();
+          resolve();
+        }
+      })));
+    }
+
+    await Promise.all(frames.map(waitForFrameReadiness));
+  })();
 
   await Promise.race([
-    Promise.all(waiting.map(frame => new Promise((resolve, reject) => {
-      const onLoad = () => {
-        cleanup();
-        if (isFrameReady(frame)) resolve();
-        else reject(new Error(`עמוד ${frame.title || ''} לא נטען במלואו`));
-      };
-      const cleanup = () => frame.removeEventListener('load', onLoad);
-      frame.addEventListener('load', onLoad, { once: true });
-      if (isFrameReady(frame)) {
-        cleanup();
-        resolve();
-      }
-    }))),
+    readiness,
     new Promise((_, reject) => setTimeout(() => reject(new Error('טעינת כל דפי החוברת להדפסה חרגה מהזמן המותר')), timeoutMs))
   ]);
 }
@@ -450,7 +489,7 @@ loadEntries()
       detectCurrentSheet();
     });
 
-    if (params.get('print') === '1') setTimeout(() => printPreparedBooklet(), 700);
+    if (params.get('print') === '1') void printPreparedBooklet();
   })
   .catch(error => {
     loading.hidden = false;
