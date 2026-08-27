@@ -111,6 +111,8 @@ jobs:
           path: qa/mobile-viewer/*.png
           if-no-files-found: warn
           retention-days: 7
+      - name: Verify exact canonical cone visual source assets
+        run: npm run verify:cone-assets
       - name: Run canonical real PDF print QA
         run: node tools/qa-print-booklets.mjs
       - name: Verify generated print PDFs
