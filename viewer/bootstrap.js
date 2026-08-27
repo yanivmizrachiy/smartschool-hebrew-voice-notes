@@ -19,7 +19,7 @@ function ensureOfficialQuestionsLink() {
   const link = document.createElement('a');
   link.className = 'sitenav__link';
   link.dataset.officialQuestions = 'true';
-  link.href = 'official-questions.html';
+  link.href = 'viewer/official-questions.html';
   link.textContent = 'שאלות רשמיות';
   nav.append(link);
 }
