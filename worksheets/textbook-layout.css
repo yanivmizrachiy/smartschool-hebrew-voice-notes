@@ -3,14 +3,16 @@
 
 .textbook-fill-visual .sheet-content{min-height:224mm;align-content:space-between}.textbook-fill-visual .figure-medium{max-height:205px}.textbook-fill-visual .figure-box{padding:8px}
 
-/* Page-specific adjustments are keyed by the visible local page number, not source file id. */
-main:has(.page-number[aria-label="עמוד 17"]) .draw-box{height:150px}
-main:has(.page-number[aria-label="עמוד 17"]) .answer-line{height:2.1em}
-main:has(.page-number[aria-label="עמוד 36"]) .mist-card{min-height:122px;padding:12px}
-main:has(.page-number[aria-label="עמוד 36"]) .answer-line{height:2.7em}
-main:has(.page-number[aria-label="עמוד 36"]) .q-card{padding-block:14px}
-main:has(.page-number[aria-label="עמוד 39"]) .work-table td{height:46px}
-main:has(.page-number[aria-label="עמוד 39"]) .formula-space{min-height:68px}
-main:has(.page-number[aria-label="עמוד 39"]) .answer-line{height:2.1em}
+/* Stable semantic layout profiles. These classes belong to the source worksheet,
+   so reordering printSequence cannot accidentally move a layout treatment to a
+   different page. */
+.layout-draw-room .draw-box{height:150px}
+.layout-draw-room .answer-line{height:2.1em}
+.layout-reasoning-room .mist-card{min-height:122px;padding:12px}
+.layout-reasoning-room .answer-line{height:2.7em}
+.layout-reasoning-room .q-card{padding-block:14px}
+.layout-table-room .work-table td{height:46px}
+.layout-table-room .formula-space{min-height:68px}
+.layout-table-room .answer-line{height:2.1em}
 
 @media print{.textbook-fill .sheet-content,.textbook-fill-visual .sheet-content{min-height:224mm}}

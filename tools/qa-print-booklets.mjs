@@ -5,7 +5,7 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const ROOT_URL = process.env.VIEWER_QA_URL || 'http://127.0.0.1:4173/';
 const OUT_DIR = path.join('qa', 'print-booklets');
-const BOOKS = { cone: 46, circle: 88, cylinder: 38 };
+const BOOKS = { cone: 46, circle: 93, cylinder: 41 };
 const A4_RATIO = 297 / 210;
 const assert = (condition, message) => { if (!condition) throw new Error(`Print QA failed: ${message}`); };
 
@@ -216,7 +216,7 @@ try {
   for (const [book, expected] of Object.entries(BOOKS)) {
     await printBook(cdp, book, expected);
   }
-  console.log('Print QA: PASS (cone 46, circle 88, cylinder 38 — real Chrome PDFs, exact page counts, A4 media boxes, no mobile transform or viewer chrome)');
+  console.log('Print QA: PASS (cone 46, circle 93, cylinder 41 — real Chrome PDFs, exact page counts, A4 media boxes, no mobile transform or viewer chrome)');
 } catch (error) {
   exitCode = 1;
   console.error(error.stack || error.message || error);

@@ -1,5 +1,12 @@
 node_modules/
+dist/
 qa/layout-pages/
+qa/shared-home/
+qa/a4-pages/
+qa/mobile-viewer/
+qa/print-booklets/
+qa/math-writing/
+qa/visual-assets/
 .asset-staging/
 *.b64
 *.tmp

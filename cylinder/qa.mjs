@@ -22,10 +22,9 @@ const pages = fs.readdirSync(dir)
   .map(name => Number(name.match(/\d+/)[0]))
   .sort((a,b) => a-b);
 
-assert(pages.length === 38, `current approved cylinder sequence must contain exactly 38 student pages; found ${pages.length}`);
-assert(new Set(pages).size === 38, 'page numbers must be unique');
-pages.forEach((page, index) => assert(page === index + 1, `current approved sequence must be continuous from 1 to 38; found page ${page} at position ${index + 1}`));
-assert(!pages.some(page => page >= 39), 'pages 39+ are blocked until the תשפ״ז status of nets/lateral/total surface area is resolved');
+assert(pages.length === 41, `current approved cylinder sequence must contain exactly 41 student pages; found ${pages.length}`);
+assert(new Set(pages).size === 41, 'page numbers must be unique');
+pages.forEach((page, index) => assert(page === index + 1, `current approved sequence must be continuous from 1 to 41; found page ${page} at position ${index + 1}`));
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
@@ -33,7 +32,7 @@ for (const page of pages) {
   assert(count(html, /<h1\b/g) === 1, `page ${page}: exactly one visible page heading is required`);
   assert(count(html, /<h[23]\b/g) === 0, `page ${page}: question-level headings are forbidden`);
   assert(new RegExp(`aria-label="עמוד ${page}"[^>]*>${page}<\\/div>`).test(html), `page ${page}: visible page number mismatch`);
-  assert(/<footer class="footer">/.test(html), `page ${page}: name/date footer is required`);
+  assert(!/<footer class=["']footer["']/.test(html), `page ${page}: name/date footer is forbidden`);
   assert(!/[×]/.test(html), `page ${page}: multiplication sign × is forbidden`);
   assert(!/\d\s*[xX]\s*\d/.test(html), `page ${page}: x/X must not be used as a numeric multiplication sign`);
   if (page === 11) {
@@ -47,7 +46,7 @@ for (const page of pages) {
   assert(!/נמקו|הסבירו\s+במילים/.test(html), `page ${page}: unrestricted open response wording is forbidden`);
   if (page === 1) assert(/<h1[^>]*>מושגים בסיסיים<\/h1>/.test(html), 'page 1: canonical opening title must be מושגים בסיסיים');
   if (page < 19) assert(!/V\s*=/.test(html), `page ${page}: volume formula is forbidden before page 19`);
-  assert(!/S\s*=|M\s*=/.test(html), `page ${page}: lateral/total surface-area formula is not authorized in current produced sequence`);
+  if (page < 39) assert(!/S\s*=|M\s*=/.test(html), `page ${page}: lateral/total surface-area formula is not authorized before the pages 39–41 mantle/surface unit`);
 
   if (page === 20) {
     assert(/<th>V לפני<\/th><th>V אחרי<\/th>[\s\S]*____ ס״מ³<\/td><td>____ ס״מ³/.test(html), 'page 20: before/after volume answers must carry cubic-centimeter units');
@@ -62,4 +61,4 @@ for (const page of pages) {
   }
 }
 
-console.log('Cylinder QA: PASS (38 student pages checked; approved sequence locked at 1–38; math-notation/unit guards active; intentional page-11 error-detection exception locked; no separate answer keys; surface-area extension blocked)');
+console.log('Cylinder QA: PASS (41 student pages checked; approved sequence locked at 1–41 incl. pages 39–41 mantle/surface/net unit; math-notation/unit guards active; intentional page-11 error-detection exception locked; no separate answer keys)');

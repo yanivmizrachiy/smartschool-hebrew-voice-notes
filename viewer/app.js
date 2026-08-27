@@ -7,17 +7,16 @@ const heroTitle = document.querySelector('#hero-title');
 const pageJump = document.querySelector('#page-jump');
 const pageJumpStatus = document.querySelector('#page-jump-status');
 
-const TOPICS = {
-  cone: { label: 'חרוט', count: 46 },
-  circle: { label: 'מעגל', count: 88, folder: 'circle' },
-  cylinder: { label: 'גליל', count: 38, folder: 'cylinder' }
-};
 const STORAGE_PREFIX = 'math-workbook:last-sheet:';
 const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-
 const params = new URLSearchParams(location.search);
-const topicKey = TOPICS[params.get('topic')] ? params.get('topic') : 'cone';
-const topic = TOPICS[topicKey];
+const topicKey = params.get('topic');
+const catalog = window.__WORKBOOK_CATALOG__;
+const catalogBook = catalog?.books?.find(book => book.id === topicKey);
+
+if (!catalogBook) throw new Error(`נושא לא מוכר בקטלוג: ${topicKey || ''}`);
+
+let topic = null;
 let entries = [];
 let currentSequence = 1;
 let scrollTicking = false;
@@ -68,27 +67,34 @@ function buildConeEntries(data) {
   });
 }
 
-function buildSimpleEntries() {
-  return Array.from({ length: topic.count }, (_, index) => {
+function buildSimpleEntries(data) {
+  return Array.from({ length: data.pageCount }, (_, index) => {
     const sequence = index + 1;
     return {
       sequence,
       key: `${topicKey}-${sequence}`,
       kind: 'worksheet',
       kindLabel: 'דף עבודה',
-      title: `${topic.label} — עמוד ${sequence}`,
+      title: `${data.label} — עמוד ${sequence}`,
       subtitle: '',
-      url: `${topic.folder}/page-${sequence}.html`,
+      url: `${data.folder}/${data.pagePattern.replace('{page}', String(sequence))}`,
       worksheetId: sequence
     };
   });
 }
 
 async function loadEntries() {
-  if (topicKey !== 'cone') return buildSimpleEntries();
-  const response = await fetch('content/workbook.json', { cache: 'no-store' });
+  const response = await fetch(catalogBook.manifest, { cache: 'no-store' });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return buildConeEntries(await response.json());
+  const data = await response.json();
+
+  if (topicKey === 'cone') {
+    topic = { label: data.project, count: data.printSheetCount };
+    return buildConeEntries(data);
+  }
+
+  topic = { label: data.label, count: data.pageCount };
+  return buildSimpleEntries(data);
 }
 
 function rememberSequence(sequence) {
@@ -179,27 +185,112 @@ function isFrameReady(frame) {
   }
 }
 
+function imageReady(image) {
+  return image.complete && image.naturalWidth > 0;
+}
+
+function imageLoadError(image, frameTitle, reason) {
+  const source = image.currentSrc || image.src || '(ללא src)';
+  return new Error(`${frameTitle}: ${reason} — ${source}`);
+}
+
+async function waitForImageEvent(image, frameTitle, timeoutMs = 8000) {
+  if (imageReady(image)) return;
+
+  await new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = callback => value => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      image.removeEventListener('load', onLoad);
+      image.removeEventListener('error', onError);
+      callback(value);
+    };
+    const succeed = finish(resolve);
+    const fail = finish(reject);
+    const onLoad = () => {
+      if (image.naturalWidth > 0) succeed();
+      else fail(imageLoadError(image, frameTitle, 'אירוע load הסתיים ללא נתוני תצוגה'));
+    };
+    const onError = () => fail(imageLoadError(image, frameTitle, 'שגיאת טעינת תמונה'));
+    const timer = setTimeout(() => fail(imageLoadError(image, frameTitle, 'טעינת התמונה חרגה מהזמן המותר')), timeoutMs);
+
+    image.addEventListener('load', onLoad, { once: true });
+    image.addEventListener('error', onError, { once: true });
+
+    // Close the race between the first readiness check and listener registration.
+    if (imageReady(image)) succeed();
+    else if (image.complete && image.naturalWidth <= 0) fail(imageLoadError(image, frameTitle, 'התמונה הסתיימה ללא נתוני תצוגה'));
+  });
+}
+
+async function reloadImageOnce(image, frameTitle) {
+  const source = image.currentSrc || image.src;
+  if (!source) throw imageLoadError(image, frameTitle, 'אין כתובת תמונה לטעינה חוזרת');
+
+  const retryUrl = new URL(source, image.ownerDocument.baseURI);
+  retryUrl.searchParams.set('__print_retry', '1');
+  image.src = retryUrl.href;
+  await waitForImageEvent(image, frameTitle);
+}
+
+async function waitForImageReady(image, frameTitle) {
+  try {
+    await waitForImageEvent(image, frameTitle);
+  } catch (firstError) {
+    // A transient deferred/off-screen image failure must not create a blank PDF.
+    // Retry exactly once; a genuinely missing or undecodable asset remains a hard failure.
+    console.warn(firstError);
+    await reloadImageOnce(image, frameTitle);
+  }
+
+  if (!imageReady(image)) throw imageLoadError(image, frameTitle, 'תמונה ללא נתוני תצוגה לאחר ניסיון חוזר');
+  if (typeof image.decode === 'function') {
+    try {
+      await image.decode();
+    } catch (error) {
+      throw imageLoadError(image, frameTitle, `פענוח התמונה נכשל: ${error?.message || error}`);
+    }
+  }
+}
+
+async function waitForFrameReadiness(frame) {
+  if (!isFrameReady(frame)) throw new Error(`עמוד ${frame.title || ''} לא נטען במלואו`);
+  const doc = frame.contentDocument;
+  if (!doc) throw new Error(`עמוד ${frame.title || ''} ללא מסמך זמין`);
+
+  if (doc.fonts?.ready) await doc.fonts.ready;
+  await Promise.all([...doc.images].map(image => waitForImageReady(image, frame.title || 'עמוד')));
+}
+
 async function ensureAllFramesLoaded(timeoutMs = 30000) {
   const frames = [...document.querySelectorAll('.ws-sheet-frame')];
   frames.forEach(frame => { frame.loading = 'eager'; });
 
-  const waiting = frames.filter(frame => !isFrameReady(frame));
-  if (!waiting.length) return;
+  const readiness = (async () => {
+    const waiting = frames.filter(frame => !isFrameReady(frame));
+    if (waiting.length) {
+      await Promise.all(waiting.map(frame => new Promise((resolve, reject) => {
+        const onLoad = () => {
+          cleanup();
+          if (isFrameReady(frame)) resolve();
+          else reject(new Error(`עמוד ${frame.title || ''} לא נטען במלואו`));
+        };
+        const cleanup = () => frame.removeEventListener('load', onLoad);
+        frame.addEventListener('load', onLoad, { once: true });
+        if (isFrameReady(frame)) {
+          cleanup();
+          resolve();
+        }
+      })));
+    }
+
+    await Promise.all(frames.map(waitForFrameReadiness));
+  })();
 
   await Promise.race([
-    Promise.all(waiting.map(frame => new Promise((resolve, reject) => {
-      const onLoad = () => {
-        cleanup();
-        if (isFrameReady(frame)) resolve();
-        else reject(new Error(`עמוד ${frame.title || ''} לא נטען במלואו`));
-      };
-      const cleanup = () => frame.removeEventListener('load', onLoad);
-      frame.addEventListener('load', onLoad, { once: true });
-      if (isFrameReady(frame)) {
-        cleanup();
-        resolve();
-      }
-    }))),
+    readiness,
     new Promise((_, reject) => setTimeout(() => reject(new Error('טעינת כל דפי החוברת להדפסה חרגה מהזמן המותר')), timeoutMs))
   ]);
 }
@@ -444,7 +535,7 @@ loadEntries()
       detectCurrentSheet();
     });
 
-    if (params.get('print') === '1') setTimeout(() => printPreparedBooklet(), 700);
+    if (params.get('print') === '1') void printPreparedBooklet();
   })
   .catch(error => {
     loading.hidden = false;

@@ -1,12 +1,25 @@
 {
-  "name": "harut-workbook",
+  "name": "math-workbooks-circle-cylinder-cone",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "build": "node src/build.mjs",
+    "sync:source": "node src/sync-source.mjs",
     "build:print": "node src/build-print.mjs",
+    "build:site": "node src/build-site.mjs",
     "render:pages": "node tools/render-layout-pages.mjs",
-    "validate": "node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs && node tests/site-parity.mjs && node tests/repo-hygiene.mjs",
-    "check": "npm run build && npm run build:print && npm run validate"
+    "validate:syntax": "node tests/control-plane-syntax.mjs",
+    "validate:catalog": "node tests/catalog-contract.mjs",
+    "validate:repro": "node tests/build-reproducibility.mjs",
+    "validate:math-properties": "node tests/math-properties.mjs",
+    "validate:layout-profiles": "node tests/layout-profile-contract.mjs",
+    "validate:jerusalem2": "node tests/jerusalem2-coverage.mjs",
+    "validate:dist": "node tests/dist-contract.mjs",
+    "verify:cone-assets": "node tools/verify-final-cone-pngs.mjs",
+    "validate": "node tests/control-plane-syntax.mjs && node tests/catalog-contract.mjs && node tests/validate.mjs && node tests/curriculum-scope.mjs && node tests/source-locked.mjs && node tests/ayelet-first.mjs && node tests/student-output.mjs && node tests/middle-school-language.mjs && node tests/math-correctness.mjs && node tests/math-properties.mjs && node tests/visual-pairs.mjs && node tests/visual-quality.mjs && node tests/booklet-contract.mjs && node tests/site-parity.mjs && node tests/layout-profile-contract.mjs && node tests/jerusalem2-coverage.mjs && node tests/repo-hygiene.mjs",
+    "check": "npm run validate:syntax && npm run build && npm run build:print && npm run validate:repro && npm run validate && npm run build:site && npm run validate:dist"
   }
 }

@@ -9,38 +9,71 @@ const app = fs.readFileSync(path.join(dir, 'app.js'), 'utf8');
 const bootstrap = fs.readFileSync(path.join(dir, 'bootstrap.js'), 'utf8');
 const css = fs.readFileSync(path.join(dir, 'mobile-scroll.css'), 'utf8');
 const homeCss = fs.readFileSync(path.join(dir, 'home.css'), 'utf8');
-const rules = fs.readFileSync(path.join(dir, 'VIEWER_RULES.md'), 'utf8');
+const projectRules = fs.readFileSync(path.join(root, 'RULES.md'), 'utf8');
+const catalog = JSON.parse(fs.readFileSync(path.join(root, 'content', 'catalog.json'), 'utf8'));
+const circle = JSON.parse(fs.readFileSync(path.join(root, 'content', 'circle.json'), 'utf8'));
+const cylinder = JSON.parse(fs.readFileSync(path.join(root, 'content', 'cylinder.json'), 'utf8'));
+const cone = JSON.parse(fs.readFileSync(path.join(root, 'content', 'workbook.json'), 'utf8'));
 const assert = (condition, message) => { if (!condition) throw new Error(`Viewer QA failed: ${message}`); };
+
+// Root RULES.md is the sole requirements authority. The viewer has no parallel rules document.
+assert(projectRules.includes('## 17. האתר המשותף — Home'), 'root RULES.md must define the shared-home contract');
+assert(projectRules.includes('## 18. Viewer משותף'), 'root RULES.md must define the shared viewer contract');
+assert(projectRules.includes('## 19. Viewer בנייד'), 'root RULES.md must define the mobile viewer contract');
+assert(projectRules.includes('## 20. ביצועי Viewer'), 'root RULES.md must define the viewer performance contract');
+assert(projectRules.includes('## 21. הדפסה ו־PDF'), 'root RULES.md must define viewer print/PDF requirements');
+
+// Canonical catalog contract: counts and topic identities come from data, never duplicated in viewer code/HTML.
+assert(catalog.books?.length === 3, 'catalog must expose exactly three workbooks');
+assert(new Set(catalog.books.map(book => book.id)).size === 3, 'catalog workbook ids must be unique');
+assert(circle.pageCount === 93, 'circle manifest must define 93 pages');
+assert(cylinder.pageCount === 41, 'cylinder manifest must define 41 pages');
+assert(cone.printSheetCount === 46, 'cone manifest must define 46 print sheets');
+assert(circle.pageCount + cylinder.pageCount + cone.printSheetCount === 180, 'canonical manifests must total 180 A4 pages');
+assert(bootstrap.includes("fetch('content/catalog.json'"), 'bootstrap must load the canonical catalog');
+assert(bootstrap.includes('catalog?.books') && bootstrap.includes('window.__WORKBOOK_CATALOG__'), 'bootstrap must derive allowed topics from the canonical catalog');
+assert(bootstrap.includes('hydrateHomeFromCatalog') && bootstrap.includes('Promise.all(catalog.books.map(loadBookSummary))'), 'home counts must be hydrated from canonical workbook manifests');
+assert(bootstrap.includes('manifest.printSheetCount ?? manifest.pageCount'), 'home must derive each workbook page count from its manifest');
+assert(!bootstrap.includes("new Set(['circle', 'cylinder', 'cone'])"), 'bootstrap must not duplicate the topic list');
+assert(app.includes('catalogBook.manifest'), 'viewer app must load the selected workbook through its catalog manifest');
+assert(!/const\s+TOPICS\s*=/.test(app), 'viewer app must not duplicate topic counts in a private TOPICS constant');
 
 // Shared-home contract: root is a three-workbook catalog, never an implicit cone booklet.
 assert(index.includes('viewer/bootstrap.js'), 'bootstrap entrypoint must control home versus workbook mode');
-assert(!index.includes('src="viewer/app.js"'), 'root HTML must not eagerly load the cone-capable workbook app');
+assert(!index.includes('src="viewer/app.js"'), 'root HTML must not eagerly load the workbook app');
 assert(index.includes('id="library"') && index.includes('id="home-hero"'), 'shared home catalog and hero are required');
 assert(index.includes('מעגל · גליל · חרוט'), 'shared project title must name all three topics');
-assert(index.includes('88 דפי A4') && index.includes('38 דפי A4') && index.includes('46 דפי A4'), 'home must show the verified page counts');
-assert(index.includes('172 דפי A4'), 'home must show the verified total page count');
+assert(index.includes('data-book-pages="circle"') && index.includes('data-book-pages="cylinder"') && index.includes('data-book-pages="cone"'), 'home must expose manifest-driven page-count slots for all workbooks');
+assert(index.includes('data-total-pages') && index.includes('data-book-count'), 'home must expose manifest-driven summary slots');
+assert(!index.includes('93 דפי A4') && !index.includes('41 דפי A4') && !index.includes('46 דפי A4') && !index.includes('180 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
 assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
 assert(!index.includes('כל הנושאים במקום אחד'), 'generic/demo-like home heading must not return');
-assert(bootstrap.includes("new Set(['circle', 'cylinder', 'cone'])"), 'bootstrap must whitelist exactly the three workbook topics');
-assert(bootstrap.includes("await import('./app.js')"), 'workbook app must load only after a valid topic is selected');
+assert(index.includes('href="viewer/home.css"'), 'home stylesheet must be present in the initial HTML');
+assert(index.indexOf('viewer/home.css') < index.indexOf('viewer/bootstrap.js'), 'home stylesheet must load before bootstrap hydration');
+assert(index.includes("if (!new URLSearchParams(location.search).has('topic')) document.body.classList.add('is-home')"), 'Home mode must be established synchronously before module hydration');
+assert(!bootstrap.includes("document.createElement('link')") && !bootstrap.includes('homeStyles'), 'bootstrap must not inject the Home stylesheet after first paint');
+assert(bootstrap.includes("await import('./app.js')"), 'workbook app must load only after a valid catalog topic is selected');
 assert(bootstrap.includes("classList.add('is-home')") && bootstrap.includes("classList.add('has-topic')"), 'home and workbook modes must be explicit');
 assert(homeCss.includes('body.is-home .hero-section') && homeCss.includes('.workbook-grid'), 'shared-home responsive design is missing');
 assert(homeCss.includes('@media(max-width:620px)'), 'shared home requires an explicit phone layout');
 
 // Existing workbook viewer contract.
 assert(index.includes('viewer/mobile-scroll.css'), 'mobile scroll stylesheet must be loaded');
+assert(index.includes('id="workbook"') && index.includes('id="booklet-status"') && index.includes('id="booklet-loading"') && index.includes('id="booklet-sheets"'), 'complete workbook viewer shell is required');
+assert(index.includes('id="bw-toggle"') && index.includes('id="print-booklet"'), 'workbook view controls are required');
 assert(index.includes('id="page-jump"'), 'fast page navigation dock is missing');
+assert(index.includes('data-jump="top"') && index.includes('data-jump="prev"') && index.includes('data-jump="next"') && index.includes('data-jump="bottom"'), 'complete fast page navigation controls are required');
 assert(index.includes('data-topic="cone"') && index.includes('data-topic="circle"') && index.includes('data-topic="cylinder"'), 'all three topic selectors are required');
-
-assert(/cone:\s*\{\s*label:\s*'חרוט',\s*count:\s*46/.test(app), 'cone count must be 46');
-assert(/circle:\s*\{\s*label:\s*'מעגל',\s*count:\s*88/.test(app), 'circle count must be 88');
-assert(/cylinder:\s*\{\s*label:\s*'גליל',\s*count:\s*38/.test(app), 'cylinder count must be 38');
 assert(app.includes('fitFrameToViewport'), 'A4 mobile scale-to-fit function is required');
 assert(app.includes('isMobileWorkbookViewport'), 'mobile/touch viewport detection is required');
 assert(app.includes("frame.style.width = '210mm'") && app.includes("frame.style.height = '297mm'"), 'mobile iframe must preserve an exact A4 surface before scaling');
 assert(app.includes("frame.style.transform = 'scale(' + scale + ')'"), 'mobile viewer must scale the iframe surface instead of the inner A4 DOM');
 assert(!/main\.style\.transform\s*=\s*`scale\(/.test(app), 'inner .a4-page DOM must not be transformed for mobile rendering');
 assert(app.includes('ensureAllFramesLoaded'), 'printing must explicitly load every workbook iframe first');
+assert(app.includes('waitForFrameReadiness') && app.includes('doc.fonts?.ready'), 'printing must wait for frame fonts readiness');
+assert(app.includes('waitForImageReady') && app.includes('image.decode()'), 'printing must wait for image decode readiness');
+assert(!app.includes("setTimeout(() => printPreparedBooklet(), 700)"), 'print mode must not rely on an arbitrary 700ms delay');
+assert(app.includes("if (params.get('print') === '1') void printPreparedBooklet()"), 'print query mode must enter the readiness-gated print workflow directly');
 assert(app.includes('printPreparedBooklet'), 'print action must use a prepared all-pages workflow');
 assert(app.includes('prepareFramesForPrint'), 'print must neutralize mobile scale before A4 output');
 assert(app.includes("addEventListener('beforeprint', prepareFramesForPrint)"), 'beforeprint guard is required');
@@ -70,9 +103,4 @@ assert(/@media print\{[\s\S]*\.ws-sheet-frame\{[\s\S]*transform:none!important/.
 assert(/\.topbar,.sitenav,.hero-section,.site-footer\{display:none!important\}/.test(css), 'topic-mode mobile viewer must be able to hide non-booklet chrome');
 assert(homeCss.includes('display:block!important'), 'home design must explicitly restore home chrome on phones');
 
-assert(rules.includes('גלילה היא אנכית בלבד') && rules.includes('פס/רווח בצבע טורקיז כהה'), 'viewer source-of-truth must lock vertical scrolling and turquoise separators');
-assert(rules.includes('זוכר את הדף האחרון') && rules.includes('אין להשתמש ב־`content-visibility`'), 'viewer source-of-truth must lock position memory and Android-safe iframe rendering');
-assert(rules.includes('210mm × 297mm') && rules.includes('אין לבצע `transform` על `.a4-page`'), 'viewer source-of-truth must lock iframe-surface scaling');
-assert(rules.includes('44') && rules.includes('reduced-motion'), 'viewer source-of-truth must lock accessible touch targets and reduced motion');
-
-console.log('Viewer QA: PASS (shared three-workbook home + Android-safe A4 iframe rendering + mobile portrait/landscape + accessibility + navigation + position memory + print preparation checked)');
+console.log('Viewer QA: PASS (root RULES authority + manifest-driven catalog/home/viewer + stable first paint + complete workbook shell + real print readiness + Android-safe A4 rendering + mobile accessibility/navigation checked)');
