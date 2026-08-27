@@ -26,7 +26,13 @@ export function synchronizeWorkbookSources({ write = false } = {}) {
   }
 
   // Stable worksheet ids are intentional: print order may change independently of layout treatment.
-  const textbookFillWorksheetIds = new Set([24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38]);
+  const textbookFillWorksheetIds = new Set([23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38]);
+  const layoutProfileByWorksheetId = new Map([
+    [7, 'layout-draw-room'],
+    [13, 'layout-reasoning-room'],
+    [15, 'layout-table-room']
+  ]);
+  const managedLayoutProfiles = new Set(layoutProfileByWorksheetId.values());
   const drift = [];
 
   const apply = (file, next) => {
@@ -64,7 +70,10 @@ export function synchronizeWorkbookSources({ write = false } = {}) {
     html = html.replace(/<main class="([^"]*)">/, (_, classes) => {
       const classSet = new Set(classes.split(/\s+/).filter(Boolean));
       classSet.delete('textbook-fill');
+      for (const profile of managedLayoutProfiles) classSet.delete(profile);
       if (textbookFillWorksheetIds.has(page.id)) classSet.add('textbook-fill');
+      const layoutProfile = layoutProfileByWorksheetId.get(page.id);
+      if (layoutProfile) classSet.add(layoutProfile);
       return `<main class="${[...classSet].join(' ')}">`;
     });
 
