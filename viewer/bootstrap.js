@@ -13,6 +13,17 @@ try {
 const topicIds = new Set((catalog?.books || []).map(book => book.id));
 const hasTopic = topicIds.has(requestedTopic);
 
+function ensureOfficialQuestionsLink() {
+  const nav = document.querySelector('.sitenav__inner');
+  if (!nav || nav.querySelector('[data-official-questions]')) return;
+  const link = document.createElement('a');
+  link.className = 'sitenav__link';
+  link.dataset.officialQuestions = 'true';
+  link.href = 'official-questions.html';
+  link.textContent = 'שאלות רשמיות';
+  nav.append(link);
+}
+
 async function loadBookSummary(book) {
   const response = await fetch(book.manifest, { cache: 'no-store' });
   if (!response.ok) throw new Error(`${book.id}: HTTP ${response.status}`);
@@ -44,6 +55,8 @@ async function hydrateHomeFromCatalog() {
     node.textContent = String(summaries.length);
   });
 }
+
+ensureOfficialQuestionsLink();
 
 if (hasTopic) {
   document.body.classList.remove('is-home');
