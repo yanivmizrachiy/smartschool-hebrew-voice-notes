@@ -80,6 +80,19 @@ if (!fs.existsSync(workflowDir)) {
     if (/audit\/textbook-layout-46-pages-20260813|final-visual-assets|apply-staged|verify-final-assets/i.test(text)) {
       fail(`.github/workflows/${name}: contains a historical branch/workflow trigger`);
     }
+
+    for (const match of text.matchAll(/^\s*-?\s*uses:\s*([^\s#]+)(?:\s*#.*)?$/gm)) {
+      const actionRef = match[1];
+      const at = actionRef.lastIndexOf('@');
+      if (at < 0) {
+        fail(`.github/workflows/${name}: action reference ${actionRef} has no immutable revision`);
+        continue;
+      }
+      const revision = actionRef.slice(at + 1);
+      if (!/^[0-9a-f]{40}$/i.test(revision)) {
+        fail(`.github/workflows/${name}: action ${actionRef} must be pinned to an immutable 40-character commit SHA`);
+      }
+    }
   }
 }
 
@@ -136,4 +149,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, and parallel requirements authorities.');
+console.log('OK: repository is free of temporary staging, historical workflows, private runtime Drive links, parallel requirements authorities, and mutable action tags.');
