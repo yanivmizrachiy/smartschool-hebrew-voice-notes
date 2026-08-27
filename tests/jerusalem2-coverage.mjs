@@ -15,11 +15,7 @@ function fail(message) {
   console.error(`Jerusalem2 coverage QA failed: ${message}`);
   process.exit(1);
 }
-
-function read(rel) {
-  return fs.readFileSync(path.join(root, rel), 'utf8');
-}
-
+function read(rel) { return fs.readFileSync(path.join(root, rel), 'utf8'); }
 async function fetchJson(url, label) {
   const response = await fetch(url, {
     headers: { 'User-Agent': 'smartschool-jerusalem2-coverage-qa' },
@@ -29,12 +25,11 @@ async function fetchJson(url, label) {
   return response.json();
 }
 
-const officialPage = read('official-questions.html');
+const officialPage = read('viewer/official-questions.html');
 const bootstrap = read('viewer/bootstrap.js');
 const buildSite = read('src/build-site.mjs');
-
 for (const required of [SOURCE_REPO, SOURCE_COMMIT, SOURCE_FILE, FIGURE_DIR]) {
-  if (!officialPage.includes(required)) fail(`official-questions.html is not pinned to ${required}`);
+  if (!officialPage.includes(required)) fail(`viewer/official-questions.html is not pinned to ${required}`);
 }
 if (!officialPage.includes('SOURCE_START_PAGE=3') || !officialPage.includes('SOURCE_END_PAGE=19')) {
   fail('official question bank must render the complete locked source range 3–19');
@@ -42,18 +37,17 @@ if (!officialPage.includes('SOURCE_START_PAGE=3') || !officialPage.includes('SOU
 if (!officialPage.includes('sourcePages.length!==17')) {
   fail('official question bank must reject an incomplete 3–19 source snapshot');
 }
-if (!bootstrap.includes('official-questions.html') || !bootstrap.includes('שאלות רשמיות')) {
+if (!bootstrap.includes('viewer/official-questions.html') || !bootstrap.includes('שאלות רשמיות')) {
   fail('shared navigation does not expose the official question bank');
 }
-if (!buildSite.includes("'official-questions.html'")) {
-  fail('deployment artifact does not include the official question bank');
+if (!buildSite.includes("'viewer'")) {
+  fail('deployment artifact does not include the viewer runtime containing the official question bank');
 }
 
 const [source, figureFiles] = await Promise.all([
   fetchJson(sourceUrl, 'locked Jerusalem2 curriculum source'),
   fetchJson(figuresApi, 'locked Jerusalem2 figure inventory')
 ]);
-
 const pages = source.blocks
   .filter(block => block.type === 'sourcePage' && block.page >= 3 && block.page <= 19)
   .sort((a, b) => a.page - b.page);
@@ -61,7 +55,6 @@ const actualPages = pages.map(block => block.page);
 if (JSON.stringify(actualPages) !== JSON.stringify(REQUIRED_PAGES)) {
   fail(`expected source pages 3–19 exactly; got ${actualPages.join(', ')}`);
 }
-
 for (const page of pages) {
   const rows = (page.tables || []).flatMap(table => table.rows || []);
   if (!rows.length) fail(`source page ${page.page} has no curriculum rows`);
@@ -69,7 +62,6 @@ for (const page of pages) {
     fail(`source page ${page.page} has no readable source content`);
   }
 }
-
 if (!Array.isArray(figureFiles)) fail('figure inventory is not an array');
 const sourceFigures = figureFiles.filter(file => {
   const match = file.name?.match(/^fig-p(\d+)-/i);
@@ -93,5 +85,4 @@ for (const book of catalog.books || []) {
   total += count;
 }
 if (total !== 172) fail(`canonical workbook total changed: ${total} != 172`);
-
 console.log(`OK: Jerusalem2 pages 3–19 are covered from locked commit ${SOURCE_COMMIT}; ${sourceFigures.length} source figures discovered; canonical 88/38/46 = 172 unchanged.`);
