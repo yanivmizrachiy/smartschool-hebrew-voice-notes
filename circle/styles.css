@@ -227,6 +227,8 @@ body {
 }
 .axis-choice { display:flex; flex-wrap:wrap; gap:2mm; }
 .axis-choice .choice-pill { font-size:13px; }
+/* Long definition pills (e.g. the MoE locus wording) must wrap inside their column. */
+.choice-row .choice-pill, .choice-list .choice-pill { white-space:normal; }
 
 /* ---- Higher-order "thinking" card (functional amber accent) --------- */
 .thinking {
