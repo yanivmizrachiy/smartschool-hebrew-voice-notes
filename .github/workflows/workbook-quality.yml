@@ -47,7 +47,7 @@ jobs:
         run: node cylinder/qa.mjs
       - name: Validate circle and cylinder content quality
         run: node tools/qa-workbook-content.mjs
-      - name: Audit mathematical writing across all 172 A4 pages
+      - name: Audit mathematical writing across all 177 A4 pages
         run: node tools/qa-math-writing.mjs
       - name: Upload mathematical writing audit report
         if: always()
