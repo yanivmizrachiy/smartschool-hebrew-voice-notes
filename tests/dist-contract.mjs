@@ -77,7 +77,7 @@ for (const rel of forbidden) {
 }
 
 const contentEntries = fs.readdirSync(path.join(dist, 'content')).sort();
-const expectedContentEntries = ['catalog.json', 'circle.json', 'cylinder.json', 'workbook.json'];
+const expectedContentEntries = ['catalog.json', 'circle.json', 'cylinder.json', 'jerusalem2-figures', 'jerusalem2-geometry-p03-19.json', 'workbook.json'];
 if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
   fail(`dist/content must contain runtime manifests only; found ${contentEntries.join(', ')}`);
 }

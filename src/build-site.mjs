@@ -17,7 +17,9 @@ const runtimeEntries = [
   'content/catalog.json',
   'content/circle.json',
   'content/cylinder.json',
-  'content/workbook.json'
+  'content/workbook.json',
+  'content/jerusalem2-geometry-p03-19.json',
+  'content/jerusalem2-figures'
 ];
 
 fs.rmSync(dist, { recursive: true, force: true });

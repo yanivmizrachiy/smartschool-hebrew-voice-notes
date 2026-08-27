@@ -1,5 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
+
+// git blob sha = sha1("blob " + bytelen + "\0" + content)
+function gitBlobSha(buf) {
+  return crypto.createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
+}
 
 const root = process.cwd();
 const SOURCE_REPO = 'yanivmizrachiy/jerusalem2';
@@ -38,6 +44,12 @@ for (const page of snapshot.pages) {
     if (!/^fig-p\d+-\d+\.(?:png|jpe?g)$/i.test(figure.file || '')) fail(`page ${page.page}: invalid figure filename`);
     if (!/^[0-9a-f]{40}$/i.test(figure.sha || '')) fail(`page ${page.page}: invalid figure sha`);
     if (!Number.isInteger(figure.bytes) || figure.bytes <= 0) fail(`page ${page.page}: invalid figure byte size`);
+    // Figure-dependent questions need the source figure repo-hosted byte-faithfully (RULES.md §9.1).
+    const figPath = path.join(root, 'content', 'jerusalem2-figures', figure.file);
+    if (!fs.existsSync(figPath)) fail(`page ${page.page}: source figure not repo-hosted: content/jerusalem2-figures/${figure.file}`);
+    const buf = fs.readFileSync(figPath);
+    if (buf.length !== figure.bytes) fail(`page ${page.page}: figure ${figure.file} bytes ${buf.length} != ${figure.bytes}`);
+    if (gitBlobSha(buf) !== figure.sha) fail(`page ${page.page}: figure ${figure.file} is not byte-faithful to the locked Jerusalem2 source`);
   }
 }
 
@@ -60,4 +72,4 @@ for (const book of catalog.books || []) {
 if (total !== 172) fail(`canonical workbook total changed: ${total} != 172`);
 
 const figureCount = snapshot.pages.reduce((sum, page) => sum + (page.figures?.length || 0), 0);
-console.log(`OK: local Jerusalem2 snapshot covers pages 3–19 from locked commit ${SOURCE_COMMIT}; ${figureCount} figure identities pinned; canonical 88/38/46 = 172 unchanged.`);
+console.log(`OK: local Jerusalem2 snapshot covers pages 3–19 from locked commit ${SOURCE_COMMIT}; ${figureCount} source figures repo-hosted byte-faithful; canonical 88/38/46 = 172 unchanged.`);
