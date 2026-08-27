@@ -65,10 +65,10 @@ export interface ConeWorkbookManifest {
 }
 
 export interface RuntimeCounts {
-  circlePages: 90;
+  circlePages: 93;
   cylinderPages: 41;
   conePages: 46;
-  totalPages: 177;
+  totalPages: 180;
 }
 
 export function assertWorkbookId(value: string): asserts value is WorkbookId {

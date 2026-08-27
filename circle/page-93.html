@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>על המעגל ובתוכו — מרכז בראשית הצירים</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .a4-page .task{margin-block:4mm}
+    .a4-page .work-table th,.a4-page .work-table td{padding-block:2.4mm}
+    .a4-page .thinking{padding:3.8mm}
+    .a4-page .choice-row{margin-block:2mm}
+  </style>
+</head>
+<body>
+<main class="a4-page">
+  <header class="page-header">
+    <h1 class="page-title">על המעגל ובתוכו — מרכז בראשית הצירים</h1>
+    <div class="page-number" aria-label="עמוד 93">93</div>
+  </header>
+
+  <div class="anchor">מעגל שמרכזו בראשית הצירים <span class="ltr-pair">O(0,0)</span> ורדיוסו <span class="math-ltr">5</span>: המרחק של כל נקודה על המעגל ממרכזו הוא <span class="math-ltr">5</span>. לכן נקודה נמצאת <b>על המעגל</b> אם <span class="math-ltr">x²+y²=25</span>, ו<b>בתוך העיגול</b> אם <span class="math-ltr">x²+y²&lt;25</span>.</div>
+
+  <section class="task">
+    <div class="task-row">
+      <div class="task-num">1</div>
+      <div class="task-body">
+        <p class="instruction">קבעו אילו מהנקודות נמצאות על המעגל ואילו בתוכו. השלימו את <span class="math-ltr">x²+y²</span> וסווגו.</p>
+        <table class="work-table center table-compact">
+          <tr><th>נקודה</th><th><span class="math-ltr">x²</span></th><th><span class="math-ltr">y²</span></th><th><span class="math-ltr">x²+y²</span></th><th>סיווג</th></tr>
+          <tr><td class="ltr-pair">A(5,0)</td><td>25</td><td>0</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">B(3,4)</td><td>9</td><td>16</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">C(3,3)</td><td>9</td><td>9</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">D(4,3)</td><td>16</td><td>9</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">E(0,4)</td><td>0</td><td>16</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">F(−3,4)</td><td>9</td><td>16</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">G(−4,3)</td><td>16</td><td>9</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+          <tr><td class="ltr-pair">H(−5,0)</td><td>25</td><td>0</td><td>____</td><td>על המעגל / בתוך העיגול</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="task thinking">
+    <div class="task-row">
+      <div class="task-num">2</div>
+      <div class="task-body">
+        <p class="instruction">התאימו כל השוואה לסיווג, והשלימו נקודה נוספת.</p>
+        <div class="choice-list">
+          <div class="choice-row"><span class="math-ltr">x²+y² = 25</span><span>→</span><span class="choice-pill">על המעגל</span></div>
+          <div class="choice-row"><span class="math-ltr">x²+y² &lt; 25</span><span>→</span><span class="choice-pill">בתוך העיגול</span></div>
+          <div class="choice-row"><span class="math-ltr">x²+y² &gt; 25</span><span>→</span><span class="choice-pill">מחוץ לעיגול</span></div>
+        </div>
+        <p class="mini-note">נקודה נוספת שנמצאת <b>מחוץ</b> לעיגול: <span class="ltr-pair">(__ , __)</span> כי <span class="math-ltr">x²+y² &gt; 25</span>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -26,10 +26,10 @@ assert(projectRules.includes('## 21. הדפסה ו־PDF'), 'root RULES.md must d
 // Canonical catalog contract: counts and topic identities come from data, never duplicated in viewer code/HTML.
 assert(catalog.books?.length === 3, 'catalog must expose exactly three workbooks');
 assert(new Set(catalog.books.map(book => book.id)).size === 3, 'catalog workbook ids must be unique');
-assert(circle.pageCount === 90, 'circle manifest must define 90 pages');
+assert(circle.pageCount === 93, 'circle manifest must define 93 pages');
 assert(cylinder.pageCount === 41, 'cylinder manifest must define 41 pages');
 assert(cone.printSheetCount === 46, 'cone manifest must define 46 print sheets');
-assert(circle.pageCount + cylinder.pageCount + cone.printSheetCount === 177, 'canonical manifests must total 177 A4 pages');
+assert(circle.pageCount + cylinder.pageCount + cone.printSheetCount === 180, 'canonical manifests must total 180 A4 pages');
 assert(bootstrap.includes("fetch('content/catalog.json'"), 'bootstrap must load the canonical catalog');
 assert(bootstrap.includes('catalog?.books') && bootstrap.includes('window.__WORKBOOK_CATALOG__'), 'bootstrap must derive allowed topics from the canonical catalog');
 assert(bootstrap.includes('hydrateHomeFromCatalog') && bootstrap.includes('Promise.all(catalog.books.map(loadBookSummary))'), 'home counts must be hydrated from canonical workbook manifests');
@@ -45,7 +45,7 @@ assert(index.includes('id="library"') && index.includes('id="home-hero"'), 'shar
 assert(index.includes('מעגל · גליל · חרוט'), 'shared project title must name all three topics');
 assert(index.includes('data-book-pages="circle"') && index.includes('data-book-pages="cylinder"') && index.includes('data-book-pages="cone"'), 'home must expose manifest-driven page-count slots for all workbooks');
 assert(index.includes('data-total-pages') && index.includes('data-book-count'), 'home must expose manifest-driven summary slots');
-assert(!index.includes('90 דפי A4') && !index.includes('41 דפי A4') && !index.includes('46 דפי A4') && !index.includes('177 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
+assert(!index.includes('93 דפי A4') && !index.includes('41 דפי A4') && !index.includes('46 דפי A4') && !index.includes('180 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
 assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
 assert(!index.includes('כל הנושאים במקום אחד'), 'generic/demo-like home heading must not return');
 assert(index.includes('href="viewer/home.css"'), 'home stylesheet must be present in the initial HTML');

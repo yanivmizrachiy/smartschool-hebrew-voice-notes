@@ -60,7 +60,7 @@ if (!buildSite.includes("'viewer'")) fail('deployment artifact does not include 
 if (!buildSite.includes("'content/catalog.json'")) fail('deployment artifact content contract is missing');
 
 const catalog = JSON.parse(read('content/catalog.json'));
-const expectedCounts = { circle: 90, cylinder: 41, cone: 46 };
+const expectedCounts = { circle: 93, cylinder: 41, cone: 46 };
 let total = 0;
 for (const book of catalog.books || []) {
   if (!(book.id in expectedCounts)) continue;
@@ -69,7 +69,7 @@ for (const book of catalog.books || []) {
   if (count !== expectedCounts[book.id]) fail(`${book.id} count changed: ${count} != ${expectedCounts[book.id]}`);
   total += count;
 }
-if (total !== 177) fail(`canonical workbook total changed: ${total} != 177`);
+if (total !== 180) fail(`canonical workbook total changed: ${total} != 180`);
 
 const figureCount = snapshot.pages.reduce((sum, page) => sum + (page.figures?.length || 0), 0);
-console.log(`OK: local Jerusalem2 snapshot covers pages 3–19 from locked commit ${SOURCE_COMMIT}; ${figureCount} source figures repo-hosted byte-faithful; canonical 90/41/46 = 177 unchanged.`);
+console.log(`OK: local Jerusalem2 snapshot covers pages 3–19 from locked commit ${SOURCE_COMMIT}; ${figureCount} source figures repo-hosted byte-faithful; canonical 93/41/46 = 180 unchanged.`);

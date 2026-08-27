@@ -3,11 +3,11 @@
   "schemaVersion": 1,
   "id": "circle",
   "label": "מעגל",
-  "pageCount": 90,
+  "pageCount": 93,
   "sourceType": "numbered-html-series",
   "folder": "circle",
   "pagePattern": "page-{page}.html",
-  "pageRange": { "start": 1, "end": 90 },
+  "pageRange": { "start": 1, "end": 93 },
   "identity": { "nameField": false, "dateField": false },
   "a4UtilizationMaxBlankPx": 150
 }
