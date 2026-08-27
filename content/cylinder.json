@@ -3,11 +3,11 @@
   "schemaVersion": 1,
   "id": "cylinder",
   "label": "גליל",
-  "pageCount": 38,
+  "pageCount": 41,
   "sourceType": "numbered-html-series",
   "folder": "cylinder",
   "pagePattern": "page-{page}.html",
-  "pageRange": { "start": 1, "end": 38 },
-  "identity": { "nameField": true, "dateField": true },
+  "pageRange": { "start": 1, "end": 41 },
+  "identity": { "nameField": false, "dateField": false },
   "a4UtilizationMaxBlankPx": 150
 }

@@ -50,10 +50,10 @@ for (const rel of required) {
 }
 if (!fs.existsSync(path.join(dist, 'build-manifest.json'))) fail('missing build-manifest.json');
 
-for (let page = 1; page <= 88; page += 1) {
+for (let page = 1; page <= 90; page += 1) {
   if (!fs.existsSync(path.join(dist, 'circle', `page-${page}.html`))) fail(`missing circle page ${page}`);
 }
-for (let page = 1; page <= 38; page += 1) {
+for (let page = 1; page <= 41; page += 1) {
   if (!fs.existsSync(path.join(dist, 'cylinder', `page-${page}.html`))) fail(`missing cylinder page ${page}`);
 }
 
@@ -84,8 +84,8 @@ if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
 
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'build-manifest.json'), 'utf8'));
 if (manifest.schemaVersion !== 2) fail(`build manifest schemaVersion must be 2, found ${manifest.schemaVersion}`);
-if (manifest.counts?.circlePages !== 90 || manifest.counts?.cylinderPages !== 38 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 174) {
-  fail('build manifest counts are not 90/38/46/174');
+if (manifest.counts?.circlePages !== 90 || manifest.counts?.cylinderPages !== 41 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 177) {
+  fail('build manifest counts are not 90/41/46/177');
 }
 
 const actualRuntimeTree = runtimeTreeFingerprint();
@@ -93,4 +93,4 @@ if (manifest.runtimeTree?.fileCount !== actualRuntimeTree.fileCount || manifest.
   fail(`runtime tree fingerprint mismatch; manifest=${JSON.stringify(manifest.runtimeTree)} actual=${JSON.stringify(actualRuntimeTree)}`);
 }
 
-console.log(`OK: dist/ contains the complete 174-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);
+console.log(`OK: dist/ contains the complete 177-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);

@@ -5,7 +5,7 @@
 ## מצב נוכחי
 
 - **מעגל:** 90 דפי A4.
-- **גליל:** 38 דפי A4.
+- **גליל:** 41 דפי A4.
 - **חרוט:** 38 דפי עבודה + 8 דפים חזותיים = 46 דפי A4 בחוברת המלאה.
 - דף 17 בחרוט נשאר source-locked.
 
@@ -19,7 +19,7 @@
 
 ## מודל הנתונים
 
-`content/catalog.json` הוא קטלוג היישום של שלוש החוברות ומפנה ל־manifest של כל חוברת. הספירות והנתיבים של מעגל וגליל נשמרים ב־`content/circle.json` וב־`content/cylinder.json`; חרוט נשאר ב־`content/workbook.json`. קובצי `content/schemas/` והבדיקה `tests/catalog-contract.mjs` מאמתים את מבנה הנתונים ואת הסכום 174.
+`content/catalog.json` הוא קטלוג היישום של שלוש החוברות ומפנה ל־manifest של כל חוברת. הספירות והנתיבים של מעגל וגליל נשמרים ב־`content/circle.json` וב־`content/cylinder.json`; חרוט נשאר ב־`content/workbook.json`. קובצי `content/schemas/` והבדיקה `tests/catalog-contract.mjs` מאמתים את מבנה הנתונים ואת הסכום 177.
 
 ## פקודות איכות
 
@@ -29,7 +29,7 @@
 - `npm run build:site` — בונה `dist/` נקי שמכיל רק את תוצרי ה־runtime שנועדו לפריסה, ומוסיף fingerprint קנוני.
 - `npm run validate:repro` — מוכיח ששתי בניות print רצופות מאותו source מייצרות fingerprint זהה.
 - `npm run validate:math-properties` — מריץ invariants גאומטריים דטרמיניסטיים על מאות/אלפי צירופי נתונים.
-- `npm run validate:dist` — בודק שה־deployment artifact מכיל את כל 174 הדפים ואינו מדליף קבצי פיתוח/QA.
+- `npm run validate:dist` — בודק שה־deployment artifact מכיל את כל 177 הדפים ואינו מדליף קבצי פיתוח/QA.
 - `npm run validate` — מפעיל את חוזי הקטלוג, התוכן, המתמטיקה, המספור, המקורות, הדפים החזותיים והיגיינת הריפו.
 - `npm run check` — מסלול האימות המלא: build לא־הרסני, print, reproducibility, validation, `dist/` ו־dist contract.
 - `npm run render:pages` — מרנדר את רצף A4 דרך Chrome כאשר שרת מקומי פעיל ב־`127.0.0.1:4173`.

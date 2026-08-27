@@ -140,7 +140,7 @@ try {
     libraryVisible: getComputedStyle(document.querySelector('#library')).display !== 'none'
   }))()`);
   assert(JSON.stringify(desktop.cards) === JSON.stringify(['מעגל','גליל','חרוט']), `desktop card order/titles ${JSON.stringify(desktop.cards)}`);
-  assert(JSON.stringify(desktop.counts) === JSON.stringify(['90 דפי A4','38 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
+  assert(JSON.stringify(desktop.counts) === JSON.stringify(['90 דפי A4','41 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
   assert(desktop.iframeCount === 0, `home must load zero iframes, got ${desktop.iframeCount}`);
   assert(desktop.workbookHidden && desktop.jumpHidden, 'workbook and page dock must stay hidden on root');
   assert(desktop.bodyHome && !desktop.bodyTopic, 'root body mode must be is-home only');

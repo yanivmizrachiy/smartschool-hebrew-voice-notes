@@ -119,7 +119,7 @@ jobs:
         run: |
           test -s qa/print-booklets/cone-46-pages.pdf
           test -s qa/print-booklets/circle-90-pages.pdf
-          test -s qa/print-booklets/cylinder-38-pages.pdf
+          test -s qa/print-booklets/cylinder-41-pages.pdf
       - name: Record canonical PDF fingerprints
         run: node tools/qa-pdf-fingerprints.mjs
       - name: Upload real PDF QA evidence

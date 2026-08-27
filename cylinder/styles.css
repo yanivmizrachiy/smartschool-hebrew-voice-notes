@@ -5,8 +5,8 @@
   cylinder booklet up to the same premium standard as the circle booklet
   (shared blue family, filled brand badges, tinted cards, functional amber
   accent, soft depth) WITHOUT changing any geometry the A4-utilization
-  profiles and the real-Chrome A4 QA depend on. The name/date footer
-  required by RULES.md §5 is preserved. Only colour, depth, gradient,
+  profiles and the real-Chrome A4 QA depend on. Per RULES.md §5 there is
+  no name/date footer on any cylinder page. Only colour, depth, gradient,
   type-weight and diagram styling are elevated.
 */
 * { box-sizing: border-box; }
@@ -57,7 +57,7 @@ body {
   width:210mm;
   height:297mm;
   margin:0 auto;
-  padding:10mm 18mm 27mm;
+  padding:10mm 18mm 18mm;
   background:var(--paper);
   overflow:hidden;
   position:relative;
@@ -285,19 +285,6 @@ body {
 .visual-card svg { width:100%; height:26mm; display:block; }
 .coord-caption { margin-top:1.5mm; font-weight:600; color:var(--muted); }
 
-/* Name / date footer (RULES.md §5) */
-.footer {
-  position:absolute;
-  right:18mm;
-  left:18mm;
-  bottom:18mm;
-  display:flex;
-  justify-content:space-between;
-  gap:8mm;
-  font-size:11px;
-  color:var(--muted);
-  font-weight:500;
-}
 
 /* A4 utilization work-area filler (preserved verbatim; Chrome-measured). */
 .a4-page:has(.page-number[aria-label="עמוד 14"]){--a4-work-extra:15mm}
