@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const BOOKS = {
-  circle: { dir: 'circle', count: 88 },
+  circle: { dir: 'circle', count: 90 },
   cylinder: { dir: 'cylinder', count: 38 }
 };
 

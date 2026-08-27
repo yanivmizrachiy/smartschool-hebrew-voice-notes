@@ -23,9 +23,9 @@ const pages = fs.readdirSync(dir)
   .map(name => Number(name.match(/\d+/)[0]))
   .sort((a,b) => a-b);
 
-assert(pages.length === 88, `complete workbook must contain exactly 88 student pages; found ${pages.length}`);
-assert(new Set(pages).size === 88, 'page numbers must be unique');
-pages.forEach((page, index) => assert(page === index + 1, `complete workbook must be continuous from 1 to 88; found page ${page} at position ${index + 1}`));
+assert(pages.length === 90, `complete workbook must contain exactly 90 student pages; found ${pages.length}`);
+assert(new Set(pages).size === 90, 'page numbers must be unique');
+pages.forEach((page, index) => assert(page === index + 1, `complete workbook must be continuous from 1 to 90; found page ${page} at position ${index + 1}`));
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(dir, `page-${page}.html`), 'utf8');
@@ -90,4 +90,4 @@ for (const page of pages) {
   }
 }
 
-console.log(`Circle QA: PASS (88 student pages checked; continuous 1–88; reverse real-life circumference/area problems locked; no separate answer keys; canonical A4/no-name-date/coordinate rules locked)`);
+console.log(`Circle QA: PASS (90 student pages checked; continuous 1–90; reverse real-life circumference/area problems locked; no separate answer keys; canonical A4/no-name-date/coordinate rules locked)`);

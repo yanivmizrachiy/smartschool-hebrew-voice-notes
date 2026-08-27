@@ -5,7 +5,7 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const ROOT_URL = process.env.VIEWER_QA_URL || 'http://127.0.0.1:4173/';
 const OUT_DIR = path.join('qa', 'a4-pages');
-const BOOKS = { circle: 88, cylinder: 38 };
+const BOOKS = { circle: 90, cylinder: 38 };
 const EXPECTED_RATIO = 297 / 210;
 const EXPECTED_WIDTH = 210 * 96 / 25.4;
 const EXPECTED_HEIGHT = 297 * 96 / 25.4;

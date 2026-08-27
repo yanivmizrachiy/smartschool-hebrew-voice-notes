@@ -121,13 +121,13 @@ if (!errors.length) {
     totalPages += manifest.pageCount || 0;
   }
 
-  assert(totalPages === 172, `catalog: total A4 page count must be 172, found ${totalPages}`);
+  assert(totalPages === 174, `catalog: total A4 page count must be 174, found ${totalPages}`);
 
   const circle = catalog.books?.find(book => book.id === 'circle');
   const cylinder = catalog.books?.find(book => book.id === 'cylinder');
   if (circle && exists(circle.manifest)) {
     const manifest = readJson(circle.manifest);
-    assert(manifest.pageCount === 88, 'circle: page count must remain 88');
+    assert(manifest.pageCount === 90, 'circle: page count must remain 90');
     assert(manifest.identity?.nameField === false && manifest.identity?.dateField === false, 'circle: name/date fields must remain disabled');
     assert(manifest.a4UtilizationMaxBlankPx === 150, 'circle: A4 blank-space threshold must remain 150px');
   }
@@ -145,4 +145,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('OK: canonical catalog + executable schema subset resolve circle 88 + cylinder 38 + cone 46 = 172 A4 pages with valid manifests and page paths.');
+console.log('OK: canonical catalog + executable schema subset resolve circle 90 + cylinder 38 + cone 46 = 174 A4 pages with valid manifests and page paths.');

@@ -118,7 +118,7 @@ jobs:
       - name: Verify generated print PDFs
         run: |
           test -s qa/print-booklets/cone-46-pages.pdf
-          test -s qa/print-booklets/circle-88-pages.pdf
+          test -s qa/print-booklets/circle-90-pages.pdf
           test -s qa/print-booklets/cylinder-38-pages.pdf
       - name: Record canonical PDF fingerprints
         run: node tools/qa-pdf-fingerprints.mjs

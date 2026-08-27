@@ -5,7 +5,7 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const ROOT_URL = process.env.VIEWER_QA_URL || 'http://127.0.0.1:4173/';
 const OUT_DIR = path.join('qa', 'mobile-viewer');
-const EXPECTED = { cone: 46, circle: 88, cylinder: 38 };
+const EXPECTED = { cone: 46, circle: 90, cylinder: 38 };
 const DEVICES = {
   portrait: { width: 412, height: 915 },
   landscape: { width: 915, height: 412 }

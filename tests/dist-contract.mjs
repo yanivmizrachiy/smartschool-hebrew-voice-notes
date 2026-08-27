@@ -84,8 +84,8 @@ if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
 
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'build-manifest.json'), 'utf8'));
 if (manifest.schemaVersion !== 2) fail(`build manifest schemaVersion must be 2, found ${manifest.schemaVersion}`);
-if (manifest.counts?.circlePages !== 88 || manifest.counts?.cylinderPages !== 38 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 172) {
-  fail('build manifest counts are not 88/38/46/172');
+if (manifest.counts?.circlePages !== 90 || manifest.counts?.cylinderPages !== 38 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 174) {
+  fail('build manifest counts are not 90/38/46/174');
 }
 
 const actualRuntimeTree = runtimeTreeFingerprint();
@@ -93,4 +93,4 @@ if (manifest.runtimeTree?.fileCount !== actualRuntimeTree.fileCount || manifest.
   fail(`runtime tree fingerprint mismatch; manifest=${JSON.stringify(manifest.runtimeTree)} actual=${JSON.stringify(actualRuntimeTree)}`);
 }
 
-console.log(`OK: dist/ contains the complete 172-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);
+console.log(`OK: dist/ contains the complete 174-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);

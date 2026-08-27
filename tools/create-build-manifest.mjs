@@ -54,7 +54,7 @@ const cylinderPages = manifests.cylinder.pageCount;
 const conePages = manifests.cone.printSheetCount;
 const totalPages = circlePages + cylinderPages + conePages;
 
-if (circlePages !== 88 || cylinderPages !== 38 || conePages !== 46 || totalPages !== 172) {
+if (circlePages !== 90 || cylinderPages !== 38 || conePages !== 46 || totalPages !== 174) {
   throw new Error(`Refusing build manifest for unexpected counts: circle=${circlePages}, cylinder=${cylinderPages}, cone=${conePages}, total=${totalPages}`);
 }
 

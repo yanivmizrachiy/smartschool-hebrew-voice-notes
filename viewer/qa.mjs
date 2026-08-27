@@ -26,10 +26,10 @@ assert(projectRules.includes('## 21. הדפסה ו־PDF'), 'root RULES.md must d
 // Canonical catalog contract: counts and topic identities come from data, never duplicated in viewer code/HTML.
 assert(catalog.books?.length === 3, 'catalog must expose exactly three workbooks');
 assert(new Set(catalog.books.map(book => book.id)).size === 3, 'catalog workbook ids must be unique');
-assert(circle.pageCount === 88, 'circle manifest must define 88 pages');
+assert(circle.pageCount === 90, 'circle manifest must define 90 pages');
 assert(cylinder.pageCount === 38, 'cylinder manifest must define 38 pages');
 assert(cone.printSheetCount === 46, 'cone manifest must define 46 print sheets');
-assert(circle.pageCount + cylinder.pageCount + cone.printSheetCount === 172, 'canonical manifests must total 172 A4 pages');
+assert(circle.pageCount + cylinder.pageCount + cone.printSheetCount === 174, 'canonical manifests must total 174 A4 pages');
 assert(bootstrap.includes("fetch('content/catalog.json'"), 'bootstrap must load the canonical catalog');
 assert(bootstrap.includes('catalog?.books') && bootstrap.includes('window.__WORKBOOK_CATALOG__'), 'bootstrap must derive allowed topics from the canonical catalog');
 assert(bootstrap.includes('hydrateHomeFromCatalog') && bootstrap.includes('Promise.all(catalog.books.map(loadBookSummary))'), 'home counts must be hydrated from canonical workbook manifests');

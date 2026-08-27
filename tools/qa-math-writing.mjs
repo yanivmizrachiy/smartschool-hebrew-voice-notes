@@ -27,8 +27,8 @@ function conePrintFiles() {
 function simpleFiles(topic, folder, count) {
   return Array.from({ length: count }, (_, i) => ({ topic, file: path.join(folder, `page-${i + 1}.html`), locked: false }));
 }
-const files = [...conePrintFiles(), ...simpleFiles('מעגל', 'circle', 88), ...simpleFiles('גליל', 'cylinder', 38)];
-if (files.length !== 172) throw new Error(`Expected 172 A4 pages, got ${files.length}`);
+const files = [...conePrintFiles(), ...simpleFiles('מעגל', 'circle', 90), ...simpleFiles('גליל', 'cylinder', 38)];
+if (files.length !== 174) throw new Error(`Expected 174 A4 pages, got ${files.length}`);
 
 function decodeEntities(text) {
   return text
@@ -140,4 +140,4 @@ if (findings.length) {
   if (findings.length > 100) console.error(`... ${findings.length - 100} more; see qa/math-writing/report.md`);
   process.exit(1);
 }
-console.log(`Mathematical writing audit: PASS — ${files.length}/172 pages checked; locked-source warnings: ${lockedWarnings.length}.`);
+console.log(`Mathematical writing audit: PASS — ${files.length}/174 pages checked; locked-source warnings: ${lockedWarnings.length}.`);

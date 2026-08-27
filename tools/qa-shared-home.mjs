@@ -140,7 +140,7 @@ try {
     libraryVisible: getComputedStyle(document.querySelector('#library')).display !== 'none'
   }))()`);
   assert(JSON.stringify(desktop.cards) === JSON.stringify(['מעגל','גליל','חרוט']), `desktop card order/titles ${JSON.stringify(desktop.cards)}`);
-  assert(JSON.stringify(desktop.counts) === JSON.stringify(['88 דפי A4','38 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
+  assert(JSON.stringify(desktop.counts) === JSON.stringify(['90 דפי A4','38 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
   assert(desktop.iframeCount === 0, `home must load zero iframes, got ${desktop.iframeCount}`);
   assert(desktop.workbookHidden && desktop.jumpHidden, 'workbook and page dock must stay hidden on root');
   assert(desktop.bodyHome && !desktop.bodyTopic, 'root body mode must be is-home only');
@@ -169,10 +169,10 @@ try {
   assert(phone.cardWidths.every(w => w <= phone.viewport + 1), `phone card exceeds viewport: ${JSON.stringify(phone.cardWidths)}`);
   await shot(cdp, 'home-phone.png');
 
-  // Direct circle link: no catalog payload; selected booklet begins at page 1 and has all 88 frames.
+  // Direct circle link: no catalog payload; selected booklet begins at page 1 and has all 90 frames.
   const circleUrl = `${ROOT_URL}?topic=circle&sheet=1#workbook`;
   await cdp.send('Page.navigate', { url: circleUrl });
-  await waitFor(cdp, `document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === 88`, 'direct circle workbook', 20000);
+  await waitFor(cdp, `document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === 90`, 'direct circle workbook', 20000);
   const circle = await evaluate(cdp, `(() => ({
     frames: document.querySelectorAll('.ws-wsframe').length,
     firstSrc: document.querySelector('.ws-sheet-frame')?.getAttribute('src') || '',
@@ -181,12 +181,12 @@ try {
     jumpHidden: document.querySelector('#page-jump')?.hidden === true,
     active: document.querySelector('.topic-link.is-active')?.dataset.topic || ''
   }))()`);
-  assert(circle.frames === 88, `circle direct link frame count ${circle.frames}`);
+  assert(circle.frames === 90, `circle direct link frame count ${circle.frames}`);
   assert(circle.firstSrc === 'circle/page-1.html', `circle must begin at page 1, got ${circle.firstSrc}`);
   assert(circle.libraryHidden && !circle.workbookHidden && !circle.jumpHidden, `circle mode visibility ${JSON.stringify(circle)}`);
   assert(circle.active === 'circle', `circle topic must be active, got ${circle.active}`);
 
-  console.log('Shared home browser QA: PASS (desktop + phone home, zero eager workbook iframes, no horizontal overflow, direct circle page 1 / 88-page viewer checked)');
+  console.log('Shared home browser QA: PASS (desktop + phone home, zero eager workbook iframes, no horizontal overflow, direct circle page 1 / 90-page viewer checked)');
 } catch (error) {
   exitCode = 1; console.error(error.stack || error.message || error);
 } finally {

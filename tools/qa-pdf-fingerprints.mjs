@@ -6,7 +6,7 @@ const root = process.cwd();
 const dir = path.join(root, 'qa', 'print-booklets');
 const expected = [
   { file: 'cone-46-pages.pdf', topic: 'cone', pages: 46 },
-  { file: 'circle-88-pages.pdf', topic: 'circle', pages: 88 },
+  { file: 'circle-90-pages.pdf', topic: 'circle', pages: 90 },
   { file: 'cylinder-38-pages.pdf', topic: 'cylinder', pages: 38 }
 ];
 
@@ -31,6 +31,6 @@ const report = {
   pdfs
 };
 
-if (report.totalExpectedPages !== 172) throw new Error(`Unexpected total PDF pages: ${report.totalExpectedPages}`);
+if (report.totalExpectedPages !== 174) throw new Error(`Unexpected total PDF pages: ${report.totalExpectedPages}`);
 fs.writeFileSync(path.join(dir, 'fingerprints.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-console.log('OK: SHA-256 fingerprints recorded for cone/circle/cylinder canonical PDFs (172 expected pages total).');
+console.log('OK: SHA-256 fingerprints recorded for cone/circle/cylinder canonical PDFs (174 expected pages total).');
