@@ -6,7 +6,7 @@ import AxeBuilder from '@axe-core/playwright';
 const ROOT_URL = process.env.VIEWER_QA_URL || 'http://127.0.0.1:4173/';
 const OUT_DIR = path.join('qa', 'modern-browser');
 const BOOKS = [
-  { id: 'circle', count: 88, first: 'circle/page-1.html' },
+  { id: 'circle', count: 90, first: 'circle/page-1.html' },
   { id: 'cylinder', count: 41, first: 'cylinder/page-1.html' },
   { id: 'cone', count: 46, first: 'worksheets/page-17.html' }
 ];

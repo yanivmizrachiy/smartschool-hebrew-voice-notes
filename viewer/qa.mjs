@@ -45,7 +45,7 @@ assert(index.includes('id="library"') && index.includes('id="home-hero"'), 'shar
 assert(index.includes('מעגל · גליל · חרוט'), 'shared project title must name all three topics');
 assert(index.includes('data-book-pages="circle"') && index.includes('data-book-pages="cylinder"') && index.includes('data-book-pages="cone"'), 'home must expose manifest-driven page-count slots for all workbooks');
 assert(index.includes('data-total-pages') && index.includes('data-book-count'), 'home must expose manifest-driven summary slots');
-assert(!index.includes('88 דפי A4') && !index.includes('38 דפי A4') && !index.includes('46 דפי A4') && !index.includes('172 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
+assert(!index.includes('90 דפי A4') && !index.includes('41 דפי A4') && !index.includes('46 דפי A4') && !index.includes('177 דפי A4'), 'home HTML must not duplicate canonical workbook counts');
 assert(index.includes('?topic=circle&sheet=1#workbook') && index.includes('?topic=cylinder&sheet=1#workbook') && index.includes('?topic=cone&sheet=1#workbook'), 'each home card must open page 1 of its own booklet');
 assert(!index.includes('כל הנושאים במקום אחד'), 'generic/demo-like home heading must not return');
 assert(index.includes('href="viewer/home.css"'), 'home stylesheet must be present in the initial HTML');
