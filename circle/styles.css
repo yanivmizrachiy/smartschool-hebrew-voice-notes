@@ -1,4 +1,5 @@
 @import url("a4-utilization.css");
+@import url("a4-fill.css");
 
 /*
   Circle workbook design system.
@@ -129,7 +130,7 @@ body {
   margin:0;
   font-size:26px;
   line-height:1.15;
-  font-weight:700;
+  font-weight:600;
   letter-spacing:-.01em;
   color:var(--brand-dark);
 }
@@ -140,7 +141,7 @@ body {
   border-radius:50%;
   display:grid;
   place-items:center;
-  font-weight:800;
+  font-weight:700;
   color:#fff;
   background:radial-gradient(120% 120% at 30% 25%,var(--brand) 0%,var(--brand-dark) 70%,var(--brand-deep) 100%);
   box-shadow:0 3px 9px rgba(29,78,216,.28), inset 0 1px 0 rgba(255,255,255,.35);
@@ -149,13 +150,13 @@ body {
 /* ---- Concept anchor ------------------------------------------------- */
 .anchor {
   margin:5mm 0 4mm;
-  padding:3mm 4mm 3mm 4mm;
+  padding:3mm 4mm;
   border:1px solid var(--brand-tint);
   border-right:3px solid var(--brand);
   border-radius:3mm;
   background:linear-gradient(135deg,var(--brand-soft),rgba(255,255,255,.6));
-  font-weight:500;
-  color:var(--ink-strong);
+  font-weight:400;
+  color:var(--ink);
   box-shadow:var(--shadow-card);
 }
 
@@ -170,14 +171,14 @@ body {
   border-radius:50%;
   display:grid;
   place-items:center;
-  font-weight:800;
+  font-weight:700;
   font-size:14px;
   color:#fff;
   background:radial-gradient(120% 120% at 30% 25%,var(--brand) 0%,var(--brand-dark) 78%);
   box-shadow:0 2px 5px rgba(29,78,216,.26), inset 0 1px 0 rgba(255,255,255,.3);
 }
 .task-body { flex:1; }
-.instruction { margin:0 0 3mm; font-weight:600; color:var(--ink-strong); }
+.instruction { margin:0 0 3mm; font-weight:500; color:var(--ink); }
 .page-intro { margin:3.5mm 0 3mm; color:var(--muted); font-weight:500; }
 
 /* ---- Visual (figure) cards ------------------------------------------ */
@@ -213,8 +214,8 @@ body {
   padding:1.3mm 3mm;
   white-space:nowrap;
   background:linear-gradient(180deg,#fff,var(--soft));
-  color:var(--ink-strong);
-  font-weight:500;
+  color:var(--ink);
+  font-weight:400;
 }
 .choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:2.5mm 4mm; }
 .choice-box {
@@ -246,14 +247,29 @@ body {
   vertical-align:-.08em;
 }
 .word-bank {
-  display:inline-block;
+  display:inline-flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:1.6mm;
   border:1px solid color-mix(in srgb,var(--brand) 20%,var(--line));
-  border-radius:999px;
-  padding:1.2mm 3mm;
+  border-radius:9px;
+  padding:2mm 2.6mm;
   background:linear-gradient(135deg,var(--brand-soft),#fff);
   font-weight:600;
   color:var(--brand-dark);
 }
+.word-bank .word {
+  display:inline-block;
+  border:1px solid color-mix(in srgb,var(--brand) 22%,var(--line));
+  border-radius:999px;
+  padding:0.9mm 3mm;
+  background:#fff;
+  color:var(--ink);
+  font-weight:600;
+  white-space:nowrap;
+}
+.sentence-list { display:grid; gap:2.6mm; margin-top:2.5mm; }
+.sentence { line-height:1.75; }
 .mini-note { font-size:12px; color:var(--muted); }
 
 /* ---- Work tables ---------------------------------------------------- */
@@ -265,7 +281,7 @@ body {
 }
 .work-table th {
   background:linear-gradient(180deg,var(--brand-soft),var(--soft));
-  font-weight:800;
+  font-weight:700;
   color:var(--brand-deep);
 }
 .work-table.center th, .work-table.center td { text-align:center; }
