@@ -6,6 +6,7 @@ const root = process.cwd();
 const dist = path.join(root, 'dist');
 const runtimeEntries = [
   'index.html',
+  'official-questions.html',
   'print.html',
   'viewer',
   'circle',
