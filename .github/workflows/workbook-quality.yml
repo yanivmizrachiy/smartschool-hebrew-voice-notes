@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: npm
@@ -51,7 +51,7 @@ jobs:
         run: node tools/qa-math-writing.mjs
       - name: Upload mathematical writing audit report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mathematical-writing-audit
           path: qa/math-writing/*
@@ -61,7 +61,7 @@ jobs:
         run: node tools/qa-visual-assets.mjs
       - name: Upload visual asset readiness status
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-asset-readiness
           path: qa/visual-assets/status.json
@@ -85,7 +85,7 @@ jobs:
         run: node tools/qa-shared-home.mjs
       - name: Upload shared-home screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: shared-home-qa
           path: qa/shared-home/*.png
@@ -95,7 +95,7 @@ jobs:
         run: node tools/qa-a4-pages.mjs
       - name: Upload A4 QA evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: a4-workbook-qa
           path: qa/a4-pages/*
@@ -105,7 +105,7 @@ jobs:
         run: node tools/qa-mobile-viewer.mjs
       - name: Upload mobile QA screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mobile-viewer-qa
           path: qa/mobile-viewer/*.png
@@ -122,7 +122,7 @@ jobs:
         run: node tools/qa-pdf-fingerprints.mjs
       - name: Upload real PDF QA evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: print-booklets-qa
           path: qa/print-booklets/*
@@ -137,14 +137,14 @@ jobs:
       - name: Validate reproducible deployment artifact
         run: node tests/dist-contract.mjs
       - name: Upload deployment artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: verified-site-dist
           path: dist/
           if-no-files-found: error
           retention-days: 30
       - name: Upload canonical build fingerprint
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build-fingerprint
           path: dist/build-manifest.json
