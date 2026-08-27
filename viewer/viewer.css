@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&family=Rubik:wght@400;500;600;700;800&display=swap');
+/* Fonts are loaded via a non-blocking <link> in index.html head (with preconnect),
+   not @import here — @import serialises font discovery and hurts Lighthouse LCP. */
 
 :root{
   --bg:#ffffff;
