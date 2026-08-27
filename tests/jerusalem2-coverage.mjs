@@ -6,73 +6,46 @@ const SOURCE_REPO = 'yanivmizrachiy/jerusalem2';
 const SOURCE_COMMIT = '0ce788f1aa2f186bce83b73217570728ea637052';
 const SOURCE_FILE = 'src/content/curriculum-fragments/idkun-geometri-8/idkun-geometri-8-p001-025.json';
 const FIGURE_DIR = 'public/media/curriculum/idkun-geometri-8';
+const SNAPSHOT_FILE = 'content/jerusalem2-geometry-p03-19.json';
 const REQUIRED_PAGES = Array.from({ length: 17 }, (_, index) => index + 3);
-const rawBase = `https://raw.githubusercontent.com/${SOURCE_REPO}/${SOURCE_COMMIT}`;
-const sourceUrl = `${rawBase}/${SOURCE_FILE}`;
-const figuresApi = `https://api.github.com/repos/${SOURCE_REPO}/contents/${FIGURE_DIR}?ref=${SOURCE_COMMIT}`;
 
 function fail(message) {
   console.error(`Jerusalem2 coverage QA failed: ${message}`);
   process.exit(1);
 }
 function read(rel) { return fs.readFileSync(path.join(root, rel), 'utf8'); }
-async function fetchJson(url, label) {
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'smartschool-jerusalem2-coverage-qa' },
-    signal: AbortSignal.timeout(20_000)
-  });
-  if (!response.ok) fail(`${label} returned HTTP ${response.status}`);
-  return response.json();
-}
 
 const officialPage = read('viewer/official-questions.html');
 const bootstrap = read('viewer/bootstrap.js');
 const buildSite = read('src/build-site.mjs');
-for (const required of [SOURCE_REPO, SOURCE_COMMIT, SOURCE_FILE, FIGURE_DIR]) {
-  if (!officialPage.includes(required)) fail(`viewer/official-questions.html is not pinned to ${required}`);
-}
-if (!officialPage.includes('SOURCE_START_PAGE=3') || !officialPage.includes('SOURCE_END_PAGE=19')) {
-  fail('official question bank must render the complete locked source range 3–19');
-}
-if (!officialPage.includes('sourcePages.length!==17')) {
-  fail('official question bank must reject an incomplete 3–19 source snapshot');
-}
-if (!bootstrap.includes('viewer/official-questions.html') || !bootstrap.includes('שאלות רשמיות')) {
-  fail('shared navigation does not expose the official question bank');
-}
-if (!buildSite.includes("'viewer'")) {
-  fail('deployment artifact does not include the viewer runtime containing the official question bank');
-}
+const snapshot = JSON.parse(read(SNAPSHOT_FILE));
 
-const [source, figureFiles] = await Promise.all([
-  fetchJson(sourceUrl, 'locked Jerusalem2 curriculum source'),
-  fetchJson(figuresApi, 'locked Jerusalem2 figure inventory')
-]);
-const pages = source.blocks
-  .filter(block => block.type === 'sourcePage' && block.page >= 3 && block.page <= 19)
-  .sort((a, b) => a.page - b.page);
-const actualPages = pages.map(block => block.page);
+if (snapshot.source?.repo !== SOURCE_REPO) fail('snapshot source repo mismatch');
+if (snapshot.source?.commit !== SOURCE_COMMIT) fail('snapshot source commit mismatch');
+if (snapshot.source?.file !== SOURCE_FILE) fail('snapshot source file mismatch');
+if (snapshot.source?.figureDir !== FIGURE_DIR) fail('snapshot figure directory mismatch');
+if (snapshot.source?.startPage !== 3 || snapshot.source?.endPage !== 19) fail('snapshot range must be exactly 3–19');
+if (!Array.isArray(snapshot.pages) || snapshot.pages.length !== 17) fail('snapshot must contain exactly 17 source pages');
+
+const actualPages = snapshot.pages.map(page => page.page);
 if (JSON.stringify(actualPages) !== JSON.stringify(REQUIRED_PAGES)) {
   fail(`expected source pages 3–19 exactly; got ${actualPages.join(', ')}`);
 }
-for (const page of pages) {
-  const rows = (page.tables || []).flatMap(table => table.rows || []);
-  if (!rows.length) fail(`source page ${page.page} has no curriculum rows`);
-  if (!rows.some(row => Array.isArray(row) && row.some(cell => String(cell || '').trim()))) {
-    fail(`source page ${page.page} has no readable source content`);
+for (const page of snapshot.pages) {
+  if (!page.id || !Array.isArray(page.topics) || !page.topics.length) fail(`page ${page.page}: invalid identity/topics`);
+  if (!String(page.questions || '').trim()) fail(`page ${page.page}: missing question text`);
+  for (const figure of page.figures || []) {
+    if (!/^fig-p\d+-\d+\.(?:png|jpe?g)$/i.test(figure.file || '')) fail(`page ${page.page}: invalid figure filename`);
+    if (!/^[0-9a-f]{40}$/i.test(figure.sha || '')) fail(`page ${page.page}: invalid figure sha`);
+    if (!Number.isInteger(figure.bytes) || figure.bytes <= 0) fail(`page ${page.page}: invalid figure byte size`);
   }
 }
-if (!Array.isArray(figureFiles)) fail('figure inventory is not an array');
-const sourceFigures = figureFiles.filter(file => {
-  const match = file.name?.match(/^fig-p(\d+)-/i);
-  if (!match) return false;
-  const page = Number(match[1]);
-  return page >= 3 && page <= 19;
-});
-if (!sourceFigures.length) fail('no source figures were discovered for pages 3–19');
-for (const file of sourceFigures) {
-  if (file.type !== 'file' || !file.name || !file.sha) fail('source figure inventory contains an invalid entry');
-}
+
+if (!officialPage.includes("../content/jerusalem2-geometry-p03-19.json")) fail('viewer must load the local locked snapshot');
+if (/raw\.githubusercontent\.com|api\.github\.com\/repos\/yanivmizrachiy\/jerusalem2/.test(officialPage)) fail('viewer must not depend on private Jerusalem2 network access at runtime');
+if (!bootstrap.includes('viewer/official-questions.html') || !bootstrap.includes('שאלות רשמיות')) fail('shared navigation does not expose the official question bank');
+if (!buildSite.includes("'viewer'")) fail('deployment artifact does not include viewer runtime');
+if (!buildSite.includes("'content/catalog.json'")) fail('deployment artifact content contract is missing');
 
 const catalog = JSON.parse(read('content/catalog.json'));
 const expectedCounts = { circle: 88, cylinder: 38, cone: 46 };
@@ -85,4 +58,6 @@ for (const book of catalog.books || []) {
   total += count;
 }
 if (total !== 172) fail(`canonical workbook total changed: ${total} != 172`);
-console.log(`OK: Jerusalem2 pages 3–19 are covered from locked commit ${SOURCE_COMMIT}; ${sourceFigures.length} source figures discovered; canonical 88/38/46 = 172 unchanged.`);
+
+const figureCount = snapshot.pages.reduce((sum, page) => sum + (page.figures?.length || 0), 0);
+console.log(`OK: local Jerusalem2 snapshot covers pages 3–19 from locked commit ${SOURCE_COMMIT}; ${figureCount} figure identities pinned; canonical 88/38/46 = 172 unchanged.`);
