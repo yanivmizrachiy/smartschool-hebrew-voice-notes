@@ -1,0 +1,20 @@
+{
+  "$schema": "schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "projectId": "circle-cylinder-cone",
+  "title": "מעגל · גליל · חרוט",
+  "books": [
+    {
+      "id": "circle",
+      "manifest": "content/circle.json"
+    },
+    {
+      "id": "cylinder",
+      "manifest": "content/cylinder.json"
+    },
+    {
+      "id": "cone",
+      "manifest": "content/workbook.json"
+    }
+  ]
+}

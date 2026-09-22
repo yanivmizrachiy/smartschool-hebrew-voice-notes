@@ -10,17 +10,24 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: textbook-layout-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   render:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22
-      - name: Install image fidelity tooling
-        run: python3 -m pip install --disable-pip-version-check pillow
+          node-version: 24
+          cache: npm
+      - name: Install locked Node dependencies
+        run: npm ci
+      - name: Install pinned image fidelity tooling
+        run: python3 -m pip install --disable-pip-version-check pillow==12.3.0
       - name: Build and validate workbook
         run: npm run check
       - name: Start local server
@@ -36,7 +43,7 @@ jobs:
       - name: Verify exact render count
         run: test "$(find qa/layout-pages -maxdepth 1 -name '*.png' | wc -l)" -eq 46
       - name: Upload page renders
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: textbook-layout-pages
           path: qa/layout-pages/*.png

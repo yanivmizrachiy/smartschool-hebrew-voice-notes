@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>סימטריה וחפיפה של מעגלים</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .a4-page .task{margin-block:3mm}
+    .a4-page .visual-card{min-height:31mm}
+    .a4-page .visual-card svg{height:25mm}
+    .a4-page .work-table th,.a4-page .work-table td{padding-block:2.3mm}
+    .a4-page .thinking{padding:3.1mm}
+    .a4-page .sentence{margin-block:1.7mm}
+    .a4-page .anchor{margin-block:2.5mm}
+  </style>
+</head>
+<body>
+<main class="a4-page">
+  <header class="page-header">
+    <h1 class="page-title">סימטריה וחפיפה של מעגלים</h1>
+    <div class="page-number" aria-label="עמוד 91">91</div>
+  </header>
+
+  <div class="anchor">למעגל יש <b>סימטריה סיבובית ביחס למרכז</b>: סיבוב בכל זווית סביב המרכז משאיר אותו ללא שינוי. כמו כן, כל קוטר הוא <b>ציר סימטריה</b> — שיקוף ביחס לקוטר. ומעגלים בעלי רדיוס שווה <b>חופפים</b>.</div>
+
+  <section class="task">
+    <div class="task-row">
+      <div class="task-num">1</div>
+      <div class="task-body">
+        <p class="instruction">בכל צורה: האם סיבוב סביב המרכז בזווית כלשהי משאיר אותה ללא שינוי (חופפת לעצמה)?</p>
+        <div class="visual-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="visual-card">
+            <svg viewBox="0 0 150 120" role="img" aria-label="מעגל עם מרכז">
+              <circle cx="75" cy="60" r="46" fill="#eef4ff" stroke="#1d4ed8" stroke-width="2.5"/>
+              <circle cx="75" cy="60" r="3" fill="#111827"/>
+            </svg>
+            <div>מעגל: <b>כן / לא</b></div>
+          </div>
+          <div class="visual-card">
+            <svg viewBox="0 0 150 120" role="img" aria-label="ריבוע עם מרכז">
+              <rect x="34" y="19" width="82" height="82" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/>
+              <circle cx="75" cy="60" r="3" fill="#111827"/>
+            </svg>
+            <div>ריבוע: <b>כן / לא</b></div>
+          </div>
+          <div class="visual-card">
+            <svg viewBox="0 0 150 120" role="img" aria-label="חץ שאינו סימטרי סיבובית">
+              <path d="M40 60 H92 V42 L118 60 L92 78 V60 Z" fill="#fef3c7" stroke="#b45309" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="79" cy="60" r="3" fill="#111827"/>
+            </svg>
+            <div>חץ: <b>כן / לא</b></div>
+          </div>
+        </div>
+        <div class="thinking">למעגל יש <b>סימטריה סיבובית ביחס למרכז</b>: סיבוב בכל זווית סביב המרכז משאיר אותו ללא שינוי — לכן למעגל התשובה היא „כן, בכל זווית”.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="task">
+    <div class="task-row">
+      <div class="task-num">2</div>
+      <div class="task-body">
+        <p class="instruction">הקו המקווקו הוא קוטר. השלימו לפי השיקוף ביחס לקוטר.</p>
+        <div class="visual-grid" style="grid-template-columns:0.9fr 1.1fr">
+          <div class="visual-card">
+            <svg viewBox="0 0 170 130" role="img" aria-label="מעגל עם קוטר אופקי כציר שיקוף ונקודה ותמונתה">
+              <circle cx="85" cy="65" r="48" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+              <line x1="30" y1="65" x2="140" y2="65" stroke="#d97706" stroke-width="2.5" stroke-dasharray="7 5"/>
+              <circle cx="85" cy="65" r="3" fill="#111827"/>
+              <text x="90" y="60" font-size="12">O</text>
+              <circle cx="108" cy="35" r="4" fill="#7c3aed"/>
+              <text x="114" y="34" font-size="13">P</text>
+              <circle cx="108" cy="95" r="4" fill="#7c3aed"/>
+              <text x="114" y="102" font-size="13">P′</text>
+            </svg>
+          </div>
+          <div>
+            <div class="word-bank"><span class="word">ציר סימטריה</span><span class="word">P′</span><span class="word">אינסוף</span></div>
+            <div class="sentence-list">
+              <div class="sentence">כל קוטר הוא <span class="blank" style="min-width:26mm"></span> של המעגל.</div>
+              <div class="sentence">הנקודה <span class="math-ltr">P</span> משוקפת ביחס לקוטר אל <span class="blank" style="min-width:16mm"></span>.</div>
+              <div class="sentence">כמה צירי סימטריה יש למעגל? <span class="blank" style="min-width:20mm"></span> (כל קוטר).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="task">
+    <div class="task-row">
+      <div class="task-num">3</div>
+      <div class="task-body">
+        <p class="instruction">סמנו בכל זוג אם המעגלים חופפים. שימו לב: קוטר יש להמיר לרדיוס תחילה.</p>
+        <table class="work-table center table-compact">
+          <tr><th>זוג</th><th>מעגל א׳</th><th>מעגל ב׳</th><th>חופפים?</th></tr>
+          <tr><td>1</td><td><span class="math-ltr">r=4</span> ס״מ</td><td><span class="math-ltr">r=4</span> ס״מ</td><td><b>חופפים / אינם חופפים</b></td></tr>
+          <tr><td>2</td><td><span class="math-ltr">r=3</span> ס״מ</td><td><span class="math-ltr">r=5</span> ס״מ</td><td><b>חופפים / אינם חופפים</b></td></tr>
+          <tr><td>3</td><td><span class="math-ltr">d=10</span> ס״מ</td><td><span class="math-ltr">r=5</span> ס״מ</td><td><b>חופפים / אינם חופפים</b></td></tr>
+        </table>
+        <div class="thinking">מסקנה: <b>מעגלים בעלי רדיוס שווה – חופפים</b>. אם לשני מעגלים אותו אורך רדיוס, אפשר להניח את האחד על השני והם מתלכדים.</div>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

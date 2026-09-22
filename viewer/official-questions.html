@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#075f63">
+  <title>שאלות רשמיות מתוכנית הלימודים — מעגל, גליל וחרוט</title>
+  <style>
+    :root{font-family:Arial,"Assistant",sans-serif;color:#17383a;background:#f4f8f8;line-height:1.55}
+    *{box-sizing:border-box}body{margin:0}a{color:inherit}.top{background:#075f63;color:#fff;padding:18px 16px}.wrap{width:min(1080px,calc(100% - 28px));margin:auto}.top .wrap{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}.top a{font-weight:700;text-decoration:none;border:1px solid #ffffff66;border-radius:999px;padding:8px 14px}main{padding:30px 0 60px}.hero,.page{background:#fff;border-radius:20px;padding:22px;box-shadow:0 5px 20px #08363810}.hero h1{margin:0 0 8px;font-size:clamp(1.7rem,5vw,2.7rem)}.source{font-size:.92rem;color:#506466}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.filters button{border:1px solid #9cc4c4;background:#fff;border-radius:999px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}.filters button[aria-pressed="true"]{background:#075f63;color:#fff}.status{padding:12px 0;font-weight:700}.page{margin:18px 0}.page h2{margin:0 0 8px}.badge{display:inline-block;background:#e7f3f2;color:#075f63;border-radius:999px;padding:4px 10px;font-size:.84rem;font-weight:700;margin-inline-start:8px}.questions{white-space:pre-wrap;font-size:1.04rem;font-weight:600}.figures{margin-top:14px;padding-top:12px;border-top:1px solid #e2ecec;color:#526467;font-size:.92rem}.figures>strong{display:block;margin-bottom:8px}.figure-grid{display:flex;flex-wrap:wrap;gap:14px}.src-fig{margin:0;max-width:300px;background:#fff;border:1px solid #dceaea;border-radius:12px;padding:8px}.src-fig img{display:block;width:100%;height:auto;border-radius:8px;background:#fbfdfd}.src-fig figcaption{margin-top:6px;font-size:.76rem;color:#7d9694;word-break:break-all}.covered{display:inline-block;margin-top:10px;background:#f2e8ef;color:#64143f;border-radius:999px;padding:4px 10px;font-size:.82rem;font-weight:700}@media print{.top,.filters,.source{display:none}.wrap{width:100%}.page{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+  </style>
+</head>
+<body>
+<header class="top"><div class="wrap"><strong>שאלות רשמיות · תוכנית הלימודים</strong><a href="../">חזרה לחוברות</a></div></header>
+<main class="wrap">
+  <section class="hero">
+    <h1>מעגל · גליל · חרוט — שאלות המקור</h1>
+    <p>מאגר משלים לחוברות, מתוך snapshot מקומי ונעול של עמודי המקור 3–19. המאגר אינו משנה את ספירת דפי החוברות 88 / 38 / 46.</p>
+    <p class="source">מקור: <code>yanivmizrachiy/jerusalem2@0ce788f1aa2f186bce83b73217570728ea637052</code> · snapshot מקומי: <code>content/jerusalem2-geometry-p03-19.json</code></p>
+  </section>
+  <div class="filters" aria-label="סינון לפי נושא">
+    <button type="button" data-filter="all" aria-pressed="true">הכול</button><button type="button" data-filter="circle" aria-pressed="false">מעגל</button><button type="button" data-filter="cylinder" aria-pressed="false">גליל</button><button type="button" data-filter="cone" aria-pressed="false">חרוט</button>
+  </div>
+  <div id="status" class="status">טוען את מאגר המקור המקומי…</div><div id="pages"></div>
+</main>
+<script type="module">
+const SNAPSHOT='../content/jerusalem2-geometry-p03-19.json';
+const status=document.querySelector('#status');const pagesRoot=document.querySelector('#pages');let currentFilter='all';let model=[];
+const labels={circle:'מעגל',cylinder:'גליל',cone:'חרוט'};
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){const visible=model.filter(p=>currentFilter==='all'||p.topics.includes(currentFilter));status.textContent=`${visible.length} עמודי מקור מוצגים · מתוך 17 עמודים נעולים (3–19)`;pagesRoot.innerHTML=visible.map(p=>`<article class="page" id="source-page-${p.page}"><h2>עמוד מקור ${p.page}<span class="badge">${p.topics.map(t=>labels[t]).join(' · ')}</span></h2><div class="questions">${esc(p.questions)}</div>${p.coverage==='existing-workbook'?'<span class="covered">כבר משולב בחוברת הקיימת</span>':''}${p.figures?.length?`<div class="figures"><strong>איורי מקור נעולים (byte-faithful):</strong><div class="figure-grid">${p.figures.map(f=>`<figure class="src-fig"><img loading="lazy" alt="איור מקור לעמוד ${p.page}" src="../content/jerusalem2-figures/${esc(f.file)}"><figcaption>${esc(f.file)} · SHA ${esc(String(f.sha).slice(0,12))}…</figcaption></figure>`).join('')}</div></div>`:''}</article>`).join('')}
+for(const button of document.querySelectorAll('[data-filter]'))button.addEventListener('click',()=>{currentFilter=button.dataset.filter;for(const b of document.querySelectorAll('[data-filter]'))b.setAttribute('aria-pressed',String(b===button));render()});
+try{const response=await fetch(SNAPSHOT,{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);const snapshot=await response.json();if(snapshot.source?.commit!=='0ce788f1aa2f186bce83b73217570728ea637052')throw new Error('commit המקור אינו תואם');if(snapshot.source?.startPage!==3||snapshot.source?.endPage!==19||snapshot.pages?.length!==17)throw new Error('snapshot המקור אינו שלם');model=snapshot.pages;render()}catch(error){status.textContent=`שגיאה בטעינת המאגר המקומי: ${error.message}`;status.setAttribute('role','alert')}
+</script>
+</body>
+</html>

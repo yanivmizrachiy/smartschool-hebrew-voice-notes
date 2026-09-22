@@ -14,8 +14,8 @@ const forbiddenInternalStudentText = /(?:RULES\.md|workbook\.json|source-registr
 const oldProjectText = /smartschool|voice[- ]?notes|סמרטקול|הכתבה בעברית/i;
 
 const allowedRootEntries = new Set([
-  '.git', '.github', '.gitignore', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
-  'package.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
+  '.git', '.github', '.gitignore', '.nvmrc', 'README.md', 'RULES.md', 'content', 'design', 'index.html',
+  'package.json', 'package-lock.json', 'print', 'print.html', 'qa', 'questions', 'research', 'src',
   'tests', 'tools', 'viewer', 'worksheets', 'visual-assets', 'visual-pages', 'circle', 'cylinder'
 ]);
 for (const entry of fs.readdirSync(root)) if (!allowedRootEntries.has(entry)) fail(`root: unexpected entry ${entry}`);
@@ -128,7 +128,8 @@ for (const file of [indexPath, appJsPath, printPagePath, printJsPath]) if (!fs.e
 if (fs.existsSync(indexPath)) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
   if (!/<h1[^>]*id="hero-title"[^>]*>מעגל · גליל · חרוט<\/h1>/.test(indexHtml)) fail('index.html: shared project title must name circle, cylinder and cone');
-  if (!indexHtml.includes('172 דפי A4')) fail('index.html: verified 172-page shared total is missing');
+  if (!indexHtml.includes('data-total-pages') || !indexHtml.includes('data-book-pages="circle"') || !indexHtml.includes('data-book-pages="cylinder"') || !indexHtml.includes('data-book-pages="cone"')) fail('index.html: manifest-driven home count slots are missing');
+  if (indexHtml.includes('93 דפי A4') || indexHtml.includes('41 דפי A4') || indexHtml.includes('46 דפי A4') || indexHtml.includes('180 דפי A4')) fail('index.html: canonical page counts must not be duplicated as hard-coded home text');
   if (!indexHtml.includes('viewer/bootstrap.js') || indexHtml.includes('src="viewer/app.js"')) fail('index.html: root must use lazy shared-home bootstrap instead of eager workbook app');
   if (!indexHtml.includes('id="library"')) fail('index.html: shared three-workbook library is missing');
   if (!indexHtml.includes('id="booklet-sheets"')) fail('index.html: missing continuous booklet sheets container');
@@ -139,7 +140,8 @@ if (fs.existsSync(indexPath)) {
 }
 if (fs.existsSync(appJsPath)) {
   const appJs = fs.readFileSync(appJsPath, 'utf8');
-  if (!appJs.includes("fetch('content/workbook.json'")) fail('viewer/app.js: must load workbook.json dynamically');
+  if (!appJs.includes('catalogBook.manifest')) fail('viewer/app.js: must load the selected workbook through the canonical catalog manifest');
+  if (/const\s+TOPICS\s*=/.test(appJs)) fail('viewer/app.js: must not duplicate canonical topic counts in a private TOPICS constant');
   if (!appJs.includes('worksheets/${page.slug}.html')) fail('viewer/app.js: must load worksheet pages from slugs');
   if (!appJs.includes("frameWrap.className = 'ws-wsframe'")) fail('viewer/app.js: continuous booklet frame rendering missing');
   if (!appJs.includes("printBooklet.addEventListener('click', printPreparedBooklet)")) fail('viewer/app.js: prepared whole-booklet print action missing');

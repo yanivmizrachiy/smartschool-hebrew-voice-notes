@@ -1,0 +1,96 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+
+const root = process.cwd();
+const dist = path.join(root, 'dist');
+const required = [
+  'index.html',
+  'print.html',
+  'viewer/bootstrap.js',
+  'viewer/app.js',
+  'content/catalog.json',
+  'content/circle.json',
+  'content/cylinder.json',
+  'content/workbook.json'
+];
+
+const fail = message => { throw new Error(`Dist contract failed: ${message}`); };
+const sha256 = data => crypto.createHash('sha256').update(data).digest('hex');
+
+function walkFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkFiles(full));
+    else out.push(full);
+  }
+  return out;
+}
+
+function runtimeTreeFingerprint() {
+  const entries = walkFiles(dist)
+    .filter(file => path.basename(file) !== 'build-manifest.json')
+    .map(file => ({
+      path: path.relative(dist, file).replaceAll('\\', '/'),
+      sha256: sha256(fs.readFileSync(file))
+    }))
+    .sort((a, b) => a.path.localeCompare(b.path, 'en'));
+  return {
+    fileCount: entries.length,
+    sha256: sha256(entries.map(entry => `${entry.path}\0${entry.sha256}`).join('\n'))
+  };
+}
+
+if (!fs.existsSync(dist)) fail('dist/ does not exist; run node src/build-site.mjs');
+
+for (const rel of required) {
+  if (!fs.existsSync(path.join(dist, rel))) fail(`missing runtime file ${rel}`);
+}
+if (!fs.existsSync(path.join(dist, 'build-manifest.json'))) fail('missing build-manifest.json');
+
+for (let page = 1; page <= 93; page += 1) {
+  if (!fs.existsSync(path.join(dist, 'circle', `page-${page}.html`))) fail(`missing circle page ${page}`);
+}
+for (let page = 1; page <= 41; page += 1) {
+  if (!fs.existsSync(path.join(dist, 'cylinder', `page-${page}.html`))) fail(`missing cylinder page ${page}`);
+}
+
+const cone = JSON.parse(fs.readFileSync(path.join(dist, 'content', 'workbook.json'), 'utf8'));
+if (cone.pages?.length !== 38 || cone.visualPages?.length !== 8 || cone.printSequence?.length !== 46) {
+  fail('cone deployment manifest does not preserve 38 worksheets + 8 visuals + 46 print sequence');
+}
+for (const page of cone.pages || []) {
+  if (!fs.existsSync(path.join(dist, 'worksheets', `${page.slug}.html`))) fail(`missing cone worksheet ${page.slug}`);
+}
+for (const page of cone.visualPages || []) {
+  if (!fs.existsSync(path.join(dist, 'visual-pages', `${page.slug}.html`))) fail(`missing cone visual page ${page.slug}`);
+}
+
+const forbidden = [
+  'RULES.md', 'README.md', 'qa', 'tests', 'research', '.github', 'package.json', 'package-lock.json',
+  'content/source-registry.json', 'content/schemas'
+];
+for (const rel of forbidden) {
+  if (fs.existsSync(path.join(dist, rel))) fail(`development-only entry leaked into deployment artifact: ${rel}`);
+}
+
+const contentEntries = fs.readdirSync(path.join(dist, 'content')).sort();
+const expectedContentEntries = ['catalog.json', 'circle.json', 'cylinder.json', 'jerusalem2-figures', 'jerusalem2-geometry-p03-19.json', 'workbook.json'];
+if (JSON.stringify(contentEntries) !== JSON.stringify(expectedContentEntries)) {
+  fail(`dist/content must contain runtime manifests only; found ${contentEntries.join(', ')}`);
+}
+
+const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'build-manifest.json'), 'utf8'));
+if (manifest.schemaVersion !== 2) fail(`build manifest schemaVersion must be 2, found ${manifest.schemaVersion}`);
+if (manifest.counts?.circlePages !== 93 || manifest.counts?.cylinderPages !== 41 || manifest.counts?.conePages !== 46 || manifest.counts?.totalPages !== 180) {
+  fail('build manifest counts are not 93/41/46/180');
+}
+
+const actualRuntimeTree = runtimeTreeFingerprint();
+if (manifest.runtimeTree?.fileCount !== actualRuntimeTree.fileCount || manifest.runtimeTree?.sha256 !== actualRuntimeTree.sha256) {
+  fail(`runtime tree fingerprint mismatch; manifest=${JSON.stringify(manifest.runtimeTree)} actual=${JSON.stringify(actualRuntimeTree)}`);
+}
+
+console.log(`OK: dist/ contains the complete 180-page runtime, only runtime manifests, no development/source-provenance files, and a verified ${actualRuntimeTree.fileCount}-file runtime fingerprint.`);

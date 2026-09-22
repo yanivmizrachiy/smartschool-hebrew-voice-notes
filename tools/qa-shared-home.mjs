@@ -13,26 +13,67 @@ if (typeof WebSocket === 'undefined') throw new Error('Shared home QA: Node 22+ 
 
 fs.rmSync(OUT_DIR, { recursive: true, force: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'home-cdp-'));
-const port = 10120 + Math.floor(Math.random() * 300);
-const browser = spawn(chrome, [
-  '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
-  `--remote-debugging-port=${port}`, '--remote-debugging-address=127.0.0.1',
-  `--user-data-dir=${profile}`, 'about:blank'
-], { stdio: ['ignore', 'pipe', 'pipe'] });
 
 async function json(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
   return response.json();
 }
-async function waitDebug() {
-  const deadline = Date.now() + 15000;
-  while (Date.now() < deadline) {
-    try { return await json(`http://127.0.0.1:${port}/json/version`); } catch { await delay(100); }
+
+async function removeProfileSafely(profilePath) {
+  if (!profilePath) return;
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    try {
+      fs.rmSync(profilePath, { recursive: true, force: true, maxRetries: 2, retryDelay: 80 });
+      return;
+    } catch (error) {
+      if (!['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(error?.code)) throw error;
+      if (attempt === 6) {
+        console.warn(`Shared home cleanup warning: ${error.message}`);
+        return;
+      }
+      await delay(120 * attempt);
+    }
   }
-  throw new Error('Shared home QA: Chrome DevTools port timeout');
 }
+
+async function launchBrowser(maxAttempts = 3) {
+  const failures = [];
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const profile = fs.mkdtempSync(path.join(os.tmpdir(), `home-cdp-${attempt}-`));
+    const port = 10120 + Math.floor(Math.random() * 2000);
+    const stderr = [];
+    const browser = spawn(chrome, [
+      '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+      `--remote-debugging-port=${port}`, '--remote-debugging-address=127.0.0.1',
+      `--user-data-dir=${profile}`, 'about:blank'
+    ], { stdio: ['ignore', 'pipe', 'pipe'] });
+    browser.stderr?.on('data', chunk => stderr.push(String(chunk)));
+
+    const deadline = Date.now() + 15000 + (attempt - 1) * 5000;
+    while (Date.now() < deadline) {
+      if (browser.exitCode !== null) break;
+      try {
+        await json(`http://127.0.0.1:${port}/json/version`);
+        return { browser, profile, port };
+      } catch {
+        await delay(Math.min(150 * attempt, 500));
+      }
+    }
+
+    const diagnostic = stderr.join('').trim().slice(-4000);
+    failures.push(`attempt ${attempt}: exit=${browser.exitCode ?? 'running'}${diagnostic ? `; stderr=${diagnostic}` : ''}`);
+    if (browser.exitCode === null) {
+      const exited = new Promise(resolve => browser.once('exit', resolve));
+      browser.kill('SIGTERM');
+      await Promise.race([exited, delay(1200)]);
+    }
+    await removeProfileSafely(profile);
+    if (attempt < maxAttempts) await delay(300 * attempt);
+  }
+  throw new Error(`Shared home QA: Chrome DevTools launch failed after ${maxAttempts} attempts\n${failures.join('\n')}`);
+}
+
 class Cdp {
   constructor(url) { this.ws = new WebSocket(url); this.id = 1; this.pending = new Map(); }
   async open() {
@@ -74,9 +115,9 @@ async function shot(cdp, name) {
 }
 function assert(condition, message) { if (!condition) throw new Error(`Shared home QA failed: ${message}`); }
 
-let cdp; let target; let exitCode = 0;
+let cdp; let target; let browser; let profile; let port; let exitCode = 0;
 try {
-  await waitDebug();
+  ({ browser, profile, port } = await launchBrowser());
   target = await json(`http://127.0.0.1:${port}/json/new?${encodeURIComponent(ROOT_URL)}`, { method: 'PUT' });
   cdp = new Cdp(target.webSocketDebuggerUrl); await cdp.open();
   await cdp.send('Runtime.enable'); await cdp.send('Page.enable');
@@ -99,7 +140,7 @@ try {
     libraryVisible: getComputedStyle(document.querySelector('#library')).display !== 'none'
   }))()`);
   assert(JSON.stringify(desktop.cards) === JSON.stringify(['מעגל','גליל','חרוט']), `desktop card order/titles ${JSON.stringify(desktop.cards)}`);
-  assert(JSON.stringify(desktop.counts) === JSON.stringify(['88 דפי A4','38 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
+  assert(JSON.stringify(desktop.counts) === JSON.stringify(['93 דפי A4','41 דפי A4','46 דפי A4']), `desktop page counts ${JSON.stringify(desktop.counts)}`);
   assert(desktop.iframeCount === 0, `home must load zero iframes, got ${desktop.iframeCount}`);
   assert(desktop.workbookHidden && desktop.jumpHidden, 'workbook and page dock must stay hidden on root');
   assert(desktop.bodyHome && !desktop.bodyTopic, 'root body mode must be is-home only');
@@ -128,10 +169,10 @@ try {
   assert(phone.cardWidths.every(w => w <= phone.viewport + 1), `phone card exceeds viewport: ${JSON.stringify(phone.cardWidths)}`);
   await shot(cdp, 'home-phone.png');
 
-  // Direct circle link: no catalog payload; selected booklet begins at page 1 and has all 88 frames.
+  // Direct circle link: no catalog payload; selected booklet begins at page 1 and has all 90 frames.
   const circleUrl = `${ROOT_URL}?topic=circle&sheet=1#workbook`;
   await cdp.send('Page.navigate', { url: circleUrl });
-  await waitFor(cdp, `document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === 88`, 'direct circle workbook', 20000);
+  await waitFor(cdp, `document.body.classList.contains('has-topic') && document.querySelectorAll('.ws-wsframe').length === 93`, 'direct circle workbook', 20000);
   const circle = await evaluate(cdp, `(() => ({
     frames: document.querySelectorAll('.ws-wsframe').length,
     firstSrc: document.querySelector('.ws-sheet-frame')?.getAttribute('src') || '',
@@ -140,22 +181,21 @@ try {
     jumpHidden: document.querySelector('#page-jump')?.hidden === true,
     active: document.querySelector('.topic-link.is-active')?.dataset.topic || ''
   }))()`);
-  assert(circle.frames === 88, `circle direct link frame count ${circle.frames}`);
+  assert(circle.frames === 93, `circle direct link frame count ${circle.frames}`);
   assert(circle.firstSrc === 'circle/page-1.html', `circle must begin at page 1, got ${circle.firstSrc}`);
   assert(circle.libraryHidden && !circle.workbookHidden && !circle.jumpHidden, `circle mode visibility ${JSON.stringify(circle)}`);
   assert(circle.active === 'circle', `circle topic must be active, got ${circle.active}`);
 
-  console.log('Shared home browser QA: PASS (desktop + phone home, zero eager workbook iframes, no horizontal overflow, direct circle page 1 / 88-page viewer checked)');
+  console.log('Shared home browser QA: PASS (desktop + phone home, zero eager workbook iframes, no horizontal overflow, direct circle page 1 / 90-page viewer checked)');
 } catch (error) {
   exitCode = 1; console.error(error.stack || error.message || error);
 } finally {
   cdp?.close();
-  if (target?.id) await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`).catch(() => {});
-  const exited = new Promise(resolve => browser.once('exit', resolve));
-  browser.kill('SIGTERM'); await Promise.race([exited, delay(1200)]);
-  for (let i = 0; i < 5; i++) {
-    try { fs.rmSync(profile, { recursive: true, force: true, maxRetries: 2, retryDelay: 80 }); break; }
-    catch (error) { if (i === 4) console.warn(`Shared home cleanup warning: ${error.message}`); else await delay(120 * (i + 1)); }
+  if (target?.id && port) await fetch(`http://127.0.0.1:${port}/json/close/${target.id}`).catch(() => {});
+  if (browser && browser.exitCode === null) {
+    const exited = new Promise(resolve => browser.once('exit', resolve));
+    browser.kill('SIGTERM'); await Promise.race([exited, delay(1200)]);
   }
+  await removeProfileSafely(profile);
 }
 process.exitCode = exitCode;

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "projectId", "title", "books"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "projectId": { "const": "circle-cylinder-cone" },
+    "title": { "type": "string", "minLength": 1 },
+    "books": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "manifest"],
+        "properties": {
+          "id": { "enum": ["circle", "cylinder", "cone"] },
+          "manifest": { "type": "string", "pattern": "^content/.+\\.json$" }
+        }
+      }
+    }
+  }
+}

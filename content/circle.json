@@ -1,0 +1,13 @@
+{
+  "$schema": "schemas/simple-workbook.schema.json",
+  "schemaVersion": 1,
+  "id": "circle",
+  "label": "מעגל",
+  "pageCount": 93,
+  "sourceType": "numbered-html-series",
+  "folder": "circle",
+  "pagePattern": "page-{page}.html",
+  "pageRange": { "start": 1, "end": 93 },
+  "identity": { "nameField": false, "dateField": false },
+  "a4UtilizationMaxBlankPx": 150
+}

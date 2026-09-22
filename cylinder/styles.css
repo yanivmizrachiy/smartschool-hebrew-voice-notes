@@ -1,6 +1,292 @@
-@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}body{direction:rtl;font-family:"Rubik","Heebo","Noto Sans Hebrew",Arial,sans-serif;background:#eef2f7;color:#111827}.a4-page{width:210mm;height:297mm;margin:0 auto;padding:10mm 18mm 27mm;background:#fff;overflow:hidden;position:relative;font-size:16px;line-height:1.36}.a4-page.tight{font-size:14px;line-height:1.24}.a4-page.tight .anchor{margin:3mm 0 2.5mm;padding:2mm 3mm}.a4-page.tight .task{margin:2mm 0}.a4-page.tight .instruction{margin-bottom:1.5mm}.a4-page::after{content:"יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים\A הדרכה במחוז ירושלים והעיר ירושלים - מנח\"י, בהובלת איילת קריספין";white-space:pre-line;position:absolute;right:18mm;left:18mm;bottom:4.5mm;border-top:1px solid #cbd5e1;padding-top:2mm;text-align:center;font-size:10.5px;line-height:1.45;color:#475569;font-weight:500}.page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:4mm;border-bottom:1.5px solid #1d4ed8}.page-title{margin:0;font-size:26px;line-height:1.15;font-weight:600;color:#1d4ed8}.page-number{width:10mm;height:10mm;border:1.5px solid #1d4ed8;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#1d4ed8}.anchor{margin:5mm 0 4mm;padding:3mm 4mm;border:1px solid #cbd5e1;border-radius:3mm;background:#f8fafc;font-weight:500}.task{margin:4mm 0}.task-row{display:flex;align-items:flex-start;gap:3mm}.task-num{flex:0 0 7mm;width:7mm;height:7mm;border:1.2px solid #1d4ed8;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#1d4ed8}.task-body{flex:1;min-width:0}.instruction{margin:0 0 3mm;font-weight:600}.shape-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5mm}.shape-card{border:1px solid #e2e8f0;border-radius:3mm;padding:2mm;text-align:center;background:#fff;min-height:39mm}.shape-card svg{width:100%;height:24mm;display:block}.shape-id{font-weight:700;color:#475569;margin-bottom:1mm}.classify-table,.work-table{width:100%;border-collapse:collapse;margin-top:3mm}.classify-table th,.classify-table td,.work-table th,.work-table td{border:1px solid #cbd5e1;padding:2.2mm 2.5mm;text-align:center;vertical-align:middle}.classify-table th,.work-table th{background:#f8fafc;font-weight:600}.work-table td:empty{height:9mm}.mark-box{display:inline-block;width:5mm;height:5mm;border:1.2px solid #64748b;border-radius:1mm;vertical-align:middle}.word-bank{display:flex;gap:3mm;flex-wrap:wrap;margin:2mm 0;border:1px solid #cbd5e1;border-radius:3mm;padding:2mm 3mm;background:#f8fafc;font-weight:600}.word{border:1px solid #94a3b8;border-radius:999px;padding:1.2mm 3mm;background:#fff}.sentence-list{display:grid;gap:2.5mm}.sentence{border-bottom:1px solid #e2e8f0;padding:2mm 0}.blank{display:inline-block;min-width:35mm;border-bottom:1px solid #64748b}.choice-list{display:grid;gap:2mm}.choice-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3mm;border-bottom:1px solid #e2e8f0;padding:2mm 0}.choice-pill{display:inline-block;border:1px solid #94a3b8;border-radius:999px;padding:1.3mm 3mm;background:#fff;white-space:nowrap}.thinking{border:1px solid #cbd5e1;border-radius:3mm;padding:3mm 4mm;background:#f8fafc}.visual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}.visual-card{border:1px solid #e2e8f0;border-radius:3mm;padding:2.5mm;text-align:center;min-height:40mm;background:#fff}.visual-card svg{width:100%;height:26mm;display:block}.coord-caption{margin-top:1.5mm;font-weight:600;color:#475569}.footer{position:absolute;right:18mm;left:18mm;bottom:18mm;display:flex;justify-content:space-between;font-size:11px;color:#475569}
+@page{size:A4;margin:0}
+/*
+  Cylinder workbook design system.
+  RULES.md is the single source of truth. This aesthetic layer brings the
+  cylinder booklet up to the same premium standard as the circle booklet
+  (shared blue family, filled brand badges, tinted cards, functional amber
+  accent, soft depth) WITHOUT changing any geometry the A4-utilization
+  profiles and the real-Chrome A4 QA depend on. Per RULES.md §5 there is
+  no name/date footer on any cylinder page. Only colour, depth, gradient,
+  type-weight and diagram styling are elevated.
+*/
+* { box-sizing: border-box; }
 
-/* A4 utilization: use otherwise empty space as useful lined workspace without changing worksheet content. */
+:root {
+  --paper:#ffffff;
+  --ink:#1e293b;
+  --ink-strong:#0f172a;
+  --muted:#5b6b82;
+  --line:#dbe3ee;
+  --line-soft:#e8eef7;
+  --soft:#f5f8fd;
+
+  --brand:#1d4ed8;
+  --brand-dark:#1a3fae;
+  --brand-deep:#152f7e;
+  --brand-soft:#eef4ff;
+  --brand-tint:#e2ecff;
+
+  --accent:#e0892b;
+  --accent-soft:#fff6ea;
+  --teal:#0f766e;
+
+  --shadow-card:0 1px 2px rgba(15,23,42,.04), 0 3px 10px rgba(15,23,42,.05);
+  --shadow-soft:0 10px 34px rgba(21,47,126,.12);
+}
+@supports (color: oklch(0.5 0.1 260)) {
+  :root {
+    --ink:oklch(0.30 0.03 260); --ink-strong:oklch(0.22 0.04 260); --muted:oklch(0.50 0.02 260);
+    --line:oklch(0.89 0.02 255); --line-soft:oklch(0.93 0.015 255); --soft:oklch(0.975 0.008 255);
+    --brand:oklch(0.50 0.17 262); --brand-dark:oklch(0.44 0.16 262); --brand-deep:oklch(0.36 0.14 262);
+    --brand-soft:oklch(0.965 0.02 262); --brand-tint:oklch(0.93 0.04 262);
+    --accent:oklch(0.71 0.14 62); --accent-soft:oklch(0.96 0.04 70); --teal:oklch(0.52 0.10 190);
+  }
+}
+
+html, body { margin:0; padding:0; }
+body {
+  direction:rtl;
+  font-family:"Rubik","Heebo","Noto Sans Hebrew",Arial,sans-serif;
+  background:linear-gradient(135deg,#eef2f9 0%,#f4f7fc 55%,#eaf0fb 100%);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+.a4-page {
+  width:210mm;
+  height:297mm;
+  margin:0 auto;
+  padding:10mm 18mm 18mm;
+  background:var(--paper);
+  overflow:hidden;
+  position:relative;
+  font-size:16px;
+  line-height:1.36;
+  color:var(--ink);
+  box-shadow:var(--shadow-soft);
+}
+.a4-page.tight { font-size:14px; line-height:1.24; }
+.a4-page.tight .anchor { margin:3mm 0 2.5mm; padding:2mm 3mm; }
+.a4-page.tight .task { margin:2mm 0; }
+.a4-page.tight .instruction { margin-bottom:1.5mm; }
+
+/* Canonical two-line credit strip (RULES.md §16) — text preserved exactly. */
+.a4-page::after {
+  content:"יניב רז - מדריך מחוזי חט\"ב בעיר ירושלים\A הדרכה במחוז ירושלים והעיר ירושלים - מנח\"י, בהובלת איילת קריספין";
+  white-space:pre-line;
+  position:absolute;
+  right:18mm;
+  left:18mm;
+  bottom:4.5mm;
+  border-top:1.4px solid var(--line);
+  padding-top:2mm;
+  text-align:center;
+  font-size:10.5px;
+  line-height:1.45;
+  color:var(--muted);
+  font-weight:500;
+}
+
+/* Header */
+.page-header {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:4mm;
+  border-bottom:1.5px solid var(--brand);
+  position:relative;
+}
+.page-header::after {
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:-1.5px;
+  width:46mm;
+  height:1.5px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.page-title {
+  margin:0;
+  font-size:26px;
+  line-height:1.15;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--brand-dark);
+}
+.page-number {
+  width:10mm;
+  height:10mm;
+  border:0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  color:#fff;
+  background:radial-gradient(120% 120% at 30% 25%,var(--brand) 0%,var(--brand-dark) 70%,var(--brand-deep) 100%);
+  box-shadow:0 3px 9px rgba(29,78,216,.28), inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* Concept anchor */
+.anchor {
+  margin:5mm 0 4mm;
+  padding:3mm 4mm;
+  border:1px solid var(--brand-tint);
+  border-right:3px solid var(--brand);
+  border-radius:3mm;
+  background:linear-gradient(135deg,var(--brand-soft),rgba(255,255,255,.6));
+  font-weight:500;
+  color:var(--ink);
+  box-shadow:var(--shadow-card);
+}
+
+/* Tasks */
+.task { margin:4mm 0; }
+.task-row { display:flex; align-items:flex-start; gap:3mm; }
+.task-num {
+  flex:0 0 7mm;
+  width:7mm;
+  height:7mm;
+  border:0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  font-size:14px;
+  color:#fff;
+  background:radial-gradient(120% 120% at 30% 25%,var(--brand) 0%,var(--brand-dark) 78%);
+  box-shadow:0 2px 5px rgba(29,78,216,.26), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.task-body { flex:1; min-width:0; }
+.instruction { margin:0 0 3mm; font-weight:500; color:var(--ink); }
+
+/* Shape identification cards */
+.shape-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2.5mm; }
+.shape-card {
+  border:1px solid var(--line);
+  border-radius:3mm;
+  padding:2mm;
+  text-align:center;
+  background:linear-gradient(160deg,var(--soft),#fff 60%);
+  min-height:39mm;
+  box-shadow:var(--shadow-card);
+}
+.shape-card svg { width:100%; height:24mm; display:block; }
+.shape-id {
+  display:inline-grid;
+  place-items:center;
+  width:6mm;
+  height:6mm;
+  border-radius:50%;
+  background:var(--brand-soft);
+  color:var(--brand-deep);
+  font-weight:700;
+  font-size:12px;
+  margin-bottom:1mm;
+}
+
+/* Tables */
+.classify-table, .work-table { width:100%; border-collapse:collapse; margin-top:3mm; }
+.classify-table th, .classify-table td,
+.work-table th, .work-table td {
+  border:1px solid var(--line);
+  padding:2.2mm 2.5mm;
+  text-align:center;
+  vertical-align:middle;
+}
+.classify-table th, .work-table th {
+  background:linear-gradient(180deg,var(--brand-soft),var(--soft));
+  font-weight:700;
+  color:var(--brand-deep);
+}
+.work-table td:empty { height:9mm; }
+
+.mark-box {
+  display:inline-block;
+  width:5mm;
+  height:5mm;
+  border:1.4px solid var(--brand);
+  border-radius:1.4mm;
+  vertical-align:middle;
+  background:#fff;
+}
+
+/* Word bank */
+.word-bank {
+  display:flex;
+  gap:2mm;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:2mm 0;
+  border:1px solid color-mix(in srgb,var(--brand) 20%,var(--line));
+  border-radius:9px;
+  padding:2mm 2.6mm;
+  background:linear-gradient(135deg,var(--brand-soft),#fff);
+  font-weight:600;
+  color:var(--brand-dark);
+}
+.word {
+  border:1px solid color-mix(in srgb,var(--brand) 22%,var(--line));
+  border-radius:999px;
+  padding:0.9mm 3mm;
+  background:#fff;
+  color:var(--ink);
+  white-space:nowrap;
+}
+
+/* Sentences, blanks */
+.sentence-list { display:grid; gap:2.5mm; }
+.sentence { border-bottom:1px solid var(--line-soft); padding:2mm 0; line-height:1.5; }
+.blank { display:inline-block; min-width:35mm; border-bottom:1.3px solid var(--muted); }
+
+/* Choices */
+.choice-list { display:grid; gap:2mm; }
+.choice-row {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:3mm;
+  border-bottom:1px solid var(--line-soft);
+  padding:2mm 0;
+}
+.choice-pill {
+  display:inline-block;
+  border:1px solid color-mix(in srgb,var(--brand) 22%,var(--line));
+  border-radius:999px;
+  padding:1.3mm 3mm;
+  background:linear-gradient(180deg,#fff,var(--soft));
+  color:var(--ink);
+}
+/* choice-pills stay on one line (nowrap) to keep sheet height predictable. */
+
+/* Higher-order thinking card (functional amber accent) */
+.thinking {
+  border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line));
+  border-right:3px solid var(--accent);
+  border-radius:3mm;
+  padding:3mm 4mm;
+  background:linear-gradient(135deg,var(--accent-soft),rgba(255,255,255,.55));
+  box-shadow:var(--shadow-card);
+}
+
+/* Figure cards */
+.visual-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; }
+.visual-card {
+  border:1px solid var(--line);
+  border-radius:3mm;
+  padding:2.5mm;
+  text-align:center;
+  min-height:40mm;
+  background:linear-gradient(160deg,var(--soft),#fff 60%);
+  box-shadow:var(--shadow-card);
+}
+.visual-card svg { width:100%; height:26mm; display:block; }
+.coord-caption { margin-top:1.5mm; font-weight:600; color:var(--muted); }
+
+
+/* A4 utilization work-area filler (preserved verbatim; Chrome-measured). */
 .a4-page:has(.page-number[aria-label="עמוד 14"]){--a4-work-extra:15mm}
 .a4-page:has(.page-number[aria-label="עמוד 4"]),.a4-page:has(.page-number[aria-label="עמוד 17"]){--a4-work-extra:20mm}
 .a4-page:has(.page-number[aria-label="עמוד 10"]){--a4-work-extra:25mm}
@@ -16,5 +302,12 @@
 .a4-page:has(.page-number[aria-label="עמוד 35"]),.a4-page:has(.page-number[aria-label="עמוד 36"]),.a4-page:has(.page-number[aria-label="עמוד 37"]){--a4-work-extra:75mm}
 .a4-page:has(.page-number[aria-label="עמוד 33"]){--a4-work-extra:80mm}
 .a4-page:has(.page-number[aria-label="עמוד 18"]),.a4-page:has(.page-number[aria-label="עמוד 32"]){--a4-work-extra:85mm}
-.a4-page:has(.page-number[aria-label="עמוד 4"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 5"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 6"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 10"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 11"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 12"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 13"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 14"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 15"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 16"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 17"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 18"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 19"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 20"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 21"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 22"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 23"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 24"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 25"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 26"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 27"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 28"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 29"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 30"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 31"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 32"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 33"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 34"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 35"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 36"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 37"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 38"]) .task:last-of-type .task-body::after{content:"מרחב עבודה / חישוב";display:block;height:var(--a4-work-extra);margin-top:3mm;border:1px dashed #cbd5e1;border-radius:2.5mm;padding:2mm 3mm;color:#64748b;font-size:11px;font-weight:500;background:repeating-linear-gradient(to bottom,#fff 0,#fff 7.5mm,#e2e8f0 7.5mm,#e2e8f0 7.8mm)}
-@media print{body{background:#fff}.a4-page{margin:0;box-shadow:none}}
+.a4-page:has(.page-number[aria-label="עמוד 4"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 5"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 6"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 10"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 11"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 12"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 13"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 14"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 15"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 16"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 17"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 18"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 19"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 20"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 21"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 22"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 23"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 24"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 25"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 26"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 27"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 28"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 29"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 30"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 31"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 32"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 33"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 34"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 35"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 36"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 37"]) .task:last-of-type .task-body::after,.a4-page:has(.page-number[aria-label="עמוד 38"]) .task:last-of-type .task-body::after{content:"מרחב עבודה / חישוב";display:block;height:var(--a4-work-extra);margin-top:3mm;border:1px dashed color-mix(in srgb,var(--brand) 30%,var(--line));border-radius:2.5mm;padding:2mm 3mm;color:var(--muted);font-size:11px;font-weight:500;background:repeating-linear-gradient(to bottom,#fff 0,#fff 7.5mm,var(--soft) 7.5mm,var(--soft) 7.8mm)}
+/* Overflow guards: pages whose fuller MoE definition wording runs two lines —
+   reclaim the otherwise-empty space inside the figure cards so the sheet fits. */
+.a4-page:has(.page-number[aria-label="עמוד 2"]) .shape-card{min-height:34mm}
+.a4-page:has(.page-number[aria-label="עמוד 2"]) .anchor{margin:3mm 0 3mm}
+main.a4-page:has(.page-number[aria-label="עמוד 9"]) .shape-card{min-height:62mm!important}
+.a4-page:has(.page-number[aria-label="עמוד 9"]) .anchor{margin:3mm 0 3mm}
+
+@media print { body { background:#fff; } .a4-page { margin:0; box-shadow:none; -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
